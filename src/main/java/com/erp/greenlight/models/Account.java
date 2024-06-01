@@ -1,4 +1,5 @@
 package com.erp.greenlight.models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,10 @@ public class Account {
     @Column(nullable = false, length = 225)
     private String name;
 
+//    @ManyToOne(fetch = FetchType.LAZY) // One-to-Many relationship with AccountType
+//   // @JoinColumn(name = "account_type", nullable = false,referencedColumnName = "id") // Foreign key
+//    @JoinColumn(name = "account_type" ,referencedColumnName = "id")
+//
     @Column(nullable = false)
     private int accountType;
 

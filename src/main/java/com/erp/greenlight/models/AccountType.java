@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,9 +18,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "account_types")
 public class AccountType {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     @Column(nullable = false)
@@ -30,6 +31,7 @@ public class AccountType {
 
     @Column(name = "relatediternalaccounts")
     private boolean relatedInternalAccounts;
-
+    @OneToMany(mappedBy = "accountType") // MappedBy points to the field in Account
+    private List<Account> accounts;
 }
 
