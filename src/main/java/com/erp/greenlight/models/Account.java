@@ -42,16 +42,11 @@ public class Account {
     @OneToMany(mappedBy = "parentAccount", cascade = CascadeType.ALL)
     private Set<Account> childAccounts = new HashSet<>();
 
-    @Column(nullable = false)
+    @Column(name="account_number")
     private Long accountNumber;
 
-    @Column(nullable = false)
     private int startBalanceStatus; // Consider using an enum for status
-
-    @Column(nullable = false)
     private BigDecimal startBalance;
-
-    @Column(nullable = false)
     private BigDecimal currentBalance = BigDecimal.ZERO; // Set default to 0.00 using BigDecimal.ZERO
 
     @Column(name = "other_table_FK")
@@ -60,19 +55,13 @@ public class Account {
     @Column(length = 225)
     private String notes;
 
-    @Column(nullable = false)
     private int addedBy;
-
     private Integer updatedBy;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt=null;
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
     private boolean active=true;
-
 
     public void addChildAccount(Account child) {
         childAccounts.add(child);
@@ -83,6 +72,5 @@ public class Account {
         childAccounts.remove(child);
         child.setParentAccount(null);
     }
-
 }
 

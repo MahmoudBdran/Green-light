@@ -45,8 +45,8 @@ public class AccountController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Object> saveAccount(@RequestBody Account account){
-       return AppResponse.generateResponse("account_saved_success", HttpStatus.OK,accountService.saveAccount(account) , true);
+    public ResponseEntity<Object> save(@RequestBody Account account){
+       return AppResponse.generateResponse("تم حفط الحساب بنجاح", HttpStatus.OK, accountService.saveAccount(account) , true);
     }
 
     @PutMapping("/update")
