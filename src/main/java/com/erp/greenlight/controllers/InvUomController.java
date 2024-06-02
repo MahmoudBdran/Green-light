@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/InvUom")
+@RequestMapping("/InvUoms")
 public class InvUomController {
 
     @Autowired

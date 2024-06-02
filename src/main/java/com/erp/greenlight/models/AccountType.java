@@ -31,6 +31,7 @@ public class AccountType {
 
     @Column(name = "relatediternalaccounts")
     private boolean relatedInternalAccounts;
+
     @OneToMany(mappedBy = "accountType") // MappedBy points to the field in Account
     private List<Account> accounts;
 }

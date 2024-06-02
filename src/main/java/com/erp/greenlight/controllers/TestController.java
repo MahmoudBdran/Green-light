@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 public class TestController {
-    @Autowired
+  /*  @Autowired
     InvItemCardRepo invItemCardRepo;
     @Autowired
     AccountRepo accountRepo;
@@ -46,7 +46,7 @@ public class TestController {
     @GetMapping("/invUoms")
     public List<InvUom> getInvUoms(){
         return invUomRepo.findAll();
-    }
+    }*/
 
 
 

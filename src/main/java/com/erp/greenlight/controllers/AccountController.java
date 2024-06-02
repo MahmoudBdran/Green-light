@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 public class AccountController {
 
     @Autowired
@@ -45,7 +45,6 @@ public class AccountController {
             return new ResponseEntity<>("deleted Successfully", HttpStatus.ACCEPTED);
         }else{
             return new ResponseEntity<>("We cannot find account Id : "+id,HttpStatus.BAD_REQUEST);
-
         }
     }
 

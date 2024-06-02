@@ -32,8 +32,10 @@ public class Account {
 //   // @JoinColumn(name = "account_type", nullable = false,referencedColumnName = "id") // Foreign key
 //    @JoinColumn(name = "account_type" ,referencedColumnName = "id")
 //
-    @Column(nullable = false)
-    private int accountType;
+
+    @ManyToOne()
+    @JoinColumn(name = "account_type",referencedColumnName = "id")
+    private AccountType accountType;
 
     @Column(nullable = false)
     private boolean isParent=false;
