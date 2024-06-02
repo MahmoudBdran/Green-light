@@ -1,5 +1,6 @@
 package com.erp.greenlight.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,8 @@ public class AccountType {
     private boolean relatedInternalAccounts;
 
     @OneToMany(mappedBy = "accountType") // MappedBy points to the field in Account
+    @JsonIgnore
     private List<Account> accounts;
+
 }
 

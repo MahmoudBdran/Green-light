@@ -1,6 +1,5 @@
 package com.erp.greenlight.controllers;
 
-
 import com.erp.greenlight.services.AccountTypeService;
 import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;

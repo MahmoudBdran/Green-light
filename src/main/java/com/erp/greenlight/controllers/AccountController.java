@@ -4,6 +4,7 @@ import com.erp.greenlight.models.Account;
 import com.erp.greenlight.models.InvItemcard;
 import com.erp.greenlight.services.AccountService;
 import com.erp.greenlight.services.InvItemCardService;
+import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +15,16 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts")
+@CrossOrigin(origins = "http://localhost:4200")
+
 public class AccountController {
 
     @Autowired
     AccountService service;
 
     @GetMapping
-    public List<Account> getAllAccounts(){
-        return service.getAllAccounts();
+    public ResponseEntity<Object> getAllAccountTypes(){
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, service.getAllAccounts() , true);
     }
     @GetMapping("/{id}")
     public Optional<Account> getAccountById(@PathVariable Long id){

@@ -17,6 +17,7 @@ public class AccountService {
     AccountRepo repo;
 
     public List<Account> getAllAccounts(){
+
         return repo.findAll();
     }
 
