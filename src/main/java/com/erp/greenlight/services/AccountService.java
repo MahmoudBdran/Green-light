@@ -16,10 +16,18 @@ public class AccountService {
     @Autowired
     AccountRepo repo;
 
-    public List<Account> getAllAccounts(){
 
+
+
+
+    public List<Account> getAllAccounts(){
         return repo.findAll();
     }
+
+    public List<Account> getParentAccounts(){
+        return repo.findAllByIsParent(Boolean.TRUE);
+    }
+
 
     public Optional<Account> getAccountById(@PathVariable Long id){
         return Optional.of(repo.findById(id).get());

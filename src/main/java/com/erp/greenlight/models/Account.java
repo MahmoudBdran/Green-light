@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -27,7 +28,6 @@ public class Account {
     @Column(nullable = false, length = 225)
     private String name;
 
-
     @ManyToOne()
     @JoinColumn(name = "account_type",referencedColumnName = "id")
     private AccountType accountType;
@@ -35,8 +35,12 @@ public class Account {
     @Column(name="is_parent")
     private Boolean isParent;
 
-    @Column(name = "parent_account_number")
-    private Long parentAccountNumber;
+    @ManyToOne
+    @JoinColumn(name = "parent_account_number")
+    private Account parentAccount;
+
+    @OneToMany(mappedBy = "parentAccount", cascade = CascadeType.ALL)
+    private Set<Account> childAccounts = new HashSet<>();
 
     @Column(nullable = false)
     private Long accountNumber;
@@ -69,11 +73,16 @@ public class Account {
     @Column(nullable = false)
     private boolean active=true;
 
-    @Column(nullable = false)
-    private int comCode;
 
-    @Column(nullable = false)
-    private LocalDate date;
+    public void addChildAccount(Account child) {
+        childAccounts.add(child);
+        child.setParentAccount(this);
+    }
+
+    public void removeChildAccount(Account child) {
+        childAccounts.remove(child);
+        child.setParentAccount(null);
+    }
 
 }
 
