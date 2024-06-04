@@ -45,9 +45,9 @@ public class Account {
     @Column(name="account_number")
     private Long accountNumber;
 
-    private int startBalanceStatus; // Consider using an enum for status
+    private int startBalanceStatus;
     private BigDecimal startBalance;
-    private BigDecimal currentBalance = BigDecimal.ZERO; // Set default to 0.00 using BigDecimal.ZERO
+    private BigDecimal currentBalance = BigDecimal.ZERO;
 
     @Column(name = "other_table_FK")
     private Long otherTableFk;
