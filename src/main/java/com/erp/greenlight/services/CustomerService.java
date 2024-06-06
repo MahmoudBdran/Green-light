@@ -1,13 +1,22 @@
 package com.erp.greenlight.services;
 
+import com.erp.greenlight.DTOs.CustomerDto;
+import com.erp.greenlight.enums.StartBalanceStatusEnum;
 import com.erp.greenlight.models.Account;
+import com.erp.greenlight.models.AccountType;
+import com.erp.greenlight.models.AdminPanelSettings;
 import com.erp.greenlight.models.Customer;
 import com.erp.greenlight.repositories.AccountRepo;
+import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
 import com.erp.greenlight.repositories.CustomerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,16 +24,90 @@ import java.util.Optional;
 public class CustomerService {
     @Autowired
     CustomerRepo repo;
+    @Autowired
+    AdminPanelSettingsRepo adminPanelSettings;
+    @Autowired
+    AccountRepo accountRepo;
+    @Autowired
+    CustomerRepo customerRepo;
+    @Autowired
+    private AdminPanelSettingsRepo adminPanelSettingsRepo;
 
-    public List<Customer> getAllCustomers(){
-        return repo.findAll();
+    public List<CustomerDto> getAllCustomers(){
+        List<Customer> customers= repo.findAll();
+        List<CustomerDto> customerDtos= new ArrayList<>();
+        for(Customer customer : customers){
+            CustomerDto customerDto = CustomerDto.convertToDto(customer);
+            customerDtos.add(customerDto);
+        }
+
+        return customerDtos;
     }
 
     public Optional<Customer> getCustomerById(@PathVariable Long id){
         return Optional.of(repo.findById(id).get());
     }
+
     public Customer saveCustomer(Customer customer){
-        return repo.save(customer);
+        Customer savedCustomer =new Customer();
+        if(validateCustomerInDB(customer)){
+            savedCustomer = repo.save(customer);
+            initiateAccountForCustomer(customer);
+            return savedCustomer;
+        }else{
+            return null;
+        }
+        //when saving customer we need to add account for him at the same time
+
+    }
+    public boolean validateCustomerInDB(Customer customer){
+        if(customerRepo.findByName(customer.getName())==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void initiateAccountForCustomer(Customer customer){
+        Account account = new Account();
+        account.setName(customer.getName());
+        account.setStartBalanceStatus(customer.getStartBalanceStatus());
+
+
+        //start Balance status , Start Balance
+        if(customer.getStartBalanceStatus()== StartBalanceStatusEnum.CREDIT.getValue()){
+            //credit
+            account.setStartBalance(customer.getStartBalance().negate());
+        }else if(customer.getStartBalanceStatus()==StartBalanceStatusEnum.DEBIT.getValue()){
+            account.setStartBalance(customer.getStartBalance());
+            if(account.getStartBalance().compareTo(BigDecimal.ZERO)<0){
+                account.setStartBalance(account.getStartBalance().negate());
+            }
+        }else if(customer.getStartBalanceStatus()==StartBalanceStatusEnum.BALANCED.getValue()){
+            account.setStartBalance(BigDecimal.ZERO);
+        }else{
+            account.setStartBalanceStatus(StartBalanceStatusEnum.BALANCED.getValue());
+            account.setStartBalance(BigDecimal.ZERO);
+        }
+
+
+        account.setCurrentBalance(customer.getStartBalance());
+        account.setParentAccount(new Account(adminPanelSettingsRepo.findAll().get(0).getCustomerParentAccountNumber()));
+        account.setNotes(customer.getNotes());
+        account.setIsParent(false);
+        account.setAccountNumber(customer.getAccountNumber());
+        AccountType accountType=new AccountType();
+        accountType.setId(3L);
+        account.setAccountType(accountType);
+        account.setActive(true);
+        //we need to add the authenticated user here
+        account.setAddedBy(1);
+        account.setCreatedAt(LocalDateTime.now());
+        account.setUpdatedAt(LocalDateTime.now());
+        //we need to add the authenticated user here
+        account.setUpdatedBy(1);
+        account.setOtherTableFk(customer.getCustomerCode());
+        accountRepo.save(account);
+
     }
     public void deleteCustomer( Long id){
         repo.deleteById(id);

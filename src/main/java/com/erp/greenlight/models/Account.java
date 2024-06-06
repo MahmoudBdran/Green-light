@@ -72,5 +72,9 @@ public class Account {
         childAccounts.remove(child);
         child.setParentAccount(null);
     }
+
+    public Account(Long id) {
+        this.id = id;
+    }
 }
 

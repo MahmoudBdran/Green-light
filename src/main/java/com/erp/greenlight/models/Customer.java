@@ -28,42 +28,36 @@ public class Customer {
     @Column(nullable = false)
     private Long customerCode;
 
-    @Column(nullable = false, length = 225)
+    @Column(  length = 225)
     private String name;
 
-    @Column(nullable = false)
     private Long accountNumber;
 
-    @Column(nullable = false)
     private int startBalanceStatus; // Consider using an enum for status
 
-    @Column(nullable = false)
     private BigDecimal startBalance;
 
-    @Column(nullable = false)
     private BigDecimal currentBalance = BigDecimal.ZERO; // Set default to 0.00 using BigDecimal.ZERO
 
     @Column(length = 225)
     private String notes;
 
-    @Column(nullable = false)
-    private int addedBy;
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
 
     private Integer updatedBy;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt=LocalDateTime.now();
 
-    private LocalDateTime updatedAt=null;
+    private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
     private boolean active=true;
 
-    @Column(nullable = false)
     private int comCode;
 
-    @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
 
     @Column(length = 250)
     private String address;

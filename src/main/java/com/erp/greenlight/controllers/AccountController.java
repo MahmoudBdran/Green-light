@@ -1,7 +1,9 @@
 package com.erp.greenlight.controllers;
 
 import com.erp.greenlight.models.Account;
+import com.erp.greenlight.models.AdminPanelSettings;
 import com.erp.greenlight.models.InvItemcard;
+import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
 import com.erp.greenlight.services.AccountService;
 import com.erp.greenlight.services.AccountTypeService;
 import com.erp.greenlight.services.InvItemCardService;
@@ -27,6 +29,8 @@ public class AccountController {
 
     @Autowired
     AccountTypeService accountTypeService;
+    @Autowired
+    AdminPanelSettingsRepo adminPanelSettingsRepo;
 
     @GetMapping
     public ResponseEntity<Object> findAll(){
@@ -38,6 +42,16 @@ public class AccountController {
         data.put("parentAccounts",  accountService.getParentAccounts());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
+    }
+
+    @GetMapping("/getAdminPanelSettings")
+    public List<AdminPanelSettings> getAllAdminPanelSettings(){
+        System.out.println(adminPanelSettingsRepo.findAll().get(0).getCustomerParentAccountNumber());
+        return adminPanelSettingsRepo.findAll();
+    }
+    @GetMapping("/getall")
+    public List<Account> getAccounts(){
+        return accountService.getAllAccounts();
     }
     @GetMapping("/{id}")
     public Optional<Account> getAccountById(@PathVariable Long id){
