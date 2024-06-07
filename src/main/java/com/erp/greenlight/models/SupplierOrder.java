@@ -36,8 +36,8 @@ public class SupplierOrder {
     private LocalDate orderDate;
 
     @OneToOne()
-    @JoinColumn(name = "suuplier_code",referencedColumnName = "suuplier_code")
-    private Supplier supplierCode;
+    @JoinColumn(name = "supplier_id",referencedColumnName = "id")
+    private Supplier supplierId;
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)

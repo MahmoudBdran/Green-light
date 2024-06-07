@@ -22,8 +22,6 @@ public class Supplier {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Assuming auto-increment for id
     private Long id;
 
-    @Column(name = "suuplier_code", nullable = false)
-    private Long supplierCode;
 
     @ManyToOne()
     @JoinColumn(name = "suppliers_categories_id",referencedColumnName = "id")

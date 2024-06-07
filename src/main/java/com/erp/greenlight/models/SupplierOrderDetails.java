@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -48,9 +49,7 @@ public class SupplierOrderDetails {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="order_date",referencedColumnName = "order_date")
-    private SupplierOrder orderDate;
+    private Date orderDate;
 
     @CreatedBy
     @JoinColumn(name = "added_by",referencedColumnName = "id")
