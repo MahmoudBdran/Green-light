@@ -14,6 +14,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/inv_itemcard_categories")
+@CrossOrigin(origins = "http://localhost:4200")
+
 public class InvItemCardCategoryController {
 
     @Autowired

@@ -6,6 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,6 +21,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners({AuditingEntityListener.class})
+
 //جدول الوحدات
 public class InvUom {
 
@@ -28,21 +36,23 @@ public class InvUom {
     @Column(nullable = false)
     private boolean isMaster;
 
-    @Column(nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    @CreatedBy
+    private Admin addedBy;
+
+
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    @LastModifiedBy
+    private Admin updatedBy;
+
+
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt=null;
-
-    @Column(nullable = false)
-    private int addedBy;
-
-    private Integer updatedBy;
-
-    @Column(nullable = false)
-    private int comCode;
-
-    @Column(nullable = false)
-    private LocalDate date;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
     private boolean active=true;
