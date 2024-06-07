@@ -2,16 +2,16 @@ package com.erp.greenlight.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Table(name = "suppliers_with_orders")
 public class SupplierOrder {
@@ -30,10 +30,13 @@ public class SupplierOrder {
     private String docNo;
 
     @Column(name = "order_date", nullable = false)
+    @CreatedDate
     private LocalDate orderDate;
 
     @Column(name = "suuplier_code", nullable = false)
-    private Long supplierCode;
+    @OneToOne()
+    @JoinColumn(name = "suuplier_code",referencedColumnName = "suuplier_code")
+    private Supplier supplierCode;
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
@@ -69,7 +72,9 @@ public class SupplierOrder {
     private BigDecimal totalCost;
 
     @Column(name = "account_number", nullable = false)
-    private Long accountNumber;
+    @OneToOne()
+    @JoinColumn(name = "account_number",referencedColumnName = "id")
+    private Account accountNumber;
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;
@@ -93,22 +98,34 @@ public class SupplierOrder {
     private BigDecimal supplierBalanceAfter;
 
     @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
+    @CreatedBy
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
 
     @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "updated_by")
-    private Integer updatedBy;
+    @LastModifiedBy
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private Admin updatedBy;
 
     @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    @ManyToOne()
+    @JoinColumn(name = "store_id",referencedColumnName = "id")
+    private Store storeId;
 
     @Column(name = "approved_by")
-    private Integer approvedBy;
+    @ManyToOne()
+    @JoinColumn(name = "approved_by",referencedColumnName = "id")
+    private Admin approvedBy;
 
     // Getters and setters (optional but recommended)
     // ...

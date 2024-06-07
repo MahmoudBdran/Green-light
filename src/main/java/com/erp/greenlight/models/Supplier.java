@@ -2,18 +2,20 @@ package com.erp.greenlight.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Table(name = "suppliers")
+@EntityListeners({AuditingEntityListener.class})
 public class Supplier {
 
     @Id
@@ -24,13 +26,17 @@ public class Supplier {
     private Long supplierCode;
 
     @Column(name = "suppliers_categories_id", nullable = false)
-    private Integer suppliersCategoriesId;
+    @ManyToOne()
+    @JoinColumn(name = "suppliers_categories_id",referencedColumnName = "id")
+    private SupplierCategory suppliersCategoriesId;
 
     @Column(name = "name", nullable = false, length = 225)  // Specify length for varchar columns
     private String name;
 
     @Column(name = "account_number", nullable = false)
-    private Long accountNumber;
+    @OneToOne()
+    @JoinColumn(name = "account_number",referencedColumnName = "id")
+    private Account accountNumber;
 
     @Column(name = "start_balance_status", nullable = false)
     private Byte startBalanceStatus;  // Byte for tinyint
@@ -45,15 +51,23 @@ public class Supplier {
     private String notes;
 
     @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
+    @CreatedBy
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
 
     @Column(name = "updated_by")
-    private Integer updatedBy;
+    @LastModifiedBy
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private Admin updatedBy;
 
     @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "active", nullable = false)

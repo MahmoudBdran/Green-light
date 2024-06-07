@@ -2,6 +2,10 @@ package com.erp.greenlight.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,10 +24,13 @@ public class SupplierOrderDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Assuming auto-increment for id
     private Long id;
 
-    @Column(name = "suppliers_with_orders_auto_serial", nullable = false)
-    private Long supplierOrderAutoSerial;  // Foreign key referencing SupplierOrder
+    @Column(name = "order_id", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "order_id",referencedColumnName = "id")
+    private SupplierOrder order_id;  // Foreign key referencing SupplierOrder
 
     @Column(name = "order_type", nullable = false)
+
     private Byte orderType;  // Byte for tinyint(1)
 
     @Column(name = "com_code", nullable = false)
@@ -33,7 +40,9 @@ public class SupplierOrderDetails {
     private BigDecimal deliveredQuantity;
 
     @Column(name = "uom_id", nullable = false)
-    private Integer uomId;  // Likely a foreign key for a Unit of Measurement table
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "uom_id",referencedColumnName = "id")
+    private InvUom uomId;  // Likely a foreign key for a Unit of Measurement table
 
     @Column(name = "isparentuom", nullable = false)
     private Boolean isParentUom;  // Boolean for tinyint(1)
@@ -45,18 +54,28 @@ public class SupplierOrderDetails {
     private BigDecimal totalPrice;
 
     @Column(name = "order_date", nullable = false)
-    private LocalDate orderDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="order_date",referencedColumnName = "order_date")
+    private SupplierOrder orderDate;
 
     @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
+    @CreatedBy
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Admin addedBy;
 
     @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "updated_by")
-    private Integer updatedBy;
+    @LastModifiedBy
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Admin updatedBy;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "item_code", nullable = false)
