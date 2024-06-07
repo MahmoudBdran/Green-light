@@ -41,16 +41,16 @@ public class InvUomController {
 
     @PutMapping("/update")
     public ResponseEntity<Object> updateInvUom(@RequestBody InvUom invUom){
-        return AppResponse.generateResponse("تم الحفظ", HttpStatus.OK,   service.saveInvUom(invUom) , true);
+        return AppResponse.generateResponse("تم التحديث", HttpStatus.OK,   service.saveInvUom(invUom) , true);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteInvUom(@PathVariable Long id){
+    public ResponseEntity<Object> deleteInvUom(@PathVariable Long id){
         if(service.getInvUomById(id).isPresent()){
             service.deleteInvUom(id);
-            return new ResponseEntity<>("deleted Successfully", HttpStatus.ACCEPTED);
+            return AppResponse.generateResponse("تم حذف الوحده بنجاح", HttpStatus.OK,null, true);
         }else{
-            return new ResponseEntity<>("We cannot find Inventory Uom Id : "+id,HttpStatus.BAD_REQUEST);
+            return AppResponse.generateResponse("الوحده غير موجوده بالفعل", HttpStatus.BAD_REQUEST,null,false);
 
         }
     }

@@ -46,7 +46,11 @@ public class CustomerService {
     }
 
     public Optional<Customer> getCustomerById(@PathVariable Long id){
-        return Optional.of(repo.findById(id).get());
+        if(repo.findById(id).isPresent()){
+            return Optional.of(repo.findById(id).get());
+        }else{
+            return Optional.empty();
+        }
     }
 
     @Transactional

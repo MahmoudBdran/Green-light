@@ -44,18 +44,11 @@ public class AccountController {
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
     }
 
-    @GetMapping("/getAdminPanelSettings")
-    public List<AdminPanelSettings> getAllAdminPanelSettings(){
-        System.out.println(adminPanelSettingsRepo.findAll().get(0).getCustomerParentAccountNumber());
-        return adminPanelSettingsRepo.findAll();
-    }
-    @GetMapping("/getall")
-    public List<Account> getAccounts(){
-        return accountService.getAllAccounts();
-    }
+
     @GetMapping("/{id}")
-    public Optional<Account> getAccountById(@PathVariable Long id){
-        return accountService.getAccountById(id);
+    public ResponseEntity<Object> getAccountById(@PathVariable Long id){
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, accountService.getAccountById(id) , true);
     }
 
     @PostMapping("/save")
@@ -64,8 +57,8 @@ public class AccountController {
     }
 
     @PutMapping("/update")
-    public Account updateAccount(@RequestBody Account account){
-        return accountService.saveAccount(account);
+    public  ResponseEntity<Object> updateAccount(@RequestBody Account account){
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, accountService.saveAccount(account), true);
     }
 
 

@@ -42,8 +42,9 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Customer> getCustomerById(@PathVariable Long id){
-        return service.getCustomerById(id);
+    public ResponseEntity<Object> getCustomerById(@PathVariable Long id){
+        return AppResponse.generateResponse("all_data", service.getCustomerById(id) .isEmpty()?HttpStatus.BAD_REQUEST:HttpStatus.OK, service.getCustomerById(id) , service.getCustomerById(id) .isEmpty()?false:true);
+
     }
 
     @PostMapping("/create")
