@@ -6,6 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,22 +30,23 @@ public class InvItemcardCategory {
     @Column(nullable = false, length = 250)
     private String name;
 
-    @Column(nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    @CreatedBy
+    private Admin addedBy;
+
+
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    @LastModifiedBy
+    private Admin updatedBy;
+
+
+    @CreatedDate
     private LocalDateTime createdAt;
 
-
-    private LocalDateTime updatedAt=null;
-
-    @Column(nullable = false)
-    private int addedBy;
-
-    private Integer updatedBy;
-
-//    @Column(nullable = false)
-//    private int comCode;
-
-    @Column(nullable = false)
-    private LocalDate date;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
     private boolean active=true;
