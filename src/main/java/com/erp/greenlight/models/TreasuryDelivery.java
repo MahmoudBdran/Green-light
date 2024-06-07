@@ -36,8 +36,8 @@ public class TreasuryDelivery {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     // Getters and setters (optional but recommended)
     // ...

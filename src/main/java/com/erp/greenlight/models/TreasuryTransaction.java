@@ -69,8 +69,8 @@ public class TreasuryTransaction {
     @Column(name = "updated_by")
     private Integer updatedBy;
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     // Getters and setters (optional but recommended)
     // ...

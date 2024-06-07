@@ -37,8 +37,8 @@ public class InvProductionOrder {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 
     @Column(name = "approved_by")
     private Integer approvedBy;

@@ -69,6 +69,6 @@ public class InvStoresInventoryDetails {
     @Column(name = "closed_at")
     private LocalDateTime closedAt;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 }

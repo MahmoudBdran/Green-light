@@ -26,11 +26,7 @@ public class CustomerService {
     @Autowired
     CustomerRepo repo;
     @Autowired
-    AdminPanelSettingsRepo adminPanelSettings;
-    @Autowired
     AccountRepo accountRepo;
-    @Autowired
-    CustomerRepo customerRepo;
     @Autowired
     private AdminPanelSettingsRepo adminPanelSettingsRepo;
 
@@ -86,7 +82,7 @@ public class CustomerService {
     }
 
     public boolean validateCustomerInDB(Customer customer){
-        if(customerRepo.findByName(customer.getName())==null){
+        if(repo.findByName(customer.getName())==null){
             return true;
         }else{
             return false;

@@ -65,8 +65,8 @@ public class InvItemcard {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
-    private int comCode;
+//    @Column(nullable = false)
+//    private int comCode;
 
     @Column(nullable = false)
     private BigDecimal price;

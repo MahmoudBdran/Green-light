@@ -84,8 +84,8 @@ public class AdminShift {
     @Column(length = 100)
     private String notes;
 
-    @Column(nullable = false)
-    private Integer comCode;
+//    @Column(nullable = false)
+//    private Integer comCode;
 
     @Column(nullable = false)
     private LocalDate date;

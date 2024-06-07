@@ -43,8 +43,8 @@ public class SalesInvoiceReturn {
     @Column(name = "is_approved", nullable = false, insertable = false, updatable = false)  // Default value set in SQL
     private Boolean isApproved;  // Boolean for tinyint(1)
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "notes", length = 225)
     private String notes;

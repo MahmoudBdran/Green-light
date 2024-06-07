@@ -48,8 +48,8 @@ public class SalesInvoice {
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "notes", length = 225)
     private String notes;

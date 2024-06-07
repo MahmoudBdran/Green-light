@@ -33,8 +33,8 @@ public class Service {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 
     @Column(name = "date")
     private LocalDate date;

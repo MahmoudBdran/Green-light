@@ -5,17 +5,15 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Table(name = "suppliers_categories")
+@EntityListeners({AuditingEntityListener.class})
 public class SupplierCategory {
 
     @Id
@@ -33,20 +31,18 @@ public class SupplierCategory {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "added_by", nullable = false)
-    @LastModifiedBy
+   @LastModifiedBy
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
     private Admin addedBy;
 
-    @Column(name = "updated_by")
     @LastModifiedBy
     @ManyToOne()
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     private Admin updatedBy;
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;

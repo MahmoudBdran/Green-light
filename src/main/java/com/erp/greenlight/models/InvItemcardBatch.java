@@ -39,8 +39,8 @@ public class InvItemcardBatch {
     @Column(name = "expired_date")
     private LocalDate expiredDate;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 
     @Column(name = "auto_serial")
     private Long autoSerial;

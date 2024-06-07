@@ -6,25 +6,22 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Table(name = "suppliers_with_orders_details")
+@EntityListeners({AuditingEntityListener.class})
 public class SupplierOrderDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Assuming auto-increment for id
     private Long id;
 
-    @Column(name = "order_id", nullable = false)
     @ManyToOne()
     @JoinColumn(name = "order_id",referencedColumnName = "id")
     private SupplierOrder order_id;  // Foreign key referencing SupplierOrder
@@ -33,16 +30,14 @@ public class SupplierOrderDetails {
 
     private Byte orderType;  // Byte for tinyint(1)
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "deliverd_quantity", nullable = false, precision = 10, scale = 2)
     private BigDecimal deliveredQuantity;
 
     @Column(name = "uom_id", nullable = false)
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "uom_id",referencedColumnName = "id")
-    private InvUom uomId;  // Likely a foreign key for a Unit of Measurement table
+    private int uomId;  // Likely a foreign key for a Unit of Measurement table
 
     @Column(name = "isparentuom", nullable = false)
     private Boolean isParentUom;  // Boolean for tinyint(1)
@@ -53,12 +48,10 @@ public class SupplierOrderDetails {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
-    @Column(name = "order_date", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="order_date",referencedColumnName = "order_date")
     private SupplierOrder orderDate;
 
-    @Column(name = "added_by", nullable = false)
     @CreatedBy
     @JoinColumn(name = "added_by",referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -68,7 +61,6 @@ public class SupplierOrderDetails {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_by")
     @LastModifiedBy
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)

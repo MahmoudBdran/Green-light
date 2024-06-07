@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "suppliers_with_orders")
+@EntityListeners({AuditingEntityListener.class})
 public class SupplierOrder {
 
     @Id
@@ -33,7 +35,6 @@ public class SupplierOrder {
     @CreatedDate
     private LocalDate orderDate;
 
-    @Column(name = "suuplier_code", nullable = false)
     @OneToOne()
     @JoinColumn(name = "suuplier_code",referencedColumnName = "suuplier_code")
     private Supplier supplierCode;
@@ -41,8 +42,8 @@ public class SupplierOrder {
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "notes", length = 225)
     private String notes;
@@ -71,7 +72,6 @@ public class SupplierOrder {
     @Column(name = "total_cost", precision = 10, scale = 2)
     private BigDecimal totalCost;
 
-    @Column(name = "account_number", nullable = false)
     @OneToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
     private Account accountNumber;
@@ -97,7 +97,6 @@ public class SupplierOrder {
     @Column(name = "Supplier_balance_after", precision = 10, scale = 2)
     private BigDecimal supplierBalanceAfter;
 
-    @Column(name = "added_by", nullable = false)
     @CreatedBy
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
@@ -111,18 +110,15 @@ public class SupplierOrder {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "updated_by")
     @LastModifiedBy
     @ManyToOne()
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     private Admin updatedBy;
 
-    @Column(name = "store_id", nullable = false)
     @ManyToOne()
     @JoinColumn(name = "store_id",referencedColumnName = "id")
     private Store storeId;
 
-    @Column(name = "approved_by")
     @ManyToOne()
     @JoinColumn(name = "approved_by",referencedColumnName = "id")
     private Admin approvedBy;

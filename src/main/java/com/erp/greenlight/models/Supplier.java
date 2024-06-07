@@ -25,7 +25,6 @@ public class Supplier {
     @Column(name = "suuplier_code", nullable = false)
     private Long supplierCode;
 
-    @Column(name = "suppliers_categories_id", nullable = false)
     @ManyToOne()
     @JoinColumn(name = "suppliers_categories_id",referencedColumnName = "id")
     private SupplierCategory suppliersCategoriesId;
@@ -33,13 +32,12 @@ public class Supplier {
     @Column(name = "name", nullable = false, length = 225)  // Specify length for varchar columns
     private String name;
 
-    @Column(name = "account_number", nullable = false)
     @OneToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
     private Account accountNumber;
 
     @Column(name = "start_balance_status", nullable = false)
-    private Byte startBalanceStatus;  // Byte for tinyint
+    private int startBalanceStatus;  // Byte for tinyint
 
     @Column(name = "start_balance", nullable = false, precision = 10, scale = 2)
     private BigDecimal startBalance;
@@ -50,13 +48,11 @@ public class Supplier {
     @Column(name = "notes", length = 225)
     private String notes;
 
-    @Column(name = "added_by", nullable = false)
     @CreatedBy
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
     private Admin addedBy;
 
-    @Column(name = "updated_by")
     @LastModifiedBy
     @ManyToOne()
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
@@ -73,8 +69,8 @@ public class Supplier {
     @Column(name = "active", nullable = false)
     private Boolean isActive;  // Boolean for tinyint(1)
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;  // LocalDate for date column

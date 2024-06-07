@@ -58,8 +58,8 @@ public class SalesInvoicesReturnDetails {
     @Column(name = "isparentuom", nullable = false)
     private Integer isparentuom;
 
-    @Column(nullable = false)
-    private Integer comCode;
+//    @Column(nullable = false)
+//    private Integer comCode;
 
     @Column(nullable = false)
     private LocalDate invoiceDate;

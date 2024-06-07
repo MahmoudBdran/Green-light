@@ -49,8 +49,8 @@ public class Delegate {
     @Column(name = "active")
     private Boolean active;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 
     @Column(name = "date")
     private LocalDate date;

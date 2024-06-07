@@ -53,8 +53,8 @@ public class AdminPanelSettings {
 
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
-    private Integer comCode;
+//    @Column(nullable = false)
+//    private Integer comCode;
 
     private String notes;
 }

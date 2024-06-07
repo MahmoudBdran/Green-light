@@ -36,8 +36,8 @@ public class SalesMaterialType {
     @Column(updatable = false)
     private Integer updatedBy;
 
-    @Column(nullable = false)
-    private Integer comCode;
+//    @Column(nullable = false)
+//    private Integer comCode;
 
     @Column(nullable = false)
     private LocalDate date;

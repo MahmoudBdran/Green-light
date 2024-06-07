@@ -36,8 +36,8 @@ public class InvItemcardCategory {
 
     private Integer updatedBy;
 
-    @Column(nullable = false)
-    private int comCode;
+//    @Column(nullable = false)
+//    private int comCode;
 
     @Column(nullable = false)
     private LocalDate date;

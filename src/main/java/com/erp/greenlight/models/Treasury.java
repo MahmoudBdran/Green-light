@@ -42,8 +42,8 @@ public class Treasury {
     @Column(name = "updated_by")
     private Integer updatedBy;
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;

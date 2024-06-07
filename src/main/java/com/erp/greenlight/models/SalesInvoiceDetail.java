@@ -52,8 +52,8 @@ public class SalesInvoiceDetail {
     @Column(name = "isparentuom", nullable = false)
     private Byte isParentUom;  // Byte for tinyint(1) - main or retail UoM
 
-    @Column(name = "com_code", nullable = false)
-    private Integer comCode;
+//    @Column(name = "com_code", nullable = false)
+//    private Integer comCode;
 
     @Column(name = "invoice_date", nullable = false)
     private LocalDate invoiceDate;

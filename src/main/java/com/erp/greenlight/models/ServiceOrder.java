@@ -25,8 +25,8 @@ public class ServiceOrder {
     @Column(name = "is_approved")
     private Boolean isApproved;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 
     @Column(name = "notes")
     private String notes;

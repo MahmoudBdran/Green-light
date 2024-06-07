@@ -49,8 +49,8 @@ public class InvItemcardMovement {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "com_code")
-    private Integer comCode;
+//    @Column(name = "com_code")
+//    private Integer comCode;
 
     @Column(name = "quantity_befor_move_store")
     private String quantityBeforMoveStore;
