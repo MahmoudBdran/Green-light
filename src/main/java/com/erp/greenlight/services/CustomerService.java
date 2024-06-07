@@ -53,9 +53,6 @@ public class CustomerService {
     public Customer saveCustomer(Customer customer){
         Customer savedCustomer =new Customer();
         if(validateCustomerInDB(customer)){
-            customer.setCustomerCode(1L);
-           // initiateAccountForCustomer(customer);
-
             if(customer.getStartBalanceStatus()== StartBalanceStatusEnum.CREDIT.getValue()){
                 //credit
                 customer.setStartBalance(customer.getStartBalance().negate());
@@ -73,7 +70,7 @@ public class CustomerService {
             customer.setCurrentBalance(customer.getStartBalance());
 
 
-            customer.setAccountNumber(initiateAccountForCustomer(customer).getId());
+            customer.setAccount( new Account(initiateAccountForCustomer(customer).getId() ));
 
             savedCustomer = repo.save(customer);
             return savedCustomer;
@@ -83,6 +80,7 @@ public class CustomerService {
         //when saving customer we need to add account for him at the same time
 
     }
+
     public boolean validateCustomerInDB(Customer customer){
         if(customerRepo.findByName(customer.getName())==null){
             return true;
@@ -90,11 +88,11 @@ public class CustomerService {
             return false;
         }
     }
+
     public Account initiateAccountForCustomer(Customer customer){
         Account account = new Account();
         account.setName(customer.getName());
         account.setStartBalanceStatus(customer.getStartBalanceStatus());
-
 
         //start Balance status , Start Balance
         if(customer.getStartBalanceStatus()== StartBalanceStatusEnum.CREDIT.getValue()){
@@ -117,18 +115,11 @@ public class CustomerService {
         account.setParentAccount(new Account(adminPanelSettingsRepo.findAll().get(0).getCustomerParentAccountNumber()));
         account.setNotes(customer.getNotes());
         account.setIsParent(false);
-        account.setAccountNumber(customer.getAccountNumber());
-        AccountType accountType=new AccountType();
+         AccountType accountType=new AccountType();
         accountType.setId(3L);
         account.setAccountType(accountType);
         account.setActive(true);
-        //we need to add the authenticated user here
-        account.setAddedBy(1);
-        account.setCreatedAt(LocalDateTime.now());
-        account.setUpdatedAt(LocalDateTime.now());
-        //we need to add the authenticated user here
-        account.setUpdatedBy(1);
-        account.setOtherTableFk(customer.getCustomerCode());
+
        return accountRepo.save(account);
 
     }

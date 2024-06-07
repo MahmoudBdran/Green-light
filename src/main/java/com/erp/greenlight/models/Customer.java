@@ -8,11 +8,12 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -28,13 +29,12 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long customerCode;
-
     @Column(  length = 225)
     private String name;
 
-    private Long accountNumber;
+    @OneToOne
+    @JoinColumn(name = "account_id",referencedColumnName = "id")
+    private Account account;
 
     private int startBalanceStatus; // Consider using an enum for status
 
@@ -50,17 +50,18 @@ public class Customer {
     @CreatedBy
     private Admin addedBy;
 
-    private Integer updatedBy;
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    @LastModifiedBy
+    private Admin updatedBy;
 
     @Column(nullable = false)
     private LocalDateTime createdAt=LocalDateTime.now();
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private boolean active=true;
-
-
-    private LocalDate date = LocalDate.now();
+    private boolean active;
 
     @Column(length = 250)
     private String address;

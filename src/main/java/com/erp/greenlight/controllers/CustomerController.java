@@ -3,10 +3,12 @@ package com.erp.greenlight.controllers;
 import com.erp.greenlight.DTOs.CustomerDto;
 import com.erp.greenlight.models.Account;
 import com.erp.greenlight.models.Customer;
+import com.erp.greenlight.repositories.AccountRepo;
 import com.erp.greenlight.repositories.CustomerRepo;
 import com.erp.greenlight.services.AccountService;
 import com.erp.greenlight.services.CustomerService;
 import com.erp.greenlight.utils.AppResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,9 @@ public class CustomerController {
     @Autowired
     private CustomerRepo customerRepo;
 
+    @Autowired
+    AccountRepo accountRepo;
+
     @GetMapping
     public ResponseEntity<Object> getAllCustomers(){
          return AppResponse.generateResponse("all_data", HttpStatus.OK, service.getAllCustomers() , true);
@@ -54,39 +59,29 @@ public class CustomerController {
     }
 
     @PutMapping("/update")
+    @Transactional
     public ResponseEntity<Object> updateCustomer(@RequestBody Customer customer){
+
         Long customerId = customer.getId();
-        Customer existingCustomer = customerRepo.findById(customerId).get();
+        Customer existingCustomer = customerRepo.findById(customerId).orElseThrow();
+
         existingCustomer.setName(customer.getName() != null ? customer.getName() : existingCustomer.getName());
-        existingCustomer.setCustomerCode(customer.getCustomerCode() != null ? customer.getCustomerCode() : existingCustomer.getCustomerCode());
-        existingCustomer.setAccountNumber(customer.getAccountNumber() != null ? customer.getAccountNumber() : existingCustomer.getAccountNumber());
-        existingCustomer.setStartBalanceStatus(customer.getStartBalanceStatus() !=0 ? customer.getStartBalanceStatus() : existingCustomer.getStartBalanceStatus());
-        existingCustomer.setStartBalance(customer.getStartBalance() != null ? customer.getStartBalance() : existingCustomer.getStartBalance());
-        existingCustomer.setCurrentBalance(customer.getCurrentBalance() != null ? customer.getCurrentBalance() : existingCustomer.getCurrentBalance());
+        existingCustomer.setAddress(customer.getAddress() != null ? customer.getAddress() : existingCustomer.getAddress());
+        existingCustomer.setPhones(customer.getPhones() != null ? customer.getPhones() : existingCustomer.getPhones());
         existingCustomer.setNotes(customer.getNotes() != null ? customer.getNotes() : existingCustomer.getNotes());
-        existingCustomer.setUpdatedBy(customer.getUpdatedBy() != null ? customer.getUpdatedBy() : existingCustomer.getUpdatedBy());
-        existingCustomer.setUpdatedAt(LocalDateTime.now()); // Update timestamp regardless// Maintain existing active state if not provided
+
+        // Update timestamp regardless// Maintain existing active state if not provided
         if(customer.isActive()==true){
             existingCustomer.setActive(customer.isActive());
         }else if(customer.isActive()==false){
             existingCustomer.setActive(customer.isActive());
         }
-        existingCustomer.setAddress(customer.getAddress() != null ? customer.getAddress() : existingCustomer.getAddress());
-        existingCustomer.setPhones(customer.getPhones() != null ? customer.getPhones() : existingCustomer.getPhones());
 
-//        existingCustomer.setCustomerCode(customer.getCustomerCode());
-//        existingCustomer.setAccountNumber(existingCustomer.getAccountNumber());
-//        existingCustomer.setStartBalanceStatus(customer.getStartBalanceStatus());
-//        existingCustomer.setStartBalance(customer.getStartBalance());
-//        existingCustomer.setCurrentBalance(customer.getCurrentBalance());
-//        existingCustomer.setNotes(customer.getNotes());
-//        existingCustomer.setUpdatedBy(customer.getUpdatedBy());
-//        existingCustomer.setUpdatedAt(LocalDateTime.now());
-//        existingCustomer.setActive(customer.isActive());
-//        existingCustomer.setComCode(customer.getComCode());
-//        existingCustomer.setAddress(customer.getAddress());
-//        existingCustomer.setPhones(customer.getPhones());
         Customer savedCustomer =customerRepo.save(existingCustomer);
+
+        Account existingAccount = savedCustomer.getAccount();
+        existingAccount.setName(customer.getName());
+        accountRepo.save(existingAccount);
         return AppResponse.generateResponse("تم تحديث الحساب بنجاح", HttpStatus.OK, savedCustomer, true);
     }
 
