@@ -1,7 +1,6 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.InvItemcard;
 import com.erp.greenlight.repositories.AccountRepo;
 import com.erp.greenlight.repositories.InvItemCardRepo;
 import org.springframework.beans.factory.annotation.Autowired;

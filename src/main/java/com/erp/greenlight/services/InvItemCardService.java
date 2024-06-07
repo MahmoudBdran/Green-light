@@ -1,6 +1,6 @@
 package com.erp.greenlight.services;
 
-import com.erp.greenlight.models.InvItemcard;
+import com.erp.greenlight.models.InvItemCard;
 import com.erp.greenlight.repositories.InvItemCardRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +17,18 @@ public class InvItemCardService {
     @Autowired
     InvItemCardRepo repo;
 
-    public List<InvItemcard> getAllInvItemCards(){
+    public List<InvItemCard> getAllInvItemCards(){
         return repo.findAll();
     }
 
-    public Optional<InvItemcard> getInvItemCardById(@PathVariable Long id){
+    public Optional<InvItemCard> getInvItemCardById(@PathVariable Long id){
         return Optional.of(repo.findById(id).get());
     }
-    public InvItemcard saveInvItemCard(InvItemcard invItemcard){
+    public InvItemCard saveInvItemCard(InvItemCard invItemcard){
+
+        if(invItemcard.getParentInvItemCard().getId() == null){
+            invItemcard.setParentInvItemCard(null);
+        }
         return repo.save(invItemcard);
     }
     public void deleteInvItemCard( Long id){

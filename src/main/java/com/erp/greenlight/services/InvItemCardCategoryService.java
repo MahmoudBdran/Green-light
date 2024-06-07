@@ -1,6 +1,5 @@
 package com.erp.greenlight.services;
 
-import com.erp.greenlight.models.InvItemcard;
 import com.erp.greenlight.models.InvItemcardCategory;
 import com.erp.greenlight.repositories.InvItemCardCategoryRepo;
 import com.erp.greenlight.repositories.InvItemCardRepo;

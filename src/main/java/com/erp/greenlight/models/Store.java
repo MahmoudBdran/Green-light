@@ -1,6 +1,10 @@
 package com.erp.greenlight.models;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,26 +31,26 @@ public class Store {
     @Column(name = "address", length = 250)
     private String address;
 
-    @Column(name = "created_at", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    @CreatedBy
+    private Admin addedBy;
+
+
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    @LastModifiedBy
+    private Admin updatedBy;
+
+
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
-
-    @Column(name = "updated_by")
-    private Integer updatedBy;
-
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
-
     @Column(name = "active", nullable = false)
-    private Boolean isActive;  // Boolean for tinyint(1)
+    private boolean active;  // Boolean for tinyint(1)
 
     // Getters and setters (optional but recommended)
     // ...

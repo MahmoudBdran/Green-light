@@ -1,6 +1,5 @@
 package com.erp.greenlight.controllers;
 
-import com.erp.greenlight.models.InvItemcard;
 import com.erp.greenlight.models.InvItemcardCategory;
 import com.erp.greenlight.services.InvItemCardCategoryService;
 import com.erp.greenlight.services.InvItemCardService;

@@ -1,7 +1,6 @@
 package com.erp.greenlight.repositories;
 
 import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.InvItemcard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -20,9 +20,20 @@ public class InvUomService {
         return repo.findAll();
     }
 
+    public List<InvUom> invUomsParent(){
+        return repo.findByIsMaster(true);
+    }
+
+    public List<InvUom> invUomsChilds(){
+        return repo.findByIsMaster(false);
+    }
+
     public Optional<InvUom> getInvUomById(@PathVariable Long id){
         return Optional.of(repo.findById(id).get());
     }
+
+
+
     public InvUom saveInvUom(InvUom invUom){
         return repo.save(invUom);
     }

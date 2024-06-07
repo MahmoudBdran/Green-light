@@ -1,12 +1,9 @@
 package com.erp.greenlight.controllers;
 
 import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.AdminPanelSettings;
-import com.erp.greenlight.models.InvItemcard;
 import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
 import com.erp.greenlight.services.AccountService;
 import com.erp.greenlight.services.AccountTypeService;
-import com.erp.greenlight.services.InvItemCardService;
 import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
