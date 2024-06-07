@@ -9,6 +9,7 @@ import com.erp.greenlight.models.Customer;
 import com.erp.greenlight.repositories.AccountRepo;
 import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
 import com.erp.greenlight.repositories.CustomerRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,11 +49,33 @@ public class CustomerService {
         return Optional.of(repo.findById(id).get());
     }
 
+    @Transactional
     public Customer saveCustomer(Customer customer){
         Customer savedCustomer =new Customer();
         if(validateCustomerInDB(customer)){
+            customer.setCustomerCode(1L);
+           // initiateAccountForCustomer(customer);
+
+            if(customer.getStartBalanceStatus()== StartBalanceStatusEnum.CREDIT.getValue()){
+                //credit
+                customer.setStartBalance(customer.getStartBalance().negate());
+            }else if(customer.getStartBalanceStatus()==StartBalanceStatusEnum.DEBIT.getValue()){
+                customer.setStartBalance(customer.getStartBalance());
+                if(customer.getStartBalance().compareTo(BigDecimal.ZERO)<0){
+                    customer.setStartBalance(customer.getStartBalance().negate());
+                }
+            }else if(customer.getStartBalanceStatus()==StartBalanceStatusEnum.BALANCED.getValue()){
+                customer.setStartBalance(BigDecimal.ZERO);
+            }else{
+                customer.setStartBalanceStatus(StartBalanceStatusEnum.BALANCED.getValue());
+                customer.setStartBalance(BigDecimal.ZERO);
+            }
+            customer.setCurrentBalance(customer.getStartBalance());
+
+
+            customer.setAccountNumber(initiateAccountForCustomer(customer).getId());
+
             savedCustomer = repo.save(customer);
-            initiateAccountForCustomer(customer);
             return savedCustomer;
         }else{
             return null;
@@ -67,7 +90,7 @@ public class CustomerService {
             return false;
         }
     }
-    public void initiateAccountForCustomer(Customer customer){
+    public Account initiateAccountForCustomer(Customer customer){
         Account account = new Account();
         account.setName(customer.getName());
         account.setStartBalanceStatus(customer.getStartBalanceStatus());
@@ -106,7 +129,7 @@ public class CustomerService {
         //we need to add the authenticated user here
         account.setUpdatedBy(1);
         account.setOtherTableFk(customer.getCustomerCode());
-        accountRepo.save(account);
+       return accountRepo.save(account);
 
     }
     public void deleteCustomer( Long id){

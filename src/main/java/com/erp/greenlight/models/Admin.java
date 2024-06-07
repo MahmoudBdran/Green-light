@@ -44,7 +44,10 @@ public class Admin {
     @Column(updatable = false)
     private Integer updatedBy;
 
-    @Column(nullable = false)
-    private Integer comCode;
+
+
+    public Admin(Integer id) {
+        this.id = id;
+    }
 }
 

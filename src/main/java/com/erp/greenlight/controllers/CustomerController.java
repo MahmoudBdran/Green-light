@@ -20,6 +20,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/customers")
+@CrossOrigin(origins = "http://localhost:4200")
+
 public class CustomerController {
 
     @Autowired
@@ -69,7 +71,6 @@ public class CustomerController {
         }else if(customer.isActive()==false){
             existingCustomer.setActive(customer.isActive());
         }
-        existingCustomer.setComCode(customer.getComCode() != 0 ? customer.getComCode() : existingCustomer.getComCode());
         existingCustomer.setAddress(customer.getAddress() != null ? customer.getAddress() : existingCustomer.getAddress());
         existingCustomer.setPhones(customer.getPhones() != null ? customer.getPhones() : existingCustomer.getPhones());
 

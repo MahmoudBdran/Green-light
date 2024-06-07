@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter
@@ -19,6 +21,7 @@ import jakarta.persistence.Table;
 @NoArgsConstructor
 @Entity
 @Table(name = "customers")
+@EntityListeners({AuditingEntityListener.class})
 public class Customer {
 
     @Id
@@ -44,6 +47,7 @@ public class Customer {
 
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
+    @CreatedBy
     private Admin addedBy;
 
     private Integer updatedBy;
@@ -55,7 +59,6 @@ public class Customer {
 
     private boolean active=true;
 
-    private int comCode;
 
     private LocalDate date = LocalDate.now();
 
