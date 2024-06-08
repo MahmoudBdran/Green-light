@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AdminPanelSettingsRepo extends JpaRepository<AdminPanelSettings,Long> {
+public interface AdminPanelSettingsRepo extends JpaRepository<AdminPanelSettings,Integer> {
  AdminPanelSettings findByCustomerParentAccountNumber(int parentAccountNumber);
 }

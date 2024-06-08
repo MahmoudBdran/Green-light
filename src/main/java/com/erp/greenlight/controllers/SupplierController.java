@@ -48,10 +48,10 @@ public class SupplierController {
     public ResponseEntity<Object> saveSupplier(@RequestBody Supplier supplier){
         Supplier savedSupplier = supplierService.saveSupplier(supplier);
         if(savedSupplier==null){
-            return AppResponse.generateResponse("لم يتم حفظ الحساب لوجود الحساب بالفعل", HttpStatus.BAD_REQUEST, savedSupplier, false);
+            return AppResponse.generateResponse("لم يتم حفظ المورد والحساب لوجود الحساب بالفعل", HttpStatus.BAD_REQUEST, savedSupplier, false);
 
         }else{
-            return AppResponse.generateResponse("تم حفط الحساب بنجاح", HttpStatus.OK, savedSupplier, true);
+            return AppResponse.generateResponse("تم حفط المورد وتم عمل حساب له بنجاح", HttpStatus.OK, savedSupplier, true);
         }
 
 
@@ -61,32 +61,15 @@ public class SupplierController {
     @Transactional
     public ResponseEntity<Object> updateSupplier(@RequestBody Supplier supplier){
 
-        Long supplierId = supplier.getId();
-        Supplier existingSupplier = supplierService.getSupplierById(supplierId).orElseThrow();
-
-        existingSupplier.setName(supplier.getName() != null ? supplier.getName() : existingSupplier.getName());
-        existingSupplier.setAddress(supplier.getAddress() != null ? supplier.getAddress() : existingSupplier.getAddress());
-        existingSupplier.setPhones(supplier.getPhones() != null ? supplier.getPhones() : existingSupplier.getPhones());
-        existingSupplier.setNotes(supplier.getNotes() != null ? supplier.getNotes() : existingSupplier.getNotes());
-
-        // Update timestamp regardless// Maintain existing active state if not provided
-        existingSupplier.setActive(supplier.getActive());
-
-
-        Supplier savedSupplier = supplierService.saveSupplier(existingSupplier);
-
-        Account existingAccount = existingSupplier.getAccountNumber();
-        existingAccount.setName(supplier.getName());
-        accountService.saveAccount(existingAccount);
-        return AppResponse.generateResponse("تم تحديث الحساب بنجاح", HttpStatus.OK, supplierService.getSupplierById(supplier.getId()) , true);
+        return AppResponse.generateResponse("تم تحديث معلومات المورد بنجاح", HttpStatus.OK, supplierService.updateSupplier(supplier) , true);
     }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Object> deleteSupplier(@PathVariable Long id){
         if(supplierService.getSupplierById(id).isPresent()){
             supplierService.deleteSupplier(id);
-            return AppResponse.generateResponse("تم حذف الحساب بنجاح", HttpStatus.OK,"deleted" , true);
+            return AppResponse.generateResponse("تم حذف المورد والحساب الخاص به بنجاح", HttpStatus.OK,"deleted" , true);
         }else{
-            return AppResponse.generateResponse("لم نتمكن من ايجاد الحساب", HttpStatus.BAD_REQUEST, "ERROR", true);
+            return AppResponse.generateResponse("لم نتمكن من ايجاد المورد", HttpStatus.BAD_REQUEST, "ERROR", true);
 
         }
     }

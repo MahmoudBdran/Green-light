@@ -42,8 +42,5 @@ public class SupplierCategory {
     private Admin updatedBy;
 
     @Column(name = "active", nullable = false)
-    private Boolean active;  // Boolean for tinyint(1)
-
-    // Getters and setters (optional but recommended)
-    // ...
+    private Boolean active;
 }

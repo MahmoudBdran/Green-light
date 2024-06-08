@@ -118,4 +118,26 @@ public class SupplierService {
     public void deleteSupplier( Long id){
         supplierRepo.deleteById(id);
     }
+
+
+    public Supplier updateSupplier(Supplier supplier){
+        Long supplierId = supplier.getId();
+        Supplier existingSupplier = supplierRepo.findById(supplierId).orElseThrow();
+
+        existingSupplier.setName(supplier.getName() != null ? supplier.getName() : existingSupplier.getName());
+        existingSupplier.setAddress(supplier.getAddress() != null ? supplier.getAddress() : existingSupplier.getAddress());
+        existingSupplier.setPhones(supplier.getPhones() != null ? supplier.getPhones() : existingSupplier.getPhones());
+        existingSupplier.setNotes(supplier.getNotes() != null ? supplier.getNotes() : existingSupplier.getNotes());
+
+        // Update timestamp regardless// Maintain existing active state if not provided
+        existingSupplier.setActive(supplier.getActive());
+
+
+        Supplier savedSupplier = supplierRepo.save(existingSupplier);
+
+        Account existingAccount = existingSupplier.getAccountNumber();
+        existingAccount.setName(supplier.getName());
+        accountRepo.save(existingAccount);
+        return savedSupplier;
+    }
 }

@@ -1,0 +1,53 @@
+package com.erp.greenlight.services;
+
+import com.erp.greenlight.models.Account;
+import com.erp.greenlight.models.AdminPanelSettings;
+import com.erp.greenlight.models.Customer;
+import com.erp.greenlight.models.Supplier;
+import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
+import com.erp.greenlight.utils.AppResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+
+@Service
+public class AdminPanelSettingsService {
+    @Autowired
+    AdminPanelSettingsRepo adminPanelSettingsRepo;
+    public List<AdminPanelSettings> getAllAdminPanelSettings(){
+        return  adminPanelSettingsRepo.findAll();
+    }
+
+    public AdminPanelSettings updateAdminPanelSettings(@RequestBody AdminPanelSettings adminPanelSettings){
+
+        Integer adminPanelSettingsId = adminPanelSettings.getId();
+        AdminPanelSettings existingAdminPanelSettings = adminPanelSettingsRepo.findById(adminPanelSettingsId).orElseThrow();
+
+        existingAdminPanelSettings.setSystemName(adminPanelSettings.getSystemName() != null ? adminPanelSettings.getSystemName() : existingAdminPanelSettings.getSystemName());
+        existingAdminPanelSettings.setPhoto(adminPanelSettings.getPhoto() != null ? adminPanelSettings.getPhoto() : existingAdminPanelSettings.getPhoto());
+        existingAdminPanelSettings.setActive(adminPanelSettings.getActive() != null ? adminPanelSettings.getActive() : existingAdminPanelSettings.getActive());
+        existingAdminPanelSettings.setGeneralAlert(adminPanelSettings.getGeneralAlert() != null ? adminPanelSettings.getGeneralAlert() : existingAdminPanelSettings.getGeneralAlert());
+
+        existingAdminPanelSettings.setAddress(adminPanelSettings.getAddress() != null ? adminPanelSettings.getAddress() : existingAdminPanelSettings.getAddress());
+        existingAdminPanelSettings.setPhone(adminPanelSettings.getPhone() != null ? adminPanelSettings.getPhone() : existingAdminPanelSettings.getPhone());
+        existingAdminPanelSettings.setCustomerParentAccountNumber(adminPanelSettings.getCustomerParentAccountNumber() != null ? adminPanelSettings.getCustomerParentAccountNumber() : existingAdminPanelSettings.getCustomerParentAccountNumber());
+        existingAdminPanelSettings.setSuppliersParentAccountNumber(adminPanelSettings.getSuppliersParentAccountNumber() != null ? adminPanelSettings.getSuppliersParentAccountNumber() : existingAdminPanelSettings.getSuppliersParentAccountNumber());
+        existingAdminPanelSettings.setDelegateParentAccountNumber(adminPanelSettings.getDelegateParentAccountNumber() != null ? adminPanelSettings.getDelegateParentAccountNumber() : existingAdminPanelSettings.getDelegateParentAccountNumber());
+        existingAdminPanelSettings.setEmployeesParentAccountNumber(adminPanelSettings.getEmployeesParentAccountNumber() != null ? adminPanelSettings.getEmployeesParentAccountNumber() : existingAdminPanelSettings.getEmployeesParentAccountNumber());
+        existingAdminPanelSettings.setAddedBy(existingAdminPanelSettings.getAddedBy());
+        existingAdminPanelSettings.setUpdatedBy(adminPanelSettings.getUpdatedBy() != null ? adminPanelSettings.getUpdatedBy() : existingAdminPanelSettings.getUpdatedBy());
+        existingAdminPanelSettings.setCreatedAt(existingAdminPanelSettings.getCreatedAt());
+        existingAdminPanelSettings.setUpdatedAt(adminPanelSettings.getUpdatedAt() != null ? adminPanelSettings.getUpdatedAt() : existingAdminPanelSettings.getUpdatedAt());
+        existingAdminPanelSettings.setNotes(adminPanelSettings.getNotes() != null ? adminPanelSettings.getNotes() : existingAdminPanelSettings.getNotes());
+
+
+        return  adminPanelSettingsRepo.save(existingAdminPanelSettings)   ;
+    }
+
+
+
+}
