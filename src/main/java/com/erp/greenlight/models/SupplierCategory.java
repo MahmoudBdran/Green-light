@@ -41,14 +41,8 @@ public class SupplierCategory {
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     private Admin updatedBy;
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
-
     @Column(name = "active", nullable = false)
-    private Boolean isActive;  // Boolean for tinyint(1)
+    private Boolean active;  // Boolean for tinyint(1)
 
     // Getters and setters (optional but recommended)
     // ...

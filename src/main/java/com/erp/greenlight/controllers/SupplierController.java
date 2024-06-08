@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/suppliers")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -24,7 +27,14 @@ public class SupplierController {
 
     @GetMapping
     public ResponseEntity<Object> getAllSuppliers(){
-        return AppResponse.generateResponse("all_data", HttpStatus.OK, supplierService.getAllSuppliers() , true);
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("suppliers",  supplierService.getAllSuppliers());
+        data.put("supplierCategories",  supplierService.getAllSupplierCategories());
+
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
     }
 
     @GetMapping("/{id}")
@@ -60,15 +70,15 @@ public class SupplierController {
         existingSupplier.setNotes(supplier.getNotes() != null ? supplier.getNotes() : existingSupplier.getNotes());
 
         // Update timestamp regardless// Maintain existing active state if not provided
-            existingSupplier.setIsActive(supplier.getIsActive());
+        existingSupplier.setActive(supplier.getActive());
 
 
-        Supplier savedSupplier =supplierService.saveSupplier(existingSupplier);
+        Supplier savedSupplier = supplierService.saveSupplier(existingSupplier);
 
-        Account existingAccount = savedSupplier.getAccountNumber();
+        Account existingAccount = existingSupplier.getAccountNumber();
         existingAccount.setName(supplier.getName());
         accountService.saveAccount(existingAccount);
-        return AppResponse.generateResponse("تم تحديث الحساب بنجاح", HttpStatus.OK, savedSupplier, true);
+        return AppResponse.generateResponse("تم تحديث الحساب بنجاح", HttpStatus.OK, supplierService.getSupplierById(supplier.getId()) , true);
     }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Object> deleteSupplier(@PathVariable Long id){

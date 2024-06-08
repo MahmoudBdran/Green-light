@@ -2,14 +2,8 @@ package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.CustomerDto;
 import com.erp.greenlight.enums.StartBalanceStatusEnum;
-import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.AccountType;
-import com.erp.greenlight.models.Customer;
-import com.erp.greenlight.models.Supplier;
-import com.erp.greenlight.repositories.AccountRepo;
-import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
-import com.erp.greenlight.repositories.CustomerRepo;
-import com.erp.greenlight.repositories.SupplierRepo;
+import com.erp.greenlight.models.*;
+import com.erp.greenlight.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +16,9 @@ import java.util.Optional;
 
 @Service
 public class SupplierService {
+
+    @Autowired
+    SupplierCategoryRepo supplierCategoryRepo;
     @Autowired
     SupplierRepo supplierRepo;
     @Autowired
@@ -30,6 +27,11 @@ public class SupplierService {
     private AdminPanelSettingsRepo adminPanelSettingsRepo;
     public List<Supplier> getAllSuppliers(){
         return  supplierRepo.findAll();
+    }
+
+
+    public List<SupplierCategory> getAllSupplierCategories(){
+        return  supplierCategoryRepo.findAll();
     }
 
     public Optional<Supplier> getSupplierById(@PathVariable Long id){
@@ -106,7 +108,7 @@ public class SupplierService {
         account.setNotes(supplier.getNotes());
         account.setIsParent(false);
         AccountType accountType=new AccountType();
-        accountType.setId(3L);
+        accountType.setId(2L);
         account.setAccountType(accountType);
         account.setActive(true);
 

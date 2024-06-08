@@ -25,7 +25,7 @@ public class Supplier {
 
     @ManyToOne()
     @JoinColumn(name = "suppliers_categories_id",referencedColumnName = "id")
-    private SupplierCategory suppliersCategoriesId;
+    private SupplierCategory supplierCategory;
 
     @Column(name = "name", nullable = false, length = 225)  // Specify length for varchar columns
     private String name;
@@ -65,13 +65,8 @@ public class Supplier {
     private LocalDateTime updatedAt;
 
     @Column(name = "active", nullable = false)
-    private Boolean isActive;  // Boolean for tinyint(1)
+    private Boolean active;  // Boolean for tinyint(1)
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    @Column(name = "date", nullable = false)
-    private LocalDate date;  // LocalDate for date column
 
     @Column(name = "address", length = 250)
     private String address;
