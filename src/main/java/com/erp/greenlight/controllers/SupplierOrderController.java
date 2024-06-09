@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/supplierOrderInsertionForm")
+@RequestMapping("/supplierOrder")
 @CrossOrigin(origins = "http://localhost:4200")
 public class SupplierOrderController {
 
@@ -26,7 +26,7 @@ public class SupplierOrderController {
     private StoreService storeService;
     @Autowired
     private SupplierService supplierService;
-    @GetMapping("")
+    @GetMapping("/supplierOrderInsertionForm")
     public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(){
         Map<String, Object> data = new HashMap<>();
         data.put("suppliers",supplierService.getAllSuppliers());
