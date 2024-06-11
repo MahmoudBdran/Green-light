@@ -18,8 +18,8 @@ import java.util.List;
 public class AdminPanelSettingsService {
     @Autowired
     AdminPanelSettingsRepo adminPanelSettingsRepo;
-    public List<AdminPanelSettings> getAllAdminPanelSettings(){
-        return  adminPanelSettingsRepo.findAll();
+    public AdminPanelSettings getAllAdminPanelSettings(){
+        return  adminPanelSettingsRepo.findAll().get(0);
     }
 
     public AdminPanelSettings updateAdminPanelSettings(@RequestBody AdminPanelSettings adminPanelSettings){
@@ -36,12 +36,7 @@ public class AdminPanelSettingsService {
         existingAdminPanelSettings.setPhone(adminPanelSettings.getPhone() != null ? adminPanelSettings.getPhone() : existingAdminPanelSettings.getPhone());
         existingAdminPanelSettings.setCustomerParentAccountNumber(adminPanelSettings.getCustomerParentAccountNumber() != null ? adminPanelSettings.getCustomerParentAccountNumber() : existingAdminPanelSettings.getCustomerParentAccountNumber());
         existingAdminPanelSettings.setSuppliersParentAccountNumber(adminPanelSettings.getSuppliersParentAccountNumber() != null ? adminPanelSettings.getSuppliersParentAccountNumber() : existingAdminPanelSettings.getSuppliersParentAccountNumber());
-        existingAdminPanelSettings.setDelegateParentAccountNumber(adminPanelSettings.getDelegateParentAccountNumber() != null ? adminPanelSettings.getDelegateParentAccountNumber() : existingAdminPanelSettings.getDelegateParentAccountNumber());
         existingAdminPanelSettings.setEmployeesParentAccountNumber(adminPanelSettings.getEmployeesParentAccountNumber() != null ? adminPanelSettings.getEmployeesParentAccountNumber() : existingAdminPanelSettings.getEmployeesParentAccountNumber());
-        existingAdminPanelSettings.setAddedBy(existingAdminPanelSettings.getAddedBy());
-        existingAdminPanelSettings.setUpdatedBy(adminPanelSettings.getUpdatedBy() != null ? adminPanelSettings.getUpdatedBy() : existingAdminPanelSettings.getUpdatedBy());
-        existingAdminPanelSettings.setCreatedAt(existingAdminPanelSettings.getCreatedAt());
-        existingAdminPanelSettings.setUpdatedAt(adminPanelSettings.getUpdatedAt() != null ? adminPanelSettings.getUpdatedAt() : existingAdminPanelSettings.getUpdatedAt());
         existingAdminPanelSettings.setNotes(adminPanelSettings.getNotes() != null ? adminPanelSettings.getNotes() : existingAdminPanelSettings.getNotes());
 
 

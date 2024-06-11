@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 @Entity
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "admin_panel_settings")
+@EntityListeners({AuditingEntityListener.class})
 public class AdminPanelSettings {
 
     @Id
@@ -45,27 +47,24 @@ public class AdminPanelSettings {
     private Long suppliersParentAccountNumber;
 
     @Column(nullable = false)
-    private Long delegateParentAccountNumber;
-
-    @Column(nullable = false)
     private Long employeesParentAccountNumber;
+
+
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
     @CreatedBy
     private Admin addedBy;
+
     @ManyToOne()
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     @LastModifiedBy
     private Admin updatedBy;
-    @Column(name = "created_at")
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt=LocalDateTime.now();
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-//    @Column(nullable = false)
-//    private Integer comCode;
 
     private String notes;
 }
