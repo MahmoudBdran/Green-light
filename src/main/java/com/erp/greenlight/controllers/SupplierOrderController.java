@@ -26,7 +26,7 @@ public class SupplierOrderController {
     private StoreService storeService;
     @Autowired
     private SupplierService supplierService;
-    @GetMapping("/supplierOrderInsertionForm")
+    @GetMapping("")
     public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(){
         Map<String, Object> data = new HashMap<>();
         data.put("suppliers",supplierService.getAllSuppliers());
@@ -37,11 +37,11 @@ public class SupplierOrderController {
     }
 
 
-    @GetMapping()
+/*    @GetMapping()
     public ResponseEntity<Object> getAllSupplierOrders(){
         return AppResponse.generateResponse("all_data", HttpStatus.OK,supplierOrderService.getAllSupplierOrders() , true);
 
-    }
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSupplierOrderById(@PathVariable Long id){

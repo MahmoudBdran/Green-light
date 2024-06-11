@@ -1,5 +1,6 @@
 package com.erp.greenlight.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -25,7 +26,9 @@ public class SupplierOrderDetails {
 
     @ManyToOne()
     @JoinColumn(name = "order_id",referencedColumnName = "id")
-    private SupplierOrder order_id;  // Foreign key referencing SupplierOrder
+    @JsonIgnore
+    private SupplierOrder order;  // Foreign key referencing SupplierOrder
+
 
     @Column(name = "order_type", nullable = false)
 
@@ -37,8 +40,10 @@ public class SupplierOrderDetails {
     @Column(name = "deliverd_quantity", nullable = false, precision = 10, scale = 2)
     private BigDecimal deliveredQuantity;
 
-    @Column(name = "uom_id", nullable = false)
-    private int uomId;  // Likely a foreign key for a Unit of Measurement table
+
+    @OneToOne
+    @JoinColumn(name = "uom_id", referencedColumnName = "id", nullable = false)
+    private InvUom uom;  // Likely a foreign key for a Unit of Measurement table
 
     @Column(name = "isparentuom", nullable = false)
     private Boolean isParentUom;  // Boolean for tinyint(1)
@@ -49,7 +54,6 @@ public class SupplierOrderDetails {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
-    private Date orderDate;
 
     @CreatedBy
     @JoinColumn(name = "added_by",referencedColumnName = "id")
@@ -69,8 +73,10 @@ public class SupplierOrderDetails {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "item_code", nullable = false)
-    private Long itemCode;  // Likely a foreign key for an Items table
+
+    @OneToOne
+    @JoinColumn(name = "inv_item_id", referencedColumnName = "id")
+    private InvItemCard invItemCard;  // Likely a foreign key for an Items table
 
     @Column(name = "batch_auto_serial")
     private Long batchAutoSerial;  // Potentially a foreign key for a Batch table

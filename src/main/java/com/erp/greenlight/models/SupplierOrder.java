@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -37,13 +38,14 @@ public class SupplierOrder {
 
     @OneToOne()
     @JoinColumn(name = "supplier_id",referencedColumnName = "id")
-    private Supplier supplierId;
+    private Supplier supplier;
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
+
+    @OneToMany(mappedBy = "order")
+    private List<SupplierOrderDetails> supplierOrderDetailsItems;
 
     @Column(name = "notes", length = 225)
     private String notes;
@@ -74,7 +76,7 @@ public class SupplierOrder {
 
     @OneToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
-    private Account accountNumber;
+    private Account account;
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;
@@ -117,7 +119,7 @@ public class SupplierOrder {
 
     @ManyToOne()
     @JoinColumn(name = "store_id",referencedColumnName = "id")
-    private Store storeId;
+    private Store store;
 
     @ManyToOne()
     @JoinColumn(name = "approved_by",referencedColumnName = "id")
