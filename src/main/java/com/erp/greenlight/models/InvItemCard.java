@@ -41,7 +41,7 @@ public class InvItemCard {
     @Column(nullable = false,name = "item_type")
     private int itemType; // Use an enum for 'واحد  مخزني - اتنين استهلاكي - ثلاثه عهده'
     
-    @ManyToOne(cascade=CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "inv_item_category_id", referencedColumnName = "id", nullable = false)
     private InvItemcardCategory invItemCategory;
 
