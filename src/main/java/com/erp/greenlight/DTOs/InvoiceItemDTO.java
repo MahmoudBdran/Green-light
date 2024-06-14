@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class InvoiceItemDTO {
-    private Long OrderItemId;
+    private Long id;
     private Long orderId;
-    private Long invItemId;
-    private Long uomId;
+    private Long invItemCard;
+    private Long uom;
     private BigDecimal deliveredQuantity;
     private BigDecimal unitPrice;
 

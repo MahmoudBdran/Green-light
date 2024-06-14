@@ -52,7 +52,7 @@ public class SupplierOrderController {
 
     @PostMapping()
     public ResponseEntity<Object> saveSupplierOrder(@RequestBody SupplierOrderDTO supplierOrderDTO){
-        return AppResponse.generateResponse("تم حفط اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
+        return AppResponse.generateResponse("تم حفط فاتورة المشتريات بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
     }
     @PutMapping()
     public ResponseEntity<Object> updateSupplierOrder(SupplierOrder supplierOrder){

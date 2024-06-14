@@ -46,7 +46,8 @@ public class SupplierOrderService {
         supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
         supplierOrder.setNotes(supplierOrderDTO.getNotes());
         supplierOrder.setPillType(supplierOrderDTO.getPillType());
-        //supplierOrder.setOrderDate(supplierOrder.getOrderDate());
+        supplierOrder.setOrderDate(supplierOrder.getOrderDate());
+        supplierOrder.setTotalCost(BigDecimal.ZERO);
         return supplierOrderRepo.save(supplierOrder);
     }
 
@@ -76,7 +77,7 @@ public class SupplierOrderService {
     @Transactional
     public SupplierOrderDetails updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(parsedInvoiceItemDto.getOrderItemId()).get();
+        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
         //map from DTO to the Original Entity
        return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
         //
@@ -86,18 +87,20 @@ public class SupplierOrderService {
     public SupplierOrderDetails mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
 
         int adminId=1;
-        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemId()));
-        supplierOrderDetails.setUom(new InvUom(parsedInvoiceItemDto.getUomId()));
+
+        supplierOrderDetails.setOrder(new SupplierOrder(parsedInvoiceItemDto.getOrderId()));
+        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
+        supplierOrderDetails.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
         supplierOrderDetails.setDeliveredQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
         supplierOrderDetails.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
         supplierOrderDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
         supplierOrderDetails.setAddedBy(new Admin(adminId));
         supplierOrderDetails.setUpdatedBy(new Admin(adminId));
         supplierOrderDetails.setOrderType(supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getOrderType());
-        supplierOrderDetails.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUomId()).get().isMaster());
-        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemId()));
+        supplierOrderDetails.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
+        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
         supplierOrderDetails.setBatchAutoSerial(1L);
-        supplierOrderDetails.setItemCardType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemId()).get().getItemType());
+        supplierOrderDetails.setItemCardType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
         //saving the supplierOrderDetails in the DB.
 
         SupplierOrderDetails savedSupplierOrderDetails= supplierOrderDetailsRepo.save(supplierOrderDetails);
