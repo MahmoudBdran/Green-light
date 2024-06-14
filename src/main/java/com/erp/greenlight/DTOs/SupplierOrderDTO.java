@@ -20,7 +20,7 @@ import java.util.List;
 public class SupplierOrderDTO {
     private String docNo;
 
-
+    private Long orderId;
    // private String orderDate;
 
     private Long supplier;

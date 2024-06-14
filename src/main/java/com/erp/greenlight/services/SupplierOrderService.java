@@ -40,9 +40,6 @@ public class SupplierOrderService {
         return Optional.of(supplierOrderRepo.findById(id).get());
     }
     public SupplierOrder saveSupplierOrder(SupplierOrderDTO supplierOrderDTO){
-        System.out.println(supplierOrderDTO.getSupplier());
-        System.out.println(supplierOrderDTO.getStore());
-        System.out.println(supplierOrderDTO.getDocNo());
         SupplierOrder supplierOrder = new SupplierOrder();
         supplierOrder.setDocNo(supplierOrderDTO.getDocNo());
         supplierOrder.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
@@ -53,20 +50,41 @@ public class SupplierOrderService {
         return supplierOrderRepo.save(supplierOrder);
     }
 
+    public SupplierOrder updateSupplierOrder(SupplierOrder supplierOrder){
+//        SupplierOrder supplierOrder = supplierOrderRepo.findById(supplierOrderDTO.getOrderId()).get();
+//        supplierOrder.setDocNo(supplierOrderDTO.getDocNo());
+//        supplierOrder.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
+//        supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
+//        supplierOrder.setNotes(supplierOrderDTO.getNotes());
+//        supplierOrder.setPillType(supplierOrderDTO.getPillType());
+        return supplierOrderRepo.save(supplierOrder);
+    }
+
     public void deleteSupplierOrder( Long id){
         supplierOrderRepo.deleteById(id);
     }
     @Transactional
     public SupplierOrderDetails saveItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-//        //map every one of this to the DTO
-//
-        System.out.println(parsedInvoiceItemDto.toString());
-        System.out.println("entered saveItemInOrder service method");
-        int adminId=1;
-//
-        //mapping the parsed Invoice Item DTO to SupplierOrderDetails object
+
         SupplierOrderDetails supplierOrderDetails = new SupplierOrderDetails();
-        supplierOrderDetails.setOrder(new SupplierOrder(parsedInvoiceItemDto.getOrderId()));
+        //map from DTO to the Original Entity
+        return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
+
+    }
+
+    @Transactional
+    public SupplierOrderDetails updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+
+        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(parsedInvoiceItemDto.getOrderItemId()).get();
+        //map from DTO to the Original Entity
+       return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
+        //
+
+    }
+    @Transactional
+    public SupplierOrderDetails mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
+
+        int adminId=1;
         supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemId()));
         supplierOrderDetails.setUom(new InvUom(parsedInvoiceItemDto.getUomId()));
         supplierOrderDetails.setDeliveredQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
@@ -93,8 +111,6 @@ public class SupplierOrderService {
 
         System.out.println("updated supplierOrder service method");
         return savedSupplierOrderDetails;
-        //
-
     }
 }
 

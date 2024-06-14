@@ -55,8 +55,8 @@ public class SupplierOrderController {
         return AppResponse.generateResponse("تم حفط اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSupplierOrder(SupplierOrderDTO supplierOrderDTO){
-        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
+    public ResponseEntity<Object> updateSupplierOrder(SupplierOrder supplierOrder){
+        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.updateSupplierOrder(supplierOrder) , true);
     }
 
     @DeleteMapping("/{id}")

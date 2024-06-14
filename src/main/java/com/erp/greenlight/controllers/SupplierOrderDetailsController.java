@@ -42,8 +42,11 @@ public class SupplierOrderDetailsController {
     }
     @PostMapping("/saveItemInOrder")
     public ResponseEntity<Object> saveItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        System.out.println("entered saveItemInOrder post method");
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.saveItemInOrder(invoiceItemDTO) , true);
+    }
+    @PutMapping("/updateItemInOrder")
+    public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.updateItemInOrder(invoiceItemDTO) , true);
     }
 
 
