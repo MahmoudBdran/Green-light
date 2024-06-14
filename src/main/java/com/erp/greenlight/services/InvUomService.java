@@ -21,11 +21,11 @@ public class InvUomService {
     }
 
     public List<InvUom> invUomsParent(){
-        return repo.findByIsMaster(true);
+        return repo.findByMaster(true);
     }
 
     public List<InvUom> invUomsChilds(){
-        return repo.findByIsMaster(false);
+        return repo.findByMaster(false);
     }
 
     public Optional<InvUom> getInvUomById(@PathVariable Long id){

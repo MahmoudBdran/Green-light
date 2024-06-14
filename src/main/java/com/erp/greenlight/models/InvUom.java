@@ -34,7 +34,7 @@ public class InvUom {
     private String name;
 
     @Column(nullable = false)
-    private boolean isMaster;
+    private boolean master;
 
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
