@@ -41,7 +41,7 @@ public class SupplierOrder {
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate orderDate;
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "supplier_id",referencedColumnName = "id")
     private Supplier supplier;
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2024 at 02:12 AM
+-- Generation Time: Jun 14, 2024 at 07:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -49,7 +49,7 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `active`, `created_at`, `current_balance`, `is_parent`, `name`, `notes`, `start_balance`, `start_balance_status`, `updated_at`, `account_type`, `added_by`, `parent_account_number`, `updated_by`) VALUES
-(1, b'1', '2024-06-11 10:56:54.000000', 0.00, b'1', 'محمد طلعت', 'ملاحظات', 0.00, 3, '2024-06-11 10:56:54.000000', 3, 1, NULL, 1),
+(1, b'1', '2024-06-11 10:56:54.000000', 0.00, b'1', 'احمد طلعت', 'ملاحظات', 0.00, 3, '2024-06-14 11:20:42.000000', 3, 1, NULL, 1),
 (2, b'1', '2024-06-11 10:57:22.000000', 0.00, b'1', 'احمد علي', NULL, 0.00, 3, '2024-06-11 10:57:22.000000', 3, 1, NULL, 1),
 (3, b'1', '2024-06-11 10:58:30.000000', 0.00, b'1', 'محسن ', NULL, 0.00, 3, '2024-06-11 10:58:30.000000', 3, 1, NULL, 1);
 
@@ -221,7 +221,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `active`, `address`, `created_at`, `current_balance`, `name`, `notes`, `phones`, `start_balance`, `start_balance_status`, `updated_at`, `account_id`, `added_by`, `updated_by`) VALUES
-(1, b'1', 'طنطا', '2024-06-07 22:51:36.000000', 0.00, 'محمد طلعت', 'خن', '0213548798', 0.00, 3, '2024-06-07 22:51:37.000000', 1, 1, 1);
+(1, b'1', 'طنطا', '2024-06-07 22:51:36.000000', 0.00, 'احمد طلعت', 'هذه ملاحظاتي', '0213548798', 0.00, 3, '2024-06-14 11:21:11.000000', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -508,16 +508,17 @@ CREATE TABLE `inv_uoms` (
   `name` varchar(250) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL,
+  `master` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inv_uoms`
 --
 
-INSERT INTO `inv_uoms` (`id`, `active`, `created_at`, `is_master`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
-(1, b'1', '2024-06-07 19:35:19.000000', b'1', 'كرتونة', '2024-06-07 19:35:19.000000', 1, 1),
-(2, b'1', '2024-06-07 19:35:19.000000', b'0', 'علبة', '2024-06-07 19:36:38.000000', 1, 1);
+INSERT INTO `inv_uoms` (`id`, `active`, `created_at`, `is_master`, `name`, `updated_at`, `added_by`, `updated_by`, `master`) VALUES
+(1, b'1', '2024-06-07 19:35:19.000000', b'1', 'كرتونة', '2024-06-07 19:35:19.000000', 1, 1, b'0'),
+(2, b'1', '2024-06-07 19:35:19.000000', b'0', 'علبة', '2024-06-07 19:36:38.000000', 1, 1, b'0');
 
 -- --------------------------------------------------------
 
@@ -897,7 +898,7 @@ INSERT INTO `suppliers_categories` (`id`, `active`, `created_at`, `name`, `updat
 CREATE TABLE `suppliers_with_orders` (
   `id` bigint(20) NOT NULL,
   `auto_serial` bigint(20) DEFAULT NULL,
-  `created_at` datetime(6) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
   `discount_percent` decimal(10,2) DEFAULT NULL,
   `discount_type` tinyint(4) DEFAULT NULL,
   `discount_value` decimal(10,2) NOT NULL,
@@ -932,8 +933,10 @@ CREATE TABLE `suppliers_with_orders` (
 --
 
 INSERT INTO `suppliers_with_orders` (`id`, `auto_serial`, `created_at`, `discount_percent`, `discount_type`, `discount_value`, `doc_no`, `is_approved`, `money_for_account`, `notes`, `order_date`, `order_type`, `pill_type`, `supplier_balance_after`, `supplier_balance_befor`, `tax_percent`, `tax_value`, `total_befor_discount`, `total_cost`, `total_cost_items`, `treasuries_transactions_id`, `updated_at`, `what_paid`, `what_remain`, `account_number`, `added_by`, `approved_by`, `store_id`, `supplier_id`, `updated_by`) VALUES
-(1, 1, '2024-06-03 12:59:48.000000', NULL, NULL, 0.00, '1', b'0', 200.00, NULL, '2024-06-11', 1, 1, 0.00, 0.00, 0.00, 0.00, 1587.00, 1587.00, 0.00, 0, '2024-06-13 21:17:23.000000', 0.00, 0.00, 1, 1, 1, 1, 3, 1),
-(12, NULL, '2024-06-14 02:06:56.000000', 0.00, 1, 0.00, '12', b'0', NULL, 'this is my note', '2024-06-14', 1, 1, NULL, NULL, 0.00, NULL, 0.00, NULL, 0.00, NULL, '2024-06-14 02:06:56.000000', NULL, NULL, NULL, 1, NULL, 1, 2, 1);
+(1, 1, '2024-06-03 12:59:48.000000', NULL, NULL, 0.00, '1', b'0', 200.00, NULL, '2024-06-11', 1, 1, 0.00, 0.00, 0.00, 0.00, 2461.00, 2461.00, 0.00, 0, '2024-06-14 18:40:01.000000', 0.00, 0.00, 1, 1, 1, 1, 3, 1),
+(16, NULL, '2024-06-14 18:55:37.000000', 0.00, 1, 0.00, '12', b'0', NULL, 'this is my note', '2024-06-14', 1, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-06-14 18:55:37.000000', NULL, NULL, NULL, 1, NULL, 1, 2, 1),
+(17, NULL, '2024-06-14 19:21:25.000000', 0.00, 1, 0.00, '12', b'0', NULL, 'this is my note', '2024-06-14', 1, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-06-14 19:21:25.000000', NULL, NULL, NULL, 1, NULL, 1, 2, 1),
+(18, NULL, '2024-06-14 19:21:34.000000', 0.00, 1, 0.00, '12', b'0', NULL, 'this is my note', '2024-06-14', 1, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-06-14 19:21:34.000000', NULL, NULL, NULL, 1, NULL, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -967,8 +970,8 @@ CREATE TABLE `suppliers_with_orders_details` (
 --
 
 INSERT INTO `suppliers_with_orders_details` (`id`, `batch_auto_serial`, `created_at`, `deliverd_quantity`, `expire_date`, `isparentuom`, `item_card_type`, `order_date`, `order_type`, `production_date`, `total_price`, `unit_price`, `uom_id`, `updated_at`, `added_by`, `inv_item_id`, `order_id`, `updated_by`) VALUES
-(8, 1, '2024-06-13 21:07:51.000000', 23.00, NULL, b'1', 1, NULL, 1, NULL, 529.00, 23.00, 1, '2024-06-13 21:07:51.000000', 1, 1, 1, 1),
-(9, 1, '2024-06-13 21:16:55.000000', 23.00, NULL, b'1', 1, NULL, 1, NULL, 529.00, 23.00, 1, '2024-06-13 21:16:55.000000', 1, 2, 1, 1),
+(8, 1, '2024-06-13 21:07:51.000000', 27.00, NULL, b'1', 1, NULL, 1, NULL, 621.00, 23.00, 1, '2024-06-14 17:06:47.000000', 1, 1, 1, 1),
+(9, 1, '2024-06-13 21:16:55.000000', 57.00, NULL, b'1', 1, NULL, 1, NULL, 1311.00, 23.00, 1, '2024-06-14 18:40:01.000000', 1, 2, 1, 1),
 (11, 1, '2024-06-13 21:17:23.000000', 23.00, NULL, b'1', 1, NULL, 1, NULL, 529.00, 23.00, 1, '2024-06-13 21:17:23.000000', 1, 6, 1, 1);
 
 -- --------------------------------------------------------
@@ -1300,10 +1303,10 @@ ALTER TABLE `suppliers_categories`
 ALTER TABLE `suppliers_with_orders`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UK_tihm4db657jrcl92nlhyr32hq` (`account_number`),
-  ADD UNIQUE KEY `UK_paq9wj0ahylx7ffuma4blko4x` (`supplier_id`),
   ADD KEY `FKcwjf3kjeeuka0h1uufil064yc` (`added_by`),
   ADD KEY `FK8ce89eg6d5juv7ygxpp15g8fw` (`approved_by`),
   ADD KEY `FKqnq8753erek0oy0n306dhqmov` (`store_id`),
+  ADD KEY `FK7ra2kat6qbw5pyh70yu72o071` (`supplier_id`),
   ADD KEY `FKr1rwbwj6ugo1ql7033btxqwud` (`updated_by`);
 
 --
@@ -1518,7 +1521,7 @@ ALTER TABLE `suppliers_categories`
 -- AUTO_INCREMENT for table `suppliers_with_orders`
 --
 ALTER TABLE `suppliers_with_orders`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `suppliers_with_orders_details`
