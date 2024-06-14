@@ -16,9 +16,9 @@ public class SupplierOrderDetailsService {
     SupplierOrderDetailsRepo supplierOrderDetailsRepo;
 
 
-    public SupplierOrderDetails findByOrderId(Long id){
+    public List<SupplierOrderDetails> findByOrderId(Long id){
 
-        return supplierOrderDetailsRepo.findByOrderId(id).orElseThrow();
+        return supplierOrderDetailsRepo.findByOrderId(id);
     }
 
 
