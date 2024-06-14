@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface InvUomRepo extends JpaRepository<InvUom,Long> {
-    List<InvUom> findByIsMaster(boolean isMaster);
+    List<InvUom> findByMaster(boolean isMaster);
 }
