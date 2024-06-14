@@ -48,12 +48,12 @@ public class SupplierOrderDetailsController {
             return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
         }else{
             System.out.println("entered if cond false checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.saveItemInOrder(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  supplierOrderService.saveItemInOrder(invoiceItemDTO) , true);
         }
     }
     @PutMapping("/updateItemInOrder")
     public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.updateItemInOrder(invoiceItemDTO) , true);
+        return AppResponse.generateResponse("تم تخديث الصنف في الفاتورة", HttpStatus.OK,  supplierOrderService.updateItemInOrder(invoiceItemDTO) , true);
     }
 
 

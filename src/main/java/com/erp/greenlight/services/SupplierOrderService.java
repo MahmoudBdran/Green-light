@@ -121,13 +121,13 @@ public class SupplierOrderService {
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
-        SupplierOrderDetails supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom()).get();
-        if (supplierOrderDetails==null){
+        Optional<SupplierOrderDetails> supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+        if (supplierOrderDetails.isEmpty()){
             return false;
         }else{
-            System.out.println(supplierOrderDetails.getOrder().getId());
-            System.out.println(supplierOrderDetails.getInvItemCard().getId());
-            System.out.println(supplierOrderDetails.getUom().getId());
+            System.out.println(supplierOrderDetails.get().getOrder().getId());
+            System.out.println(supplierOrderDetails.get().getInvItemCard().getId());
+            System.out.println(supplierOrderDetails.get().getUom().getId());
             return true;
         }
     }

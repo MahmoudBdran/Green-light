@@ -45,7 +45,7 @@ public class SupplierOrderDetails {
     private BigDecimal deliveredQuantity;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "uom_id", referencedColumnName = "id", nullable = false)
     private InvUom uom;  // Likely a foreign key for a Unit of Measurement table
 
