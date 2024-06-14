@@ -1,5 +1,6 @@
 package com.erp.greenlight.controllers;
 
+import com.erp.greenlight.DTOs.SupplierOrderDTO;
 import com.erp.greenlight.models.SupplierOrder;
 import com.erp.greenlight.services.StoreService;
 import com.erp.greenlight.services.SupplierOrderService;
@@ -50,12 +51,12 @@ public class SupplierOrderController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> saveSupplierOrder(SupplierOrder supplierOrder){
-        return AppResponse.generateResponse("تم حفط اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrder) , true);
+    public ResponseEntity<Object> saveSupplierOrder(@RequestBody SupplierOrderDTO supplierOrderDTO){
+        return AppResponse.generateResponse("تم حفط اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSupplierOrder(SupplierOrder supplierOrder){
-        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrder) , true);
+    public ResponseEntity<Object> updateSupplierOrder(SupplierOrderDTO supplierOrderDTO){
+        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
     }
 
     @DeleteMapping("/{id}")

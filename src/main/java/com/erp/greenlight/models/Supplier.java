@@ -13,7 +13,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "suppliers")
 @EntityListeners({AuditingEntityListener.class})
 public class Supplier {
@@ -76,5 +79,9 @@ public class Supplier {
 
     // Getters and setters (optional but recommended)
     // ...
+
+    public Supplier(Long id) {
+        this.id = id;
+    }
 }
 

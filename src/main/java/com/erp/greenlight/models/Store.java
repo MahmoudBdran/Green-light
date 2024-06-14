@@ -9,7 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "stores")
 public class Store {
 
@@ -53,5 +56,8 @@ public class Store {
     @Column(name = "active", nullable = false)
     private Boolean isActive;
 
+    public Store(Integer id) {
+        this.id = id;
+    }
 }
 

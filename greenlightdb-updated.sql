@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2024 at 12:16 PM
+-- Generation Time: Jun 14, 2024 at 02:12 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -896,7 +896,7 @@ INSERT INTO `suppliers_categories` (`id`, `active`, `created_at`, `name`, `updat
 
 CREATE TABLE `suppliers_with_orders` (
   `id` bigint(20) NOT NULL,
-  `auto_serial` bigint(20) NOT NULL,
+  `auto_serial` bigint(20) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
   `discount_percent` decimal(10,2) DEFAULT NULL,
   `discount_type` tinyint(4) DEFAULT NULL,
@@ -932,7 +932,8 @@ CREATE TABLE `suppliers_with_orders` (
 --
 
 INSERT INTO `suppliers_with_orders` (`id`, `auto_serial`, `created_at`, `discount_percent`, `discount_type`, `discount_value`, `doc_no`, `is_approved`, `money_for_account`, `notes`, `order_date`, `order_type`, `pill_type`, `supplier_balance_after`, `supplier_balance_befor`, `tax_percent`, `tax_value`, `total_befor_discount`, `total_cost`, `total_cost_items`, `treasuries_transactions_id`, `updated_at`, `what_paid`, `what_remain`, `account_number`, `added_by`, `approved_by`, `store_id`, `supplier_id`, `updated_by`) VALUES
-(1, 1, '2024-06-03 12:59:48.000000', NULL, NULL, 0.00, '1', b'0', 200.00, NULL, '2024-06-11', 1, 1, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0, '2024-06-11 10:22:17.000000', 0.00, 0.00, 1, 1, 1, 1, 3, 1);
+(1, 1, '2024-06-03 12:59:48.000000', NULL, NULL, 0.00, '1', b'0', 200.00, NULL, '2024-06-11', 1, 1, 0.00, 0.00, 0.00, 0.00, 1587.00, 1587.00, 0.00, 0, '2024-06-13 21:17:23.000000', 0.00, 0.00, 1, 1, 1, 1, 3, 1),
+(12, NULL, '2024-06-14 02:06:56.000000', 0.00, 1, 0.00, '12', b'0', NULL, 'this is my note', '2024-06-14', 1, 1, NULL, NULL, 0.00, NULL, 0.00, NULL, 0.00, NULL, '2024-06-14 02:06:56.000000', NULL, NULL, NULL, 1, NULL, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -966,7 +967,9 @@ CREATE TABLE `suppliers_with_orders_details` (
 --
 
 INSERT INTO `suppliers_with_orders_details` (`id`, `batch_auto_serial`, `created_at`, `deliverd_quantity`, `expire_date`, `isparentuom`, `item_card_type`, `order_date`, `order_type`, `production_date`, `total_price`, `unit_price`, `uom_id`, `updated_at`, `added_by`, `inv_item_id`, `order_id`, `updated_by`) VALUES
-(1, 1, '2024-06-03 12:59:48.000000', 1.00, '2024-06-11', b'1', 1, '2024-06-11 00:00:00.000000', 1, '2024-06-11', 0.00, 0.00, 1, '2024-06-11 12:40:21.000000', 1, 2, 1, 1);
+(8, 1, '2024-06-13 21:07:51.000000', 23.00, NULL, b'1', 1, NULL, 1, NULL, 529.00, 23.00, 1, '2024-06-13 21:07:51.000000', 1, 1, 1, 1),
+(9, 1, '2024-06-13 21:16:55.000000', 23.00, NULL, b'1', 1, NULL, 1, NULL, 529.00, 23.00, 1, '2024-06-13 21:16:55.000000', 1, 2, 1, 1),
+(11, 1, '2024-06-13 21:17:23.000000', 23.00, NULL, b'1', 1, NULL, 1, NULL, 529.00, 23.00, 1, '2024-06-13 21:17:23.000000', 1, 6, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1515,13 +1518,13 @@ ALTER TABLE `suppliers_categories`
 -- AUTO_INCREMENT for table `suppliers_with_orders`
 --
 ALTER TABLE `suppliers_with_orders`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `suppliers_with_orders_details`
 --
 ALTER TABLE `suppliers_with_orders_details`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `treasuries`
@@ -1613,8 +1616,8 @@ ALTER TABLE `stores`
 ALTER TABLE `suppliers`
   ADD CONSTRAINT `FK2ly160ahwqao40hkyqos1hj5u` FOREIGN KEY (`suppliers_categories_id`) REFERENCES `suppliers_categories` (`id`),
   ADD CONSTRAINT `FKm0xy3i26lepd4uh6gqeht9map` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
-  ADD CONSTRAINT `FKp0m6v7l9vlw9t1ctwovusopab` FOREIGN KEY (`account_number`) REFERENCES `accounts` (`id`),
-  ADD CONSTRAINT `FKsl8v2scpv13itxxthds6x4ylr` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
+  ADD CONSTRAINT `FKsl8v2scpv13itxxthds6x4ylr` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `suppliers_ibfk_1` FOREIGN KEY (`account_number`) REFERENCES `accounts` (`id`);
 
 --
 -- Constraints for table `suppliers_categories`
@@ -1642,14 +1645,8 @@ ALTER TABLE `suppliers_with_orders_details`
   ADD CONSTRAINT `FK5udjhv8jd8rbx0wtm1kyn8kir` FOREIGN KEY (`inv_item_id`) REFERENCES `inv_itemcard` (`id`),
   ADD CONSTRAINT `FKc9ouf1y9in0xro35cjeto9ehy` FOREIGN KEY (`uom_id`) REFERENCES `inv_uoms` (`id`),
   ADD CONSTRAINT `FKj8q246xxhi6hqxbk3i6pc3uep` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
-  ADD CONSTRAINT `FKsavkx70bnrd4hi3p5ptrqahb7` FOREIGN KEY (`order_id`) REFERENCES `suppliers_with_orders` (`id`);
-
---
--- Constraints for table `suppliers_with_orders_supplier_order_details`
---
-ALTER TABLE `suppliers_with_orders_supplier_order_details`
-  ADD CONSTRAINT `FK13cl0ga7ouomyoq2aued4ofpm` FOREIGN KEY (`supplier_order_details_id`) REFERENCES `suppliers_with_orders_details` (`id`),
-  ADD CONSTRAINT `FK8m6c6i803dos5c3v6tc3q9esq` FOREIGN KEY (`supplier_order_id`) REFERENCES `suppliers_with_orders` (`id`);
+  ADD CONSTRAINT `FKsavkx70bnrd4hi3p5ptrqahb7` FOREIGN KEY (`order_id`) REFERENCES `suppliers_with_orders` (`id`),
+  ADD CONSTRAINT `suppliers_with_orders_details_ibfk_1` FOREIGN KEY (`inv_item_id`) REFERENCES `inv_itemcard` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

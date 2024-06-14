@@ -127,4 +127,8 @@ public class InvItemCard {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public InvItemCard(Long id) {
+        this.id = id;
+    }
 }

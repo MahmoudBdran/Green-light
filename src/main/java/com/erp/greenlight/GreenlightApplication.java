@@ -1,5 +1,6 @@
 package com.erp.greenlight;
 
+import com.erp.greenlight.enums.AccountTypesEnum;
 import com.erp.greenlight.repositories.AccountRepo;
 import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ public class GreenlightApplication  {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GreenlightApplication.class, args);
-
 	}
 
 

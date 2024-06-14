@@ -16,6 +16,10 @@ import java.util.Date;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "suppliers_with_orders_details")
 @EntityListeners({AuditingEntityListener.class})
 public class SupplierOrderDetails {
@@ -87,7 +91,7 @@ public class SupplierOrderDetails {
     @Column(name = "expire_date")
     private LocalDate expireDate;
 
-    @Column(name = "item_card_type", nullable = false)
+    @Column(name = "item_card_type")
     private Byte itemCardType;  // Byte for tinyint(1)
 
     // Getters and setters (optional but recommended)

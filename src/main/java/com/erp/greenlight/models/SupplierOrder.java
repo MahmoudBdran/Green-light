@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,7 +15,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "suppliers_with_orders")
 @EntityListeners({AuditingEntityListener.class})
 public class SupplierOrder {
@@ -24,9 +28,9 @@ public class SupplierOrder {
     private Long id;
 
     @Column(name = "order_type", nullable = false)
-    private Byte orderType;  // Byte for tinyint(1)
+    private Byte orderType=1;  // Byte for tinyint(1)
 
-    @Column(name = "auto_serial", nullable = false)
+    @Column(name = "auto_serial")
     private Long autoSerial;
 
     @Column(name = "DOC_NO", length = 25)
@@ -34,6 +38,7 @@ public class SupplierOrder {
 
     @Column(name = "order_date", nullable = false)
     @CreatedDate
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate orderDate;
 
     @OneToOne()
@@ -41,7 +46,7 @@ public class SupplierOrder {
     private Supplier supplier;
 
     @Column(name = "is_approved", nullable = false)
-    private Boolean isApproved;  // Boolean for tinyint(1)
+    private Boolean isApproved=false;  // Boolean for tinyint(1)
 
 
     @OneToMany(mappedBy = "order")
@@ -51,25 +56,25 @@ public class SupplierOrder {
     private String notes;
 
     @Column(name = "discount_type")
-    private Byte discountType;  // Byte for tinyint(1)
+    private Byte discountType=1;  // Byte for tinyint(1)
 
     @Column(name = "discount_percent", precision = 10, scale = 2)
-    private BigDecimal discountPercent;
+    private BigDecimal discountPercent=BigDecimal.ZERO;
 
     @Column(name = "discount_value", nullable = false, precision = 10, scale = 2)
-    private BigDecimal discountValue;
+    private BigDecimal discountValue=BigDecimal.ZERO;
 
     @Column(name = "tax_percent", precision = 10, scale = 2)
-    private BigDecimal taxPercent;
+    private BigDecimal taxPercent=BigDecimal.ZERO;
 
     @Column(name = "total_cost_items", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalCostItems;
+    private BigDecimal totalCostItems=BigDecimal.ZERO;
 
     @Column(name = "tax_value", precision = 10, scale = 2)
     private BigDecimal taxValue;
 
     @Column(name = "total_befor_discount", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalBeforeDiscount;
+    private BigDecimal totalBeforeDiscount=BigDecimal.ZERO;
 
     @Column(name = "total_cost", precision = 10, scale = 2)
     private BigDecimal totalCost;
@@ -82,7 +87,7 @@ public class SupplierOrder {
     private BigDecimal moneyForAccount;
 
     @Column(name = "pill_type", nullable = false)
-    private Byte pillType;  // Byte for tinyint(1)
+    private Byte pillType=1;  // Byte for tinyint(1)
 
     @Column(name = "what_paid", precision = 10, scale = 2)
     private BigDecimal whatPaid;
@@ -104,7 +109,7 @@ public class SupplierOrder {
     @JoinColumn(name = "added_by",referencedColumnName = "id")
     private Admin addedBy;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -127,4 +132,8 @@ public class SupplierOrder {
 
     // Getters and setters (optional but recommended)
     // ...
+
+    public SupplierOrder(Long id) {
+        this.id = id;
+    }
 }

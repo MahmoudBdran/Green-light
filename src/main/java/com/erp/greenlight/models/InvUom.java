@@ -57,5 +57,8 @@ public class InvUom {
     @Column(nullable = false)
     private boolean active=true;
 
+    public InvUom(Long id) {
+        this.id = id;
+    }
 }
 
