@@ -42,9 +42,12 @@ public class SupplierOrderDetailsController {
     }
     @PostMapping("/saveItemInOrder")
     public ResponseEntity<Object> saveItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+        System.out.println("entered saveItemInOrder");
         if(supplierOrderService.checkItemInOrderOrNot(invoiceItemDTO)){
+            System.out.println("entered if cond true checkItemInOrderOrNot ");
             return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
         }else{
+            System.out.println("entered if cond false checkItemInOrderOrNot ");
             return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.saveItemInOrder(invoiceItemDTO) , true);
         }
     }

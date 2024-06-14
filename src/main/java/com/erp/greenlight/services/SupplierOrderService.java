@@ -117,8 +117,11 @@ public class SupplierOrderService {
     }
 
     public boolean checkItemInOrderOrNot(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-
-        SupplierOrderDetails supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemId(), parsedInvoiceItemDto.getUomId()).get();
+        System.out.println("entered checkItemInORderOrNot method");
+        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
+        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
+        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
+        SupplierOrderDetails supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom()).get();
         if (supplierOrderDetails==null){
             return false;
         }else{
@@ -131,7 +134,8 @@ public class SupplierOrderService {
 
     @Transactional
     public SupplierOrderDetails updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemId(),parsedInvoiceItemDto.getUomId()).orElseThrow();
+
+        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
         supplierOrderDetails.setDeliveredQuantity(supplierOrderDetails.getDeliveredQuantity().add(parsedInvoiceItemDto.getDeliveredQuantity()));
         supplierOrderDetails.setTotalPrice(supplierOrderDetails.getUnitPrice().multiply(supplierOrderDetails.getDeliveredQuantity()));
         //map from DTO to the Original Entity
