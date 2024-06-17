@@ -26,10 +26,7 @@ import java.util.Optional;
 public class SupplierOrderService {
     @Autowired
     SupplierOrderRepo supplierOrderRepo;
-    @Autowired
-    InvUomRepo invUomRepo;
-    @Autowired
-    InvItemCardRepo invItemCardRepo;
+
     @Autowired
     SupplierOrderDetailsRepo supplierOrderDetailsRepo;
      SupplierOrderMapper mapper;
@@ -60,104 +57,24 @@ public class SupplierOrderService {
 //        supplierOrder.setPillType(supplierOrderDTO.getPillType());
         return supplierOrderRepo.save(supplierOrder);
     }
-
-    public void deleteSupplierOrder( Long id){
-        supplierOrderRepo.deleteById(id);
-    }
     @Transactional
-    public SupplierOrderDetails saveItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-
-        SupplierOrderDetails supplierOrderDetails = new SupplierOrderDetails();
-        //map from DTO to the Original Entity
-
-        return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
+    public boolean deleteSupplierOrder(Long id){
+         for(SupplierOrderDetails supplierOrderDetails: supplierOrderRepo.findById(id).get().getSupplierOrderDetailsItems()){
+             supplierOrderDetailsRepo.deleteById(supplierOrderDetails.getId());
+         }
+         supplierOrderRepo.deleteById(id);
+        return true;
 
     }
 
     @Transactional
-    public SupplierOrderDetails updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-
-        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
-        //map from DTO to the Original Entity
-       return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
-        //
-
-    }
-    @Transactional
-    public SupplierOrderDetails mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
-
-        int adminId=1;
-
-        supplierOrderDetails.setOrder(new SupplierOrder(parsedInvoiceItemDto.getOrderId()));
-        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
-        supplierOrderDetails.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
-        supplierOrderDetails.setDeliveredQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
-        supplierOrderDetails.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-        supplierOrderDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
-        supplierOrderDetails.setAddedBy(new Admin(adminId));
-        supplierOrderDetails.setUpdatedBy(new Admin(adminId));
-        supplierOrderDetails.setOrderType(supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getOrderType());
-        supplierOrderDetails.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
-        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
-        supplierOrderDetails.setBatchAutoSerial(1L);
-        supplierOrderDetails.setItemCardType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
-        //saving the supplierOrderDetails in the DB.
-
-        SupplierOrderDetails savedSupplierOrderDetails= supplierOrderDetailsRepo.save(supplierOrderDetails);
-
-        System.out.println("saved savedSupplierOrderDetails service method");
-        //updating the Order itself with the updates.
-        SupplierOrder supplierOrder =supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        supplierOrder.setTotalCost(supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getTotalCost().add(supplierOrderDetails.getTotalPrice()==null?BigDecimal.ZERO:supplierOrderDetails.getTotalPrice()));
-        supplierOrder.setUpdatedBy(new Admin(adminId));
-        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost().add(supplierOrder.getTaxValue()==null? BigDecimal.ZERO:supplierOrder.getTaxValue()));
-        supplierOrderRepo.save(supplierOrder);
-
-        return savedSupplierOrderDetails;
+    public boolean checkOrderIsApproved(Long id){
+        SupplierOrder supplierOrder=supplierOrderRepo.findById(id).orElseThrow();
+       return supplierOrder.getIsApproved();
     }
 
-    public boolean checkItemInOrderOrNot(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-        System.out.println("entered checkItemInORderOrNot method");
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
-        Optional<SupplierOrderDetails> supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
-        if (supplierOrderDetails.isEmpty()){
-            return false;
-        }else{
-            System.out.println(supplierOrderDetails.get().getOrder().getId());
-            System.out.println(supplierOrderDetails.get().getInvItemCard().getId());
-            System.out.println(supplierOrderDetails.get().getUom().getId());
-            return true;
-        }
-    }
 
-    @Transactional
-    public SupplierOrderDetails updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
-        supplierOrderDetails.setDeliveredQuantity(supplierOrderDetails.getDeliveredQuantity().add(parsedInvoiceItemDto.getDeliveredQuantity()));
-        supplierOrderDetails.setTotalPrice(supplierOrderDetails.getUnitPrice().multiply(supplierOrderDetails.getDeliveredQuantity()));
-        //map from DTO to the Original Entity
-        //calculate the total price for the supplier order itself
 
-        float totalPrice=0;
-        for(SupplierOrderDetails details : supplierOrderDetailsRepo.findByOrderId(parsedInvoiceItemDto.getOrderId())){
-            System.out.println(details.getTotalPrice());
-            totalPrice+=details.getTotalPrice().floatValue();
-        }
-        System.out.println("totalPrice : "+totalPrice);
-
-        SupplierOrder supplierOrder =supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        supplierOrder.setTotalCost(BigDecimal.valueOf(totalPrice));
-        System.out.println("totalPrice in obj : "+supplierOrder.getTotalCost());
-        supplierOrder.setUpdatedBy(new Admin(1));
-        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost().add(supplierOrder.getTaxValue()==null? BigDecimal.ZERO:supplierOrder.getTaxValue()));
-        System.out.println("totalPrice : "+supplierOrder.getTotalBeforeDiscount());
-        System.out.println("totalPrice : "+supplierOrder.getTaxValue());
-        supplierOrderRepo.save(supplierOrder);
-        totalPrice=0;
-        return supplierOrderDetailsRepo.save(supplierOrderDetails);
-    }
 }
 

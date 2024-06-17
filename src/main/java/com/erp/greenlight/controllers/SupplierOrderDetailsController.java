@@ -43,17 +43,25 @@ public class SupplierOrderDetailsController {
     @PostMapping("/saveItemInOrder")
     public ResponseEntity<Object> saveItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         System.out.println("entered saveItemInOrder");
-        if(supplierOrderService.checkItemInOrderOrNot(invoiceItemDTO)){
+        if(supplierOrderDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderDetailsService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
         }else{
             System.out.println("entered if cond false checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  supplierOrderService.saveItemInOrder(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  supplierOrderDetailsService.saveItemInOrder(invoiceItemDTO) , true);
         }
     }
     @PutMapping("/updateItemInOrder")
     public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        return AppResponse.generateResponse("تم تخديث الصنف في الفاتورة", HttpStatus.OK,  supplierOrderService.updateItemInOrder(invoiceItemDTO) , true);
+        return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  supplierOrderDetailsService.updateItemInOrder(invoiceItemDTO) , true);
+    }
+
+    @DeleteMapping("/deleteItemInOrder/{id}")
+    public ResponseEntity<Object> deleteItemInOrder(@PathVariable Long id){
+        if(supplierOrderDetailsService.checkOrderDetailsItemIsApproved(id)){
+            return AppResponse.generateResponse("تعذر حذف المنتج من الفاتوره لأنها مغلقه", HttpStatus.BAD_REQUEST,null , false);
+        }
+        return AppResponse.generateResponse("تم حذف الصنف من الفاتورة", HttpStatus.OK,  supplierOrderDetailsService.deleteItemFromSupplierOrder(id) , true);
     }
 
 

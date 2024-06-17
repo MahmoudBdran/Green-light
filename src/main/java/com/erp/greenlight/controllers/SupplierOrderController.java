@@ -60,8 +60,11 @@ public class SupplierOrderController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSupplierOrder(@PathVariable Long id){
-        supplierOrderService.deleteSupplierOrder(id);
+    public ResponseEntity<Object> deleteSupplierOrder(@PathVariable Long id){
+        if(supplierOrderService.checkOrderIsApproved(id)){
+            return AppResponse.generateResponse("تعذر حذف الفاتورة لأنها مغلقه", HttpStatus.BAD_REQUEST,null , false);
+        }
+        return AppResponse.generateResponse("تم حذف الفاتورة بمحتوياتها بنجاح", HttpStatus.OK,  supplierOrderService.deleteSupplierOrder(id) , true);
     }
 
 
