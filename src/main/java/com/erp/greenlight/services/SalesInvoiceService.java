@@ -29,13 +29,36 @@ public class SalesInvoiceService {
     }
     public SalesInvoice saveSalesInvoice(SalesInvoiceDTO salesInvoiceDTO){
         SalesInvoice salesInvoice = new SalesInvoice();
-//        salesInvoice.setDocNo(salesInvoiceDTO.getDocNo());
+
+
+        salesInvoice.setInvoiceDate(salesInvoiceDTO.getDate());
+
+        if(salesInvoiceDTO.getCustomer() != null){
+            salesInvoice.setIsHasCustomer(Boolean.TRUE);
+        }else{
+            salesInvoice.setIsHasCustomer(Boolean.FALSE);
+        }
         salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
-      //  salesInvoice.setStore(new Store(salesInvoiceDTO.getStore()));
+
+        salesInvoice.setIsApproved(Boolean.FALSE);
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
+        salesInvoice.setDiscountPercent(BigDecimal.ZERO);
+        salesInvoice.setDiscountValue(BigDecimal.ZERO);
+        salesInvoice.setTaxPercent(BigDecimal.ZERO);
+        salesInvoice.setTaxValue(BigDecimal.ZERO);
+
+        salesInvoice.setTotalCostItems(BigDecimal.ZERO);
+        salesInvoice.setTotalBeforeDiscount(BigDecimal.ZERO);
+        salesInvoice.setTotalCost(BigDecimal.ZERO);
+        salesInvoice.setMoneyForAccount(BigDecimal.ZERO);
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
+
+        salesInvoice.setWhatPaid(BigDecimal.ZERO);
+        salesInvoice.setWhatRemain(BigDecimal.ZERO);
+
         salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
         salesInvoice.setTotalCost(BigDecimal.ZERO);
+
         return salesInvoiceRepo.save(salesInvoice);
     }
 

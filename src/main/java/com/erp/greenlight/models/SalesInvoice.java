@@ -40,23 +40,10 @@ public class SalesInvoice {
     @JoinColumn(name = "customer",referencedColumnName = "id")
     private Customer customer;
 
-//    @Column(name = "delegate_code")
-//    private Long delegateCode;
-
-//    @Column(name = "delegate_commission_percent_type")
-//    private BigDecimal delegateCommissionPercentType;
-
-//    @Column(name = "delegate_commission_percent", nullable = false, precision = 10, scale = 2)
-//    private BigDecimal delegateCommissionPercent;
-//
-//    @Column(name = "delegate_commission_value", nullable = false, precision = 10, scale = 2)
-//    private BigDecimal delegateCommissionValue;
 
     @Column(name = "is_approved", nullable = false)
-    private Boolean isApproved;  // Boolean for tinyint(1)
+    private Boolean isApproved;
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
 
     @Column(name = "notes", length = 225)
     private String notes;
@@ -93,6 +80,7 @@ public class SalesInvoice {
 
     @OneToMany(mappedBy = "salesInvoice")
     private List<SalesInvoiceDetail> salesInvoiceDetails;
+
     @Column(name = "pill_type")
     private Byte pillType;
 
@@ -132,11 +120,9 @@ public class SalesInvoice {
     @JoinColumn(name = "approved_by",referencedColumnName = "id")
     private Admin approvedBy;
 
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
 
     @Column(name = "sales_item_type", nullable = false)
-    private Byte salesItemType;  // Byte for tinyint(1) - sales item type
+    private Byte salesItemTyp=1;  // Byte for tinyint(1) - sales item type
 
     public SalesInvoice(Long id) {
         this.id = id;

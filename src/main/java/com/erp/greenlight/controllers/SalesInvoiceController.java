@@ -3,6 +3,7 @@ package com.erp.greenlight.controllers;
 import com.erp.greenlight.DTOs.SalesInvoiceDTO;
 import com.erp.greenlight.models.SalesInvoice;
 import com.erp.greenlight.models.SupplierOrder;
+import com.erp.greenlight.services.CustomerService;
 import com.erp.greenlight.services.SalesInvoiceService;
 import com.erp.greenlight.services.StoreService;
 import com.erp.greenlight.utils.AppResponse;
@@ -24,14 +25,15 @@ public class SalesInvoiceController {
     private SalesInvoiceService salesInvoiceService;
     @Autowired
     private StoreService storeService;
-//    @Autowired
-//    private SupplierService supplierService;
+
+    @Autowired
+    CustomerService customerService;
+
     @GetMapping("")
     public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(){
         Map<String, Object> data = new HashMap<>();
-//        data.put("suppliers",supplierService.getAllSuppliers());
-        data.put("suppliersWithOrders", salesInvoiceService.getAllSalesInvoices());
-        data.put("stores",storeService.findAll());
+        data.put("sales", salesInvoiceService.getAllSalesInvoices());
+        data.put("customers",customerService.getAllCustomers());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
     }
