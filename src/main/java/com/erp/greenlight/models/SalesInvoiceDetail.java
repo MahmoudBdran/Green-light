@@ -32,17 +32,17 @@ public class SalesInvoiceDetail {
 
     @ManyToMany()
     @JoinColumn(name = "store_id",referencedColumnName = "id")
-    private List<Store> storeId;  // Likely a foreign key referencing a Store
+    private List<Store> stores;  // Likely a foreign key referencing a Store
 
     @Column(name = "sales_item_type", nullable = false)
     private Byte salesItemType;  // Byte for tinyint(1) - sales item type
 
     @OneToOne()
     @JoinColumn(name = "item_code",referencedColumnName = "id") //inv item f k
-    private InvItemCard itemCode;  // Likely a foreign key referencing an Item table
+    private InvItemCard item;  // Likely a foreign key referencing an Item table
     @ManyToOne()
     @JoinColumn(name = "uom_id",referencedColumnName = "id")
-    private InvUom uomId;  // Likely a foreign key referencing a Unit of Measure table
+    private InvUom uom;  // Likely a foreign key referencing a Unit of Measure table
 
     @Column(name = "batch_auto_serial")
     private Long batchAutoSerial;  // Likely a foreign key referencing a Batch table

@@ -1,7 +1,6 @@
 package com.erp.greenlight.repositories;
 
 import com.erp.greenlight.models.SalesInvoiceDetail;
-import com.erp.greenlight.models.SupplierOrderDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface SalesInvoiceDetailsRepo extends JpaRepository<SalesInvoiceDetail, Long> {
 
-    Optional<SalesInvoiceDetail> findBySalesInvoiceIdAndItemCodeAndUomId(Long orderId, Long invItemCardId, Long uomId);
+    Optional<SalesInvoiceDetail> findBySalesInvoiceIdAndItemIdAndUomId(Long orderId, Long invItemCardId, Long uomId);
 
-    List<SalesInvoiceDetail>findBySalesInvoice(Long id);
+    List<SalesInvoiceDetail> findBySalesInvoiceId(Long id);
 }

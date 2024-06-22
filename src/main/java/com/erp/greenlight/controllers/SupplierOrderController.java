@@ -69,18 +69,9 @@ public class SupplierOrderController {
     }
 
     @PostMapping("/approve")
-    public ResponseEntity<Object> approveSupplierOrder(@RequestBody  ApproveSupplierOrderDTO request){
-        return  supplierOrderService.approve(request);
-    }
+    public ResponseEntity<Object> approve(@RequestBody ApproveSupplierOrderDTO request){
+        return supplierOrderService.approve(request);
 
-    @PostMapping("/approveSupplierOrder")
-    public ResponseEntity<Object> approveSupplierOrder(@RequestBody SupplierOrder supplierOrder){
-        if(supplierOrderService.checkOrderIsApproved(supplierOrder.getId())){
-            return AppResponse.generateResponse("الفاتوره بالفعل محفوظه", HttpStatus.BAD_REQUEST,null , false);
-        }else{
-
-            return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK,  supplierOrderService.approveSupplierOrder(supplierOrder) , true);
-        }
     }
 
 

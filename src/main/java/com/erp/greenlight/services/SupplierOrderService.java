@@ -73,6 +73,7 @@ public class SupplierOrderService {
         supplierOrder.setPillType(supplierOrderDTO.getPillType());
         supplierOrder.setOrderDate(supplierOrder.getOrderDate());
         supplierOrder.setTotalCost(BigDecimal.ZERO);
+        supplierOrder.setDiscountValue(BigDecimal.ZERO);
         return supplierOrderRepo.save(supplierOrder);
     }
 

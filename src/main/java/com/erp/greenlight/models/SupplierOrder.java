@@ -57,7 +57,7 @@ public class SupplierOrder {
     private String notes;
 
     @Column(name = "discount_type")
-    private Byte discountType=1;  // Byte for tinyint(1)
+    private Byte discountType;  // Byte for tinyint(1)
 
     @Column(name = "discount_percent", precision = 10, scale = 2)
     private BigDecimal discountPercent;
@@ -80,7 +80,7 @@ public class SupplierOrder {
     @Column(name = "total_cost", precision = 10, scale = 2)
     private BigDecimal totalCost;
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
     private Account account;
 

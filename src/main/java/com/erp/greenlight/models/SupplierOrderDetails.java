@@ -78,7 +78,7 @@ public class SupplierOrderDetails {
     private LocalDateTime updatedAt;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "inv_item_id", referencedColumnName = "id")
     private InvItemCard invItemCard;  // Likely a foreign key for an Items table
 
