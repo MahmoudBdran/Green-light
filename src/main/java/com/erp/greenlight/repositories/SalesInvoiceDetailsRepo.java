@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface SalesInvoiceDetailsRepo extends JpaRepository<SalesInvoiceDetail, Long> {
 
-    Optional<SalesInvoiceDetail> findByOrderIdAndInvItemCard_IdAndUomId(Long orderId, Long invItemCardId, Long uomId);
+    Optional<SalesInvoiceDetail> findBySalesInvoiceIdAndItemCodeAndUomId(Long orderId, Long invItemCardId, Long uomId);
 
-    List<SalesInvoiceDetail>findByOrderId(Long id);
+    List<SalesInvoiceDetail>findBySalesInvoice(Long id);
 }

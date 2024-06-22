@@ -22,9 +22,9 @@ public class SalesInvoiceDetailsService {
     InvUomRepo invUomRepo;
     @Autowired
     InvItemCardRepo invItemCardRepo;
-    public List<SalesInvoiceDetail> findByOrderId(Long id){
+    public List<SalesInvoiceDetail> findBySalesInvoiceId(Long id){
 
-        return salesInvoiceDetailsRepo.findByOrderId(id);
+        return salesInvoiceDetailsRepo.findBySalesInvoice(id);
     }
 
     @Transactional
@@ -47,14 +47,14 @@ public class SalesInvoiceDetailsService {
     @Transactional
     public SalesInvoiceDetail updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
+        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemCodeAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
         salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getDeliveredQuantity()));
         salesInvoiceDetail.setTotalPrice(salesInvoiceDetail.getUnitPrice().multiply(salesInvoiceDetail.getQuantity()));
         //map from DTO to the Original Entity
         //calculate the total price for the supplier order itself
 
         float totalPrice=0;
-        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findByOrderId(parsedInvoiceItemDto.getOrderId())){
+        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoice(parsedInvoiceItemDto.getOrderId())){
             System.out.println(details.getTotalPrice());
             totalPrice+=details.getTotalPrice().floatValue();
         }
@@ -79,7 +79,7 @@ public class SalesInvoiceDetailsService {
         //calculate the total price for the supplier order itself
         salesInvoiceDetailsRepo.deleteById(id);
         float totalPrice=0;
-        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findByOrderId(salesInvoiceDetail.getSalesInvoice().getId())){
+        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoice(salesInvoiceDetail.getSalesInvoice().getId())){
             totalPrice+=details.getTotalPrice().floatValue();
         }
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
@@ -131,7 +131,7 @@ public class SalesInvoiceDetailsService {
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
-        Optional<SalesInvoiceDetail> supplierOrderDetails= salesInvoiceDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+        Optional<SalesInvoiceDetail> supplierOrderDetails= salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemCodeAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
         if (supplierOrderDetails.isEmpty()){
             return false;
         }else{

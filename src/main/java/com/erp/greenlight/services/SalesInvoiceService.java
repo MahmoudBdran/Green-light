@@ -43,7 +43,7 @@ public class SalesInvoiceService {
         return salesInvoiceRepo.save(salesInvoice);
     }
     @Transactional
-    public boolean deleteSupplierOrder(Long id){
+    public boolean deleteSalesInvoice(Long id){
          for(SalesInvoiceDetail salesInvoiceDetail: salesInvoiceRepo.findById(id).get().getSalesInvoiceDetails()){
              supplierOrderDetailsRepo.deleteById(salesInvoiceDetail.getId());
          }
