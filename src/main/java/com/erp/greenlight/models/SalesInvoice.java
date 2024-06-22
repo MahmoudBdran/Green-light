@@ -5,6 +5,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Table(name = "sales_invoices")
+@EntityListeners({AuditingEntityListener.class})
 public class SalesInvoice {
 
     @Id
@@ -27,11 +29,11 @@ public class SalesInvoice {
     @ManyToOne()
     @JoinColumn(name = "sales_matrial_types",referencedColumnName = "id")
     private SalesMaterialType salesMaterialType;
+//
+//    @Column(name = "auto_serial")
+//    private Long autoSerial=1L;
 
-//    @Column(name = "auto_serial", nullable = false)
-//    private Long autoSerial;
-
-    @Column(name = "invoice_date", nullable = false)
+    @Column(name = "invoice_date")
     @CreatedDate
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate invoiceDate;
@@ -75,8 +77,10 @@ public class SalesInvoice {
     @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalCost;
 
-    @Column(name = "account_number")
-    private Long accountNumber; //relation with account
+
+    @ManyToOne()
+    @JoinColumn(name = "account_number",referencedColumnName = "id")
+    private Account accountNumber; //relation with account
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;

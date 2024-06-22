@@ -3,6 +3,8 @@ package com.erp.greenlight.services;
 import com.erp.greenlight.DTOs.SalesInvoiceDTO;
 import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
+import com.erp.greenlight.repositories.AccountRepo;
+import com.erp.greenlight.repositories.CustomerRepo;
 import com.erp.greenlight.repositories.SalesInvoiceRepo;
 import com.erp.greenlight.repositories.SupplierOrderDetailsRepo;
 import jakarta.transaction.Transactional;
@@ -22,6 +24,11 @@ public class SalesInvoiceService {
     @Autowired
     SupplierOrderDetailsRepo supplierOrderDetailsRepo;
      SupplierOrderMapper mapper;
+    @Autowired
+    private AccountRepo accountRepo;
+    @Autowired
+    private CustomerRepo customerRepo;
+
     public List<SalesInvoice> getAllSalesInvoices(){
         return salesInvoiceRepo.findAll();
     }
@@ -29,24 +36,53 @@ public class SalesInvoiceService {
         return Optional.of(salesInvoiceRepo.findById(id).get());
     }
     public SalesInvoice saveSalesInvoice(SalesInvoiceDTO salesInvoiceDTO){
+//        SalesInvoice salesInvoice = new SalesInvoice();
+//        if(salesInvoiceDTO.getCustomer() != null){
+//            salesInvoice.setIsHasCustomer(Boolean.TRUE);
+//        }else{
+//            salesInvoice.setIsHasCustomer(Boolean.FALSE);
+//        }
+//        salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
+//
+//        salesInvoice.setIsApproved(Boolean.FALSE);
+//        salesInvoice.setNotes(salesInvoiceDTO.getNotes());
+//        salesInvoice.setDiscountPercent(BigDecimal.ZERO);
+//        salesInvoice.setDiscountValue(BigDecimal.ZERO);
+//        salesInvoice.setTaxPercent(BigDecimal.ZERO);
+//        salesInvoice.setTaxValue(BigDecimal.ZERO);
+//
+//        salesInvoice.setTotalCostItems(BigDecimal.ZERO);
+//        salesInvoice.setTotalBeforeDiscount(BigDecimal.ZERO);
+//        salesInvoice.setTotalCost(BigDecimal.ZERO);
+//        salesInvoice.setMoneyForAccount(BigDecimal.ZERO);
+//        salesInvoice.setPillType(salesInvoiceDTO.getPillType());
+//
+//        salesInvoice.setWhatPaid(BigDecimal.ZERO);
+//        salesInvoice.setWhatRemain(BigDecimal.ZERO);
+//
+//        salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
+//        salesInvoice.setTotalCost(BigDecimal.ZERO);
+//
+//        return salesInvoiceRepo.save(salesInvoice);
         SalesInvoice salesInvoice = new SalesInvoice();
+//        salesInvoice.setDocNo(salesInvoiceDTO.getDocNo());
 
-
-
-        if(salesInvoiceDTO.getCustomer() != null){
+                if(salesInvoiceDTO.getCustomer() != null){
             salesInvoice.setIsHasCustomer(Boolean.TRUE);
         }else{
             salesInvoice.setIsHasCustomer(Boolean.FALSE);
         }
         salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
-
+                Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+        salesInvoice.setNotes(salesInvoiceDTO.getNotes());
+        salesInvoice.setPillType(salesInvoiceDTO.getPillType());
+        salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
         salesInvoice.setIsApproved(Boolean.FALSE);
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setDiscountPercent(BigDecimal.ZERO);
         salesInvoice.setDiscountValue(BigDecimal.ZERO);
         salesInvoice.setTaxPercent(BigDecimal.ZERO);
         salesInvoice.setTaxValue(BigDecimal.ZERO);
-
         salesInvoice.setTotalCostItems(BigDecimal.ZERO);
         salesInvoice.setTotalBeforeDiscount(BigDecimal.ZERO);
         salesInvoice.setTotalCost(BigDecimal.ZERO);
@@ -55,10 +91,8 @@ public class SalesInvoiceService {
 
         salesInvoice.setWhatPaid(BigDecimal.ZERO);
         salesInvoice.setWhatRemain(BigDecimal.ZERO);
-
-        salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
         salesInvoice.setTotalCost(BigDecimal.ZERO);
-
+        salesInvoice.setAccountNumber(customer.getAccount());
         return salesInvoiceRepo.save(salesInvoice);
     }
 

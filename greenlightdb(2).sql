@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 22, 2024 at 06:38 PM
+-- Generation Time: Jun 22, 2024 at 11:57 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -656,17 +656,12 @@ CREATE TABLE `sales_invoices` (
   `account_number` bigint(20) DEFAULT NULL,
   `added_by` int(11) NOT NULL,
   `approved_by` int(11) DEFAULT NULL,
-  `auto_serial` bigint(20) NOT NULL,
-  `com_code` int(11) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `customer_balance_after` decimal(10,2) DEFAULT NULL,
   `customer_balance_befor` decimal(10,2) DEFAULT NULL,
   `customer_code` bigint(20) DEFAULT NULL,
-  `date` date NOT NULL,
+  `date` date DEFAULT NULL,
   `delegate_code` bigint(20) DEFAULT NULL,
-  `delegate_commission_percent` decimal(10,2) NOT NULL,
-  `delegate_commission_percent_type` decimal(38,2) DEFAULT NULL,
-  `delegate_commission_value` decimal(10,2) NOT NULL,
   `discount_percent` decimal(10,2) NOT NULL,
   `discount_type` tinyint(4) DEFAULT NULL,
   `discount_value` decimal(10,2) NOT NULL,
@@ -690,6 +685,13 @@ CREATE TABLE `sales_invoices` (
   `what_remain` decimal(10,2) NOT NULL,
   `customer` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sales_invoices`
+--
+
+INSERT INTO `sales_invoices` (`id`, `account_number`, `added_by`, `approved_by`, `created_at`, `customer_balance_after`, `customer_balance_befor`, `customer_code`, `date`, `delegate_code`, `discount_percent`, `discount_type`, `discount_value`, `invoice_date`, `is_approved`, `is_has_customer`, `money_for_account`, `notes`, `pill_type`, `sales_item_type`, `sales_matrial_types`, `tax_percent`, `tax_value`, `total_befor_discount`, `total_cost`, `total_cost_items`, `treasuries_transactions_id`, `updated_at`, `updated_by`, `what_paid`, `what_remain`, `customer`) VALUES
+(2, 5, 1, NULL, '2024-06-22 23:56:03.000000', NULL, NULL, NULL, NULL, NULL, 0.00, NULL, 0.00, '2024-06-22', b'0', b'1', 0.00, 'this is my note', 1, 1, NULL, 0.00, 0.00, 0.00, 0.00, 0.00, NULL, '2024-06-22 23:56:03.000000', 1, 0.00, 0.00, 1);
 
 -- --------------------------------------------------------
 
@@ -1342,7 +1344,8 @@ ALTER TABLE `sales_invoices`
   ADD KEY `FKo8mnudm8g2jxhvuhg0vbwpq2u` (`approved_by`),
   ADD KEY `FKp8x36wfin689hyv8ghhlxywib` (`customer`),
   ADD KEY `FKjn4w8rpfp8a9x10437ygwx1iq` (`sales_matrial_types`),
-  ADD KEY `FK562eayn9py4l2iuenm6il8dqy` (`updated_by`);
+  ADD KEY `FK562eayn9py4l2iuenm6il8dqy` (`updated_by`),
+  ADD KEY `FK40wjhpbae6076emb1xxla1lgr` (`account_number`);
 
 --
 -- Indexes for table `sales_invoices_details`
@@ -1600,7 +1603,7 @@ ALTER TABLE `personal_access_token`
 -- AUTO_INCREMENT for table `sales_invoices`
 --
 ALTER TABLE `sales_invoices`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `sales_invoices_details`
@@ -1772,6 +1775,7 @@ ALTER TABLE `inv_uoms`
 -- Constraints for table `sales_invoices`
 --
 ALTER TABLE `sales_invoices`
+  ADD CONSTRAINT `FK40wjhpbae6076emb1xxla1lgr` FOREIGN KEY (`account_number`) REFERENCES `accounts` (`id`),
   ADD CONSTRAINT `FK562eayn9py4l2iuenm6il8dqy` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FK85o6smi8xee5nkqwvycw34fw5` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKjn4w8rpfp8a9x10437ygwx1iq` FOREIGN KEY (`sales_matrial_types`) REFERENCES `sales_matrial_types` (`id`),
