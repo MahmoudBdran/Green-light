@@ -14,4 +14,8 @@ public class InvItemcardMovementsCategory {
 
     @Column(name = "name")
     private String name;
+
+    public InvItemcardMovementsCategory(Integer id) {
+        this.id = id;
+    }
 }

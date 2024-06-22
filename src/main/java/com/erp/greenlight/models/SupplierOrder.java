@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
 @Table(name = "suppliers_with_orders")
 @EntityListeners({AuditingEntityListener.class})
 public class SupplierOrder {
@@ -59,10 +60,10 @@ public class SupplierOrder {
     private Byte discountType=1;  // Byte for tinyint(1)
 
     @Column(name = "discount_percent", precision = 10, scale = 2)
-    private BigDecimal discountPercent=BigDecimal.ZERO;
+    private BigDecimal discountPercent;
 
     @Column(name = "discount_value", nullable = false, precision = 10, scale = 2)
-    private BigDecimal discountValue=BigDecimal.ZERO;
+    private BigDecimal discountValue;
 
     @Column(name = "tax_percent", precision = 10, scale = 2)
     private BigDecimal taxPercent=BigDecimal.ZERO;

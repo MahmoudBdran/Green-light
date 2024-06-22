@@ -1,6 +1,11 @@
 package com.erp.greenlight.models;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,14 +17,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Table(name = "treasuries_transactions")
+@EntityListeners({AuditingEntityListener.class})
+
 public class TreasuryTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Assuming auto-increment for id
     private Long id;
 
-    @Column(name = "auto_serial", nullable = false)
-    private Long autoSerial;  // Bigint for large transaction codes
 
     @Column(name = "isal_number", nullable = false)
     private Long isalNumber;  // Bigint for large transaction codes
@@ -30,8 +35,10 @@ public class TreasuryTransaction {
     @Column(name = "money", nullable = false, precision = 10, scale = 2)
     private BigDecimal money;  // Decimal for transaction amounts
 
-    @Column(name = "treasuries_id", nullable = false)
-    private Integer treasuryId;  // Likely a foreign key referencing Treasury
+
+    @ManyToOne
+    @JoinColumn(name = "treasure_id", nullable = false)
+    private Treasure treasure;  // Likely a foreign key referencing Treasury
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
@@ -45,8 +52,9 @@ public class TreasuryTransaction {
     @Column(name = "the_foregin_key")
     private Long theForeignKey;  // Could be a foreign key to another table, depending on your data model
 
-    @Column(name = "account_number")
-    private Long accountNumber;  // Potential foreign key for an Accounts table
+    @ManyToOne
+    @JoinColumn(name = "account_number")
+    private Account account;  // Potential foreign key for an Accounts table
 
     @Column(name = "is_account")
     private Boolean isAccount;  // Boolean for tinyint(1)
@@ -57,22 +65,22 @@ public class TreasuryTransaction {
     @Column(name = "byan", nullable = false, length = 225)
     private String byan;  // Transaction description
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedBy
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
+
+    @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
-
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "updated_by")
-    private Integer updatedBy;
-
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    // Getters and setters (optional but recommended)
-    // ...
+    @LastModifiedBy
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private Admin updatedBy;
 }
 

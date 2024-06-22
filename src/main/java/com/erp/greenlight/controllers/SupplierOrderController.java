@@ -1,5 +1,6 @@
 package com.erp.greenlight.controllers;
 
+import com.erp.greenlight.DTOs.ApproveSupplierOrderDTO;
 import com.erp.greenlight.DTOs.SupplierOrderDTO;
 import com.erp.greenlight.models.SupplierOrder;
 import com.erp.greenlight.services.StoreService;
@@ -67,5 +68,9 @@ public class SupplierOrderController {
         return AppResponse.generateResponse("تم حذف الفاتورة بمحتوياتها بنجاح", HttpStatus.OK,  supplierOrderService.deleteSupplierOrder(id) , true);
     }
 
+    @PostMapping("/approve")
+    public ResponseEntity<Object> approveSupplierOrder(@RequestBody  ApproveSupplierOrderDTO request){
+        return  supplierOrderService.approve(request);
+    }
 
 }

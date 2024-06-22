@@ -64,7 +64,7 @@ public class SupplierService {
             supplier.setCurrentBalance(supplier.getStartBalance());
 
 
-            supplier.setAccountNumber( new Account(initiateAccountForSupplier(supplier).getId() ));
+            supplier.setAccount( new Account(initiateAccountForSupplier(supplier).getId() ));
 
             savedSupplier = supplierRepo.save(supplier);
             return savedSupplier;
@@ -135,7 +135,7 @@ public class SupplierService {
 
         Supplier savedSupplier = supplierRepo.save(existingSupplier);
 
-        Account existingAccount = existingSupplier.getAccountNumber();
+        Account existingAccount = existingSupplier.getAccount();
         existingAccount.setName(supplier.getName());
         accountRepo.save(existingAccount);
         return savedSupplier;

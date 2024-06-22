@@ -81,7 +81,7 @@ public class InvItemCard {
     @Column(nullable = false)
     private BigDecimal nosGomlaPrice;
 
-    @Column(nullable = false)
+
     private BigDecimal gomlaPrice;
 
     private BigDecimal priceRetail;

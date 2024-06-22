@@ -35,7 +35,7 @@ public class Supplier {
 
     @OneToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
-    private Account accountNumber;
+    private Account account;
 
     @Column(name = "start_balance_status", nullable = false)
     private int startBalanceStatus;  // Byte for tinyint

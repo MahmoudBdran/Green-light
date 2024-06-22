@@ -1,8 +1,12 @@
 package com.erp.greenlight.models;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Entity
@@ -12,7 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Table(name = "treasuries")
-public class Treasury {
+@EntityListeners({AuditingEntityListener.class})
+public class Treasure {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Assuming auto-increment for id
@@ -30,23 +35,23 @@ public class Treasury {
     @Column(name = "last_isal_collect", nullable = false)
     private Long lastIsalCollect;  // Bigint for large numbers
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedBy
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
+
+    @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
-
-    @Column(name = "updated_by")
-    private Integer updatedBy;
-
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    @LastModifiedBy
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private Admin updatedBy;
 
     @Column(name = "active", nullable = false)
     private Boolean isActive;  // Boolean for tinyint(1)

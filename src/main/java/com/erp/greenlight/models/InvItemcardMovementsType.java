@@ -16,4 +16,8 @@ public class InvItemcardMovementsType {
 
     @Column(name = "type")
     private String type;
+
+    public InvItemcardMovementsType(Integer id) {
+        this.id = id;
+    }
 }
