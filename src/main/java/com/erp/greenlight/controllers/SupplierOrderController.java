@@ -73,4 +73,15 @@ public class SupplierOrderController {
         return  supplierOrderService.approve(request);
     }
 
+    @PostMapping("/approveSupplierOrder")
+    public ResponseEntity<Object> approveSupplierOrder(@RequestBody SupplierOrder supplierOrder){
+        if(supplierOrderService.checkOrderIsApproved(supplierOrder.getId())){
+            return AppResponse.generateResponse("الفاتوره بالفعل محفوظه", HttpStatus.BAD_REQUEST,null , false);
+        }else{
+
+            return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK,  supplierOrderService.approveSupplierOrder(supplierOrder) , true);
+        }
+    }
+
+
 }
