@@ -63,5 +63,8 @@ public class Customer {
     @Column(length = 50)
     private String phones;
 
+    public Customer(Long id) {
+        this.id = id;
+    }
 }
 

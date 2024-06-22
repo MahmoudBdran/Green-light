@@ -74,7 +74,13 @@ public class SupplierOrderService {
     }
 
 
-
-
+    public String approveSupplierOrder(SupplierOrder supplierOrder) {
+        //count order items first to see if it contains items or not?
+       //List<SupplierOrderDetails> orderItems= supplierOrderDetailsRepo.findByOrderId(id);
+        if(supplierOrderDetailsRepo.findByOrderId(supplierOrder.getId()).size()==0){
+            return "عفوا لايمكن اعتماد الفاتورة قبل اضافة خدمات عليها";
+        }
+        return "تمت بنجاح";
+    }
 }
 

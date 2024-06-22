@@ -1,10 +1,16 @@
 package com.erp.greenlight.models;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -17,12 +23,12 @@ public class SalesInvoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne()
+    @JoinColumn(name = "sales_matrial_types",referencedColumnName = "id")
+    private SalesMaterialType salesMaterialType;
 
-    @Column(name = "sales_matrial_types")
-    private Integer salesMaterialType;
-
-    @Column(name = "auto_serial", nullable = false)
-    private Long autoSerial;
+//    @Column(name = "auto_serial", nullable = false)
+//    private Long autoSerial;
 
     @Column(name = "invoice_date", nullable = false)
     private LocalDate invoiceDate;
@@ -30,20 +36,21 @@ public class SalesInvoice {
     @Column(name = "is_has_customer", nullable = false)
     private Boolean isHasCustomer;
 
-    @Column(name = "customer_code")
-    private Long customerCode;
+    @ManyToOne()
+    @JoinColumn(name = "customer",referencedColumnName = "id")
+    private Customer customer;
 
-    @Column(name = "delegate_code")
-    private Long delegateCode;
+//    @Column(name = "delegate_code")
+//    private Long delegateCode;
 
-    @Column(name = "delegate_commission_percent_type")
-    private BigDecimal delegateCommissionPercentType;
+//    @Column(name = "delegate_commission_percent_type")
+//    private BigDecimal delegateCommissionPercentType;
 
-    @Column(name = "delegate_commission_percent", nullable = false, precision = 10, scale = 2)
-    private BigDecimal delegateCommissionPercent;
-
-    @Column(name = "delegate_commission_value", nullable = false, precision = 10, scale = 2)
-    private BigDecimal delegateCommissionValue;
+//    @Column(name = "delegate_commission_percent", nullable = false, precision = 10, scale = 2)
+//    private BigDecimal delegateCommissionPercent;
+//
+//    @Column(name = "delegate_commission_value", nullable = false, precision = 10, scale = 2)
+//    private BigDecimal delegateCommissionValue;
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
@@ -79,11 +86,13 @@ public class SalesInvoice {
     private BigDecimal totalCost;
 
     @Column(name = "account_number")
-    private Long accountNumber;
+    private Long accountNumber; //relation with account
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;
 
+    @OneToMany(mappedBy = "salesInvoice")
+    private List<SalesInvoiceDetail> salesInvoiceDetails;
     @Column(name = "pill_type")
     private Byte pillType;
 
@@ -102,20 +111,26 @@ public class SalesInvoice {
     @Column(name = "customer_balance_after", precision = 10, scale = 2)
     private BigDecimal customerBalanceAfter;  // Decimal for customer balance after invoice
 
-    @Column(name = "added_by", nullable = false)
-    private Integer addedBy;
-
-    @Column(name = "created_at", nullable = false)
+    @CreatedBy
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
+    @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "updated_by")
-    private Integer updatedBy;
+    @LastModifiedBy
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private Admin updatedBy;
 
-    @Column(name = "approved_by")
-    private Integer approvedBy;
+    @ManyToOne()
+    @JoinColumn(name = "approved_by",referencedColumnName = "id")
+    private Admin approvedBy;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
@@ -123,5 +138,7 @@ public class SalesInvoice {
     @Column(name = "sales_item_type", nullable = false)
     private Byte salesItemType;  // Byte for tinyint(1) - sales item type
 
-
+    public SalesInvoice(Long id) {
+        this.id = id;
+    }
 }
