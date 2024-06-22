@@ -15,6 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
+@Setter
+@Getter
 @Table(name = "customers")
 @AllArgsConstructor
 @NoArgsConstructor

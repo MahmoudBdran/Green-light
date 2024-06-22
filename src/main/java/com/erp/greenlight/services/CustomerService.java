@@ -51,7 +51,6 @@ public class CustomerService {
 
     @Transactional
     public Customer saveCustomer(Customer customer){
-        Customer savedCustomer =new Customer();
         if(validateCustomerInDB(customer)){
             if(customer.getStartBalanceStatus()== StartBalanceStatusEnum.CREDIT.getValue()){
                 //credit
@@ -72,7 +71,7 @@ public class CustomerService {
 
             customer.setAccount( new Account(initiateAccountForCustomer(customer).getId() ));
 
-            savedCustomer = repo.save(customer);
+            Customer savedCustomer = repo.save(customer);
             return savedCustomer;
         }else{
             return null;

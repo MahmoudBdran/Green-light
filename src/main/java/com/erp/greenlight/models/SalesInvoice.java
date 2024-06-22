@@ -5,6 +5,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,6 +32,8 @@ public class SalesInvoice {
 //    private Long autoSerial;
 
     @Column(name = "invoice_date", nullable = false)
+    @CreatedDate
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate invoiceDate;
 
     @Column(name = "is_has_customer", nullable = false)

@@ -37,7 +37,7 @@ public class SupplierOrder {
     @Column(name = "DOC_NO", length = 25)
     private String docNo;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(name = "order_date")
     @CreatedDate
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate orderDate;

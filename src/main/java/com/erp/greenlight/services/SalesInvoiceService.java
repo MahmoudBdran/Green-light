@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,6 @@ public class SalesInvoiceService {
         SalesInvoice salesInvoice = new SalesInvoice();
 
 
-        salesInvoice.setInvoiceDate(salesInvoiceDTO.getDate());
 
         if(salesInvoiceDTO.getCustomer() != null){
             salesInvoice.setIsHasCustomer(Boolean.TRUE);
