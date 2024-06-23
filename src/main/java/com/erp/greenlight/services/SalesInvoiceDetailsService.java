@@ -63,7 +63,6 @@ public class SalesInvoiceDetailsService {
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
         salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
         System.out.println("totalPrice in obj : "+salesInvoice.getTotalCost());
-        salesInvoice.setUpdatedBy(new Admin(1));
         salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
         System.out.println("totalPrice : "+salesInvoice.getTotalBeforeDiscount());
         System.out.println("totalPrice : "+salesInvoice.getTaxValue());
@@ -92,7 +91,6 @@ public class SalesInvoiceDetailsService {
     @Transactional
     public SalesInvoiceDetail mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(InvoiceItemDTO parsedInvoiceItemDto, SalesInvoiceDetail salesInvoiceDetail) {
 
-        int adminId=1;
 
         salesInvoiceDetail.setSalesInvoice(new SalesInvoice(parsedInvoiceItemDto.getOrderId()));
         salesInvoiceDetail.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
@@ -100,11 +98,8 @@ public class SalesInvoiceDetailsService {
         salesInvoiceDetail.setQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
         salesInvoiceDetail.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
         salesInvoiceDetail.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
-        salesInvoiceDetail.setAddedBy(new Admin(adminId));
-        salesInvoiceDetail.setUpdatedBy(new Admin(adminId));
         salesInvoiceDetail.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
         salesInvoiceDetail.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
-        salesInvoiceDetail.setBatchAutoSerial(1L);
         salesInvoiceDetail.setSalesItemType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
         //saving the salesInvoiceDetail in the DB.
 
@@ -114,7 +109,6 @@ public class SalesInvoiceDetailsService {
         //updating the Order itself with the updates.
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
         salesInvoice.setTotalCost(salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getTotalCost().add(salesInvoiceDetail.getTotalPrice()==null?BigDecimal.ZERO:salesInvoiceDetail.getTotalPrice()));
-        salesInvoice.setUpdatedBy(new Admin(adminId));
         salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
         salesInvoiceRepo.save(salesInvoice);
 
@@ -131,13 +125,13 @@ public class SalesInvoiceDetailsService {
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
-        Optional<SalesInvoiceDetail> supplierOrderDetails= salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
-        if (supplierOrderDetails.isEmpty()){
+        Optional<SalesInvoiceDetail> salesInvoiceDetails= salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+        if (salesInvoiceDetails.isEmpty()){
             return false;
         }else{
-            System.out.println(supplierOrderDetails.get().getSalesInvoice().getId());
-            System.out.println(supplierOrderDetails.get().getItem().getId());
-            System.out.println(supplierOrderDetails.get().getUom().getId());
+            System.out.println(salesInvoiceDetails.get().getSalesInvoice().getId());
+            System.out.println(salesInvoiceDetails.get().getItem().getId());
+            System.out.println(salesInvoiceDetails.get().getUom().getId());
             return true;
         }
     }

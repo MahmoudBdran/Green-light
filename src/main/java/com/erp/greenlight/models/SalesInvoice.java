@@ -105,7 +105,9 @@ public class SalesInvoice {
 
     @Column(name = "customer_balance_after", precision = 10, scale = 2)
     private BigDecimal customerBalanceAfter;  // Decimal for customer balance after invoice
-
+    @ManyToOne()
+    @JoinColumn(name = "store_id",referencedColumnName = "id")
+    private Store store;
     @CreatedBy
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")

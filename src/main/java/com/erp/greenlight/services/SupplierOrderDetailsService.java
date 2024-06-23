@@ -66,7 +66,6 @@ public class SupplierOrderDetailsService {
         SupplierOrder supplierOrder =supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
         supplierOrder.setTotalCost(BigDecimal.valueOf(totalPrice));
         System.out.println("totalPrice in obj : "+supplierOrder.getTotalCost());
-        supplierOrder.setUpdatedBy(new Admin(1));
         supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost().add(supplierOrder.getTaxValue()==null? BigDecimal.ZERO:supplierOrder.getTaxValue()));
         System.out.println("totalPrice : "+supplierOrder.getTotalBeforeDiscount());
         System.out.println("totalPrice : "+supplierOrder.getTaxValue());
@@ -110,7 +109,6 @@ public class SupplierOrderDetailsService {
         //saving the supplierOrderDetails in the DB.
 
         SupplierOrderDetails savedSupplierOrderDetails= supplierOrderDetailsRepo.save(supplierOrderDetails);
-
         System.out.println("saved savedSupplierOrderDetails service method");
         //updating the Order itself with the updates.
         SupplierOrder supplierOrder =supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
