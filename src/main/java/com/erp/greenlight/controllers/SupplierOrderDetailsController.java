@@ -38,7 +38,8 @@ public class SupplierOrderDetailsController {
         data.put("invItems", invItemCardService.getAllInvItemCards());
         data.put("invUoms",invUomService.getAllInvUoms());
 
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderDetailsService.findByOrderId(id) , true);
+       // return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderDetailsService.findByOrderId(id) , true);
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
     @PostMapping("/saveItemInOrder")
     public ResponseEntity<Object> saveItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {

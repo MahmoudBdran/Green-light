@@ -1,11 +1,18 @@
 package com.erp.greenlight.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,29 +23,32 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners({AuditingEntityListener.class})
 public class SalesInvoicesReturnDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sales_invoices_auto_serial", nullable = false)
-    private Long salesInvoicesAutoSerial;
+    @ManyToOne()
+    @JoinColumn(name = "sales_invoice_return",referencedColumnName = "id")
+    @JsonIgnore
+    private SalesInvoiceReturn salesInvoiceReturn;
 
-    @Column(nullable = false)
-    private Integer storeId;
 
     @Column(name = "sales_item_type", nullable = false)
-    private Integer salesItemType;
+    private Byte salesItemType;
 
-    @Column(nullable = false)
-    private Long itemCode;
+    @OneToOne()
+    @JoinColumn(name = "item_Id",referencedColumnName = "id") //inv item f k
+    private InvItemCard item;  // Likely a foreign key referencing an Item table
 
-    @Column(name = "uom_id", nullable = false)
-    private Integer uomId;
+    @ManyToOne()
+    @JoinColumn(name = "uom_id",referencedColumnName = "id")
+    private InvUom uom;
 
-    @Column(name = "batch_auto_serial")
-    private Long batchAutoSerial;
+//    @Column(name = "batch_auto_serial")
+//    private Long batchAutoSerial;
 
     @Column(precision = 10, scale = 4)
     private BigDecimal quantity= BigDecimal.valueOf(0.0000);
@@ -56,24 +66,31 @@ public class SalesInvoicesReturnDetails {
     private Integer isNormalOrOther;
 
     @Column(name = "isparentuom", nullable = false)
-    private Integer isparentuom;
+    private Boolean isparentuom;
 
 //    @Column(nullable = false)
 //    private Integer comCode;
 
     @Column(nullable = false)
+    @CreatedDate
     private LocalDate invoiceDate;
 
-    @Column(nullable = false)
-    private Integer addedBy;
+    @CreatedBy
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Admin addedBy;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(updatable = false)
-    private Integer updatedBy;
+    @LastModifiedBy
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Admin updatedBy;
 
-    @Column(updatable = false)
+    @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Column(name = "production_date")
@@ -83,6 +100,7 @@ public class SalesInvoicesReturnDetails {
     private LocalDate expireDate;
 
     @Column(nullable = false)
+    @CreatedDate
     private LocalDate date;
 }
 

@@ -3,16 +3,12 @@ package com.erp.greenlight.services;
 import com.erp.greenlight.DTOs.SalesInvoiceDTO;
 import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
-import com.erp.greenlight.repositories.AccountRepo;
-import com.erp.greenlight.repositories.CustomerRepo;
-import com.erp.greenlight.repositories.SalesInvoiceRepo;
-import com.erp.greenlight.repositories.SupplierOrderDetailsRepo;
+import com.erp.greenlight.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +18,7 @@ public class SalesInvoiceService {
     SalesInvoiceRepo salesInvoiceRepo;
 
     @Autowired
-    SupplierOrderDetailsRepo supplierOrderDetailsRepo;
+    SalesInvoiceDetailsRepo salesInvoiceDetailsRepo;
      SupplierOrderMapper mapper;
     @Autowired
     private AccountRepo accountRepo;
@@ -102,7 +98,7 @@ public class SalesInvoiceService {
     @Transactional
     public boolean deleteSalesInvoice(Long id){
          for(SalesInvoiceDetail salesInvoiceDetail: salesInvoiceRepo.findById(id).get().getSalesInvoiceDetails()){
-             supplierOrderDetailsRepo.deleteById(salesInvoiceDetail.getId());
+             salesInvoiceDetailsRepo.deleteById(salesInvoiceDetail.getId());
          }
          salesInvoiceRepo.deleteById(id);
         return true;
@@ -119,7 +115,7 @@ public class SalesInvoiceService {
     public String approveSalesInvoice(SalesInvoice salesInvoice) {
         //count order items first to see if it contains items or not?
        //List<SupplierOrderDetails> orderItems= supplierOrderDetailsRepo.findByOrderId(id);
-        if(supplierOrderDetailsRepo.findByOrderId(salesInvoice.getId()).size()==0){
+        if(salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoice.getId()).isEmpty()){
             return "عفوا لايمكن اعتماد الفاتورة قبل اضافة خدمات عليها";
         }
         return "تمت بنجاح";

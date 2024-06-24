@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2024 at 06:25 PM
+-- Generation Time: Jun 24, 2024 at 03:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -789,7 +789,9 @@ CREATE TABLE `sales_invoices_return` (
   `updated_at` datetime(6) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `what_paid` decimal(10,2) NOT NULL,
-  `what_remain` decimal(10,2) NOT NULL
+  `what_remain` decimal(10,2) NOT NULL,
+  `customer` bigint(20) DEFAULT NULL,
+  `store_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -808,19 +810,21 @@ CREATE TABLE `sales_invoices_return_details` (
   `expire_date` date DEFAULT NULL,
   `invoice_date` date NOT NULL,
   `is_normal_or_other` int(11) NOT NULL,
-  `isparentuom` int(11) NOT NULL,
+  `isparentuom` bit(1) NOT NULL,
   `item_code` bigint(20) NOT NULL,
   `production_date` date DEFAULT NULL,
   `quantity` decimal(10,4) DEFAULT NULL,
   `sales_invoices_auto_serial` bigint(20) NOT NULL,
-  `sales_item_type` int(11) NOT NULL,
+  `sales_item_type` tinyint(4) NOT NULL,
   `store_id` int(11) NOT NULL,
   `total_price` decimal(10,2) DEFAULT NULL,
   `unit_cost_price` decimal(10,2) DEFAULT NULL,
   `unit_price` decimal(10,2) DEFAULT NULL,
-  `uom_id` int(11) NOT NULL,
+  `uom_id` bigint(20) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL,
+  `item_id` bigint(20) DEFAULT NULL,
+  `sales_invoice_return` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1382,13 +1386,25 @@ ALTER TABLE `sales_invoices_details_store_id`
 -- Indexes for table `sales_invoices_return`
 --
 ALTER TABLE `sales_invoices_return`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK2u7khslor9hgb1d9paawyeqnj` (`account_number`),
+  ADD KEY `FKhfsaa5iisehioccl0l46iw69o` (`added_by`),
+  ADD KEY `FKkcmtn5ggxap3bn1dcnktcc9wp` (`approved_by`),
+  ADD KEY `FKmqgmqrcc1jp0bfycmc3du2f9o` (`customer`),
+  ADD KEY `FKc3qajugjuxaacf2qp54su3au6` (`sales_matrial_types`),
+  ADD KEY `FKdlpip4ncf2klwcbh5rescybqr` (`store_id`),
+  ADD KEY `FKp7lj7b40qeg163ldvy930w6n9` (`updated_by`);
 
 --
 -- Indexes for table `sales_invoices_return_details`
 --
 ALTER TABLE `sales_invoices_return_details`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_hljro00jldgmxvhd5kfrwfjsw` (`item_id`),
+  ADD KEY `FKnu7rrls20ddgm8cwyw0sdve2b` (`added_by`),
+  ADD KEY `FKbago77dg1ep3soe61plmhp7vb` (`sales_invoice_return`),
+  ADD KEY `FKbrw4c8s5xwqcmr7itb1iwb5l3` (`uom_id`),
+  ADD KEY `FKgdl0nwdyhsdvlu6hpsn9qis74` (`updated_by`);
 
 --
 -- Indexes for table `sales_matrial_types`
@@ -1812,6 +1828,28 @@ ALTER TABLE `sales_invoices_details_stores`
 ALTER TABLE `sales_invoices_details_store_id`
   ADD CONSTRAINT `FKbndj4qn876aidnbfcqh0q6mig` FOREIGN KEY (`store_id_id`) REFERENCES `stores` (`id`),
   ADD CONSTRAINT `FKc9tr25nrmird1nv5akswyhe7b` FOREIGN KEY (`sales_invoice_detail_id`) REFERENCES `sales_invoices_details` (`id`);
+
+--
+-- Constraints for table `sales_invoices_return`
+--
+ALTER TABLE `sales_invoices_return`
+  ADD CONSTRAINT `FK2u7khslor9hgb1d9paawyeqnj` FOREIGN KEY (`account_number`) REFERENCES `accounts` (`id`),
+  ADD CONSTRAINT `FKc3qajugjuxaacf2qp54su3au6` FOREIGN KEY (`sales_matrial_types`) REFERENCES `sales_matrial_types` (`id`),
+  ADD CONSTRAINT `FKdlpip4ncf2klwcbh5rescybqr` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`),
+  ADD CONSTRAINT `FKhfsaa5iisehioccl0l46iw69o` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKkcmtn5ggxap3bn1dcnktcc9wp` FOREIGN KEY (`approved_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKmqgmqrcc1jp0bfycmc3du2f9o` FOREIGN KEY (`customer`) REFERENCES `customers` (`id`),
+  ADD CONSTRAINT `FKp7lj7b40qeg163ldvy930w6n9` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `sales_invoices_return_details`
+--
+ALTER TABLE `sales_invoices_return_details`
+  ADD CONSTRAINT `FK5wat4q3ub98ygusx9vbg7u8ee` FOREIGN KEY (`item_id`) REFERENCES `inv_itemcard` (`id`),
+  ADD CONSTRAINT `FKbago77dg1ep3soe61plmhp7vb` FOREIGN KEY (`sales_invoice_return`) REFERENCES `sales_invoices_return` (`id`),
+  ADD CONSTRAINT `FKbrw4c8s5xwqcmr7itb1iwb5l3` FOREIGN KEY (`uom_id`) REFERENCES `inv_uoms` (`id`),
+  ADD CONSTRAINT `FKgdl0nwdyhsdvlu6hpsn9qis74` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKnu7rrls20ddgm8cwyw0sdve2b` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
 
 --
 -- Constraints for table `stores`

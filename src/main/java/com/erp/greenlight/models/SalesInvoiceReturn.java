@@ -1,10 +1,16 @@
 package com.erp.greenlight.models;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Table(name = "sales_invoices_return")  // Optional: Specify table name if it differs from the class name
+@EntityListeners({AuditingEntityListener.class})
 public class SalesInvoiceReturn {
 
     @Id
@@ -21,24 +28,30 @@ public class SalesInvoiceReturn {
 
     @Column(name = "return_type", nullable = false)
     private Byte returnType;  // Byte for tinyint(1) - return type (invoice-based or general)
+    @ManyToOne()
+    @JoinColumn(name = "store_id",referencedColumnName = "id")
+    private Store store;
+    //@Column(name = "sales_matrial_types")
+    @ManyToOne()
+    @JoinColumn(name = "sales_matrial_types",referencedColumnName = "id")
+    private SalesMaterialType salesMaterialType;  // Likely an integer representing sales material type
 
-    @Column(name = "sales_matrial_types")
-    private Integer salesMaterialType;  // Likely an integer representing sales material type
 
-    @Column(name = "auto_serial", nullable = false)
-    private Long autoSerial;  // Bigint for large invoice codes
-
+    @OneToMany(mappedBy = "salesInvoiceReturn")
+    private List<SalesInvoicesReturnDetails> salesInvoicesReturnDetails;
     @Column(name = "invoice_date", nullable = false)
+    @CreatedDate
     private LocalDate invoiceDate;
 
     @Column(name = "is_has_customer", nullable = false)
     private Boolean isHasCustomer;  // Boolean for tinyint(1)
 
-    @Column(name = "customer_code")
-    private Long customerCode;  // Likely a foreign key referencing a Customer table
+    @ManyToOne()
+    @JoinColumn(name = "customer",referencedColumnName = "id")
+    private Customer customer;
 
-    @Column(name = "delegate_code")
-    private Long delegateCode;  // Likely a foreign key referencing an Employee or Delegate table
+//    @Column(name = "delegate_code")
+//    private Long delegateCode;  // Likely a foreign key referencing an Employee or Delegate table
 
     @Column(name = "is_approved", nullable = false, insertable = false, updatable = false)  // Default value set in SQL
     private Boolean isApproved;  // Boolean for tinyint(1)
@@ -73,8 +86,9 @@ public class SalesInvoiceReturn {
     @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalCost;  // Decimal for total invoice cost
 
-    @Column(name = "account_number")
-    private Long accountNumber;  // Potential foreign key for an Accounts table
+    @ManyToOne()
+    @JoinColumn(name = "account_number",referencedColumnName = "id")
+    private Account accountNumber; //relation with account
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;  // Decimal for money for account
@@ -97,22 +111,34 @@ public class SalesInvoiceReturn {
     @Column(name = "customer_balance_after", precision = 10, scale = 2)
     private BigDecimal customerBalanceAfter;
 
-    @Column(nullable = false)
-    private Integer addedBy;
-
-    @Column(nullable = false)
+    @CreatedBy
+    @ManyToOne()
+    @JoinColumn(name = "added_by",referencedColumnName = "id")
+    private Admin addedBy;
+    @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(updatable = false)
+    @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(updatable = false)
-    private Integer updatedBy;
+    @LastModifiedBy
+    @ManyToOne()
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private Admin updatedBy;
 
-    @Column(updatable = false)
-    private Integer approvedBy;
+    @ManyToOne()
+    @JoinColumn(name = "approved_by",referencedColumnName = "id")
+    private Admin approvedBy;
+
 
     @Column(nullable = false)
+    @CreatedDate
     private LocalDate date;
+
+    public SalesInvoiceReturn(Long id) {
+        this.id = id;
+    }
 }
 

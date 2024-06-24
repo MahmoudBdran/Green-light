@@ -13,54 +13,52 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/salesInvoiceDetails")
+@RequestMapping("/salesInvoiceReturnDetails")
 @CrossOrigin(origins = "http://localhost:4200")
-public class SalesInvoiceDetailsController {
+public class SalesInvoiceReturnDetailsController {
 
     @Autowired
-    private SalesInvoiceDetailsService salesInvoiceDetailsService;
+    private SalesInvoiceReturnDetailsService salesInvoiceReturnDetailsService;
 
     @Autowired
     private InvItemCardService invItemCardService;
 
     @Autowired
     private InvUomService invUomService;
-    @Autowired
-    private SalesInvoiceService salesInvoiceService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Object>  getSalesInvoiceDetails(@PathVariable Long id){
         Map<String, Object> data = new HashMap<>();
 
-        data.put("salesInvoiceDetails", salesInvoiceDetailsService.findBySalesInvoiceId(id));
+        data.put("salesInvoiceReturnDetails", salesInvoiceReturnDetailsService.findBySalesInvoiceReturnId(id));
         data.put("invItems", invItemCardService.getAllInvItemCards());
         data.put("invUoms",invUomService.getAllInvUoms());
 
-       // return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceDetailsService.findBySalesInvoiceId(id) , true);
+        //return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceReturnDetailsService.findBySalesInvoiceId(id) , true);
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
-    @PostMapping("/saveItemInSalesInvoice")
+    @PostMapping("/saveItemInSalesInvoiceReturn")
     public ResponseEntity<Object> saveItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         System.out.println("entered saveItemInOrder");
-        if(salesInvoiceDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
+        if(salesInvoiceReturnDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceDetailsService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceReturnDetailsService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
         }else{
             System.out.println("entered if cond false checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.saveItemInOrder(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceReturnDetailsService.saveItemInOrder(invoiceItemDTO) , true);
         }
     }
-    @PutMapping("/updateItemInSalesInvoice")
+    @PutMapping("/updateItemInSalesInvoiceReturn")
     public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.updateItemInOrder(invoiceItemDTO) , true);
+        return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceReturnDetailsService.updateItemInOrder(invoiceItemDTO) , true);
     }
 
-    @DeleteMapping("/deleteItemInOrder/{id}")
-    public ResponseEntity<Object> deleteItemInOrder(@PathVariable Long id){
-        if(salesInvoiceDetailsService.checkOrderDetailsItemIsApproved(id)){
+    @DeleteMapping("/deleteItemInOrderReturn/{id}")
+    public ResponseEntity<Object> deleteItemInOrderReturn(@PathVariable Long id){
+        if(salesInvoiceReturnDetailsService.checkOrderDetailsItemIsApproved(id)){
             return AppResponse.generateResponse("تعذر حذف المنتج من الفاتوره لأنها مغلقه", HttpStatus.BAD_REQUEST,null , false);
         }
-        return AppResponse.generateResponse("تم حذف الصنف من الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.deleteItemFromSalesInvoice(id) , true);
+        return AppResponse.generateResponse("تم حذف الصنف من الفاتورة", HttpStatus.OK,  salesInvoiceReturnDetailsService.deleteItemFromSalesInvoiceReturn(id) , true);
     }
 
 

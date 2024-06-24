@@ -56,8 +56,8 @@ public class SalesInvoiceController {
         return AppResponse.generateResponse("تم حفط فاتورة المبيعات بنجاح", HttpStatus.OK, salesInvoiceService.saveSalesInvoice(salesInvoiceDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSalesInvoice(SalesInvoice salesInvoice){
-        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK, salesInvoiceService.updateSalesInvoice(salesInvoice) , true);
+    public ResponseEntity<Object> updateSalesInvoice(@RequestBody SalesInvoice salesInvoice){
+        return AppResponse.generateResponse("تم تحديث اوردر العميل بنجاح", HttpStatus.OK, salesInvoiceService.updateSalesInvoice(salesInvoice) , true);
     }
 
     @DeleteMapping("/{id}")
