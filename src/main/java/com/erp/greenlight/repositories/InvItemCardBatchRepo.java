@@ -13,7 +13,8 @@ import java.util.List;
 @Repository
 public interface InvItemCardBatchRepo extends JpaRepository<InvItemCardBatch,Long> {
 
-
+    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE item=:item")
+    BigDecimal allQuantityINBatches(InvItemCard item);
 
     @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE item=:item")
     BigDecimal getQuantityBeforeMove(InvItemCard item);
@@ -24,4 +25,7 @@ public interface InvItemCardBatchRepo extends JpaRepository<InvItemCardBatch,Lon
 
 
     List<InvItemCardBatch> findAllByStoreIdAndItemIdAndInvUomIdAndUnitCostPriceAndQuantity(Integer storeId, Long itemId, Long invUomId, BigDecimal unitCostPrice, BigDecimal quantity);
+
+    List<InvItemCardBatch> findAllByStoreIdAndItemIdAndInvUomId(Integer storeId, Long itemId, Long invUomId);
+
 }

@@ -21,6 +21,5 @@ public class SalesInvoiceDTO {
 
     private Byte pillType;
 
-    private Integer store;
 
 }

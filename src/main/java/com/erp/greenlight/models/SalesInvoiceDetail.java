@@ -28,29 +28,32 @@ public class SalesInvoiceDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Assuming auto-increment for id
     private Long id;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sales_invoice",referencedColumnName = "id")
     @JsonIgnore
     private SalesInvoice salesInvoice;
-//    @Column(name = "sales_invoices_auto_serial", nullable = false)
-//    private Long salesInvoiceAutoSerial;  // Likely a foreign key referencing a SalesInvoice
 
-//    @ManyToOne()
-//    @JoinColumn(name = "store_id",referencedColumnName = "id")
-//    private Store store;  // Likely a foreign key referencing a Store
+    @ManyToOne()
+    @JoinColumn(name = "store_id",referencedColumnName = "id")
+    private Store store;  // Likely a foreign key referencing a Store
 
     @Column(name = "sales_item_type", nullable = false)
-    private Byte salesItemType;  // Byte for tinyint(1) - sales item type
+    private Byte salesItemType=1;  // Byte for tinyint(1) - sales item type
 
     @OneToOne()
     @JoinColumn(name = "item_code",referencedColumnName = "id") //inv item f k
     private InvItemCard item;  // Likely a foreign key referencing an Item table
+
+
     @ManyToOne()
     @JoinColumn(name = "uom_id",referencedColumnName = "id")
     private InvUom uom;  // Likely a foreign key referencing a Unit of Measure table
 
-//    @Column(name = "batch_auto_serial")
-//    private Long batchAutoSerial;  // Likely a foreign key referencing a Batch table
+    @ManyToOne()
+    @JoinColumn(name = "batch_id",referencedColumnName = "id")
+    private InvItemCardBatch batch;  // Likely a foreign key referencing a Batch table
 
     @Column(name = "quantity", nullable = false, precision = 10, scale = 4)
     private BigDecimal quantity;
@@ -67,12 +70,6 @@ public class SalesInvoiceDetail {
     @Column(name = "isparentuom", nullable = false)
     private Boolean isParentUom;  // Byte for tinyint(1) - main or retail UoM
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    @Column(name = "invoice_date", nullable = false)
-    @CreatedDate
-    private LocalDate invoiceDate;
 
     @CreatedBy
     @JoinColumn(name = "added_by",referencedColumnName = "id")
@@ -98,10 +95,6 @@ public class SalesInvoiceDetail {
 
     @Column(name = "expire_date")
     private LocalDate expireDate = LocalDate.now();
-
-    @Column(name = "date")
-    @CreatedDate
-    private LocalDate date;
 
 
 }

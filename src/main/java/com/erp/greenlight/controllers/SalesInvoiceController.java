@@ -1,9 +1,15 @@
 package com.erp.greenlight.controllers;
 
+import com.erp.greenlight.DTOs.GetItemBatchDto;
 import com.erp.greenlight.DTOs.SalesInvoiceDTO;
+import com.erp.greenlight.models.InvItemCard;
+import com.erp.greenlight.models.InvItemCardBatch;
 import com.erp.greenlight.models.SalesInvoice;
 import com.erp.greenlight.models.SupplierOrder;
+import com.erp.greenlight.repositories.InvItemCardBatchRepo;
+import com.erp.greenlight.repositories.InvUomRepo;
 import com.erp.greenlight.services.CustomerService;
+import com.erp.greenlight.services.InvItemCardService;
 import com.erp.greenlight.services.SalesInvoiceService;
 import com.erp.greenlight.services.StoreService;
 import com.erp.greenlight.utils.AppResponse;
@@ -13,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,7 +34,16 @@ public class SalesInvoiceController {
     private StoreService storeService;
 
     @Autowired
+    InvItemCardService invItemCardService;
+
+    @Autowired
     CustomerService customerService;
+
+    @Autowired
+    InvItemCardBatchRepo invItemCardBatchRepo;
+
+    @Autowired
+    InvUomRepo invUomRepo;
 
     @GetMapping("")
     public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(){
@@ -78,6 +94,19 @@ public class SalesInvoiceController {
             return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK,  salesInvoiceService.approveSalesInvoice(salesInvoice) , true);
         }
     }
+
+
+
+
+    @GetMapping("/getAllData")
+    public ResponseEntity<Object>  getAllData(){
+        Map<String, Object> data = new HashMap<>();
+        data.put("stores", storeService.findAll());
+        data.put("invItems", invItemCardService.getAllInvItemCards());
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
+    }
+
 
 
 }

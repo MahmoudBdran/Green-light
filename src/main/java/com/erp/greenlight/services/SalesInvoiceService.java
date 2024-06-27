@@ -28,6 +28,7 @@ public class SalesInvoiceService {
     public List<SalesInvoice> getAllSalesInvoices(){
         return salesInvoiceRepo.findAll();
     }
+
     public Optional<SalesInvoice> getSalesInvoiceById( Long id){
         return Optional.of(salesInvoiceRepo.findById(id).get());
     }
@@ -84,7 +85,6 @@ public class SalesInvoiceService {
         salesInvoice.setTotalCost(BigDecimal.ZERO);
         salesInvoice.setMoneyForAccount(BigDecimal.ZERO);
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
-        salesInvoice.setStore(new Store(salesInvoiceDTO.getStore()));
         salesInvoice.setWhatPaid(BigDecimal.ZERO);
         salesInvoice.setWhatRemain(BigDecimal.ZERO);
         salesInvoice.setTotalCost(BigDecimal.ZERO);

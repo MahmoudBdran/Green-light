@@ -1,13 +1,17 @@
 package com.erp.greenlight.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class InvItemCardBatch {
 
     @Id
@@ -45,5 +49,10 @@ public class InvItemCardBatch {
 
     @Column(name = "is_send_to_archived")
     private Boolean isSendToArchived;
+
+
+    public InvItemCardBatch(Long id) {
+        this.id = id;
+    }
 }
 

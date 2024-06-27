@@ -26,7 +26,7 @@ public class StoreController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getAccountById(@PathVariable Long id){
+    public ResponseEntity<Object> getAccountById(@PathVariable Integer id){
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, storeService.findById(id) , true);
     }

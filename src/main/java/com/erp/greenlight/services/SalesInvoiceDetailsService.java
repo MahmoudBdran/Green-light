@@ -1,6 +1,7 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.InvoiceItemDTO;
+import com.erp.greenlight.DTOs.SalesInvoiceItemDTO;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,22 +23,110 @@ public class SalesInvoiceDetailsService {
     InvUomRepo invUomRepo;
     @Autowired
     InvItemCardRepo invItemCardRepo;
+
+    @Autowired
+    StoreRepo storeRepo;
+
+    @Autowired
+    InvItemCardBatchRepo invItemCardBatchRepo;
+
+    @Autowired
+    CustomerRepo customerRepo;
+
+    @Autowired
+    InvItemcardMovementRepo invItemcardMovementRepo;
+    @Autowired
+    AccountRepo accountRepo;
+
+    @Autowired
+    InvItemCardService invItemCardService;
+
+
     public List<SalesInvoiceDetail> findBySalesInvoiceId(Long id){
 
         return salesInvoiceDetailsRepo.findBySalesInvoiceId(id);
     }
 
     @Transactional
-    public SalesInvoiceDetail saveItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SalesInvoiceDetail saveItemInOrder(SalesInvoiceItemDTO request) throws JsonProcessingException {
 
-        SalesInvoiceDetail salesInvoiceDetail = new SalesInvoiceDetail();
-        //map from DTO to the Original Entity
 
-        return mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(parsedInvoiceItemDto, salesInvoiceDetail);
+        SalesInvoice salesInvoice = salesInvoiceRepo.findById(request.getOrderId()).orElseThrow();
+        InvItemCardBatch batchData = invItemCardBatchRepo.findById(request.getBatch()).orElseThrow();
+        InvItemCard invItemCard = invItemCardRepo.findById(request.getInvItemCard()).orElseThrow();
+        InvUom invUom = invUomRepo.findById(request.getUom()).orElseThrow();
+        Store store = storeRepo.findById(request.getStore()).orElseThrow();
+        Customer customer = salesInvoice.getCustomer();
+
+
+        SalesInvoiceDetail dataToInsertToInvoiceDetails = new SalesInvoiceDetail();
+
+
+        dataToInsertToInvoiceDetails.setStore(store);
+        dataToInsertToInvoiceDetails.setItem(invItemCard);
+        dataToInsertToInvoiceDetails.setUom(invUom);
+        dataToInsertToInvoiceDetails.setBatch(batchData);
+        dataToInsertToInvoiceDetails.setQuantity(request.getItemQuantity());
+        dataToInsertToInvoiceDetails.setUnitPrice(request.getUnitPrice());
+        dataToInsertToInvoiceDetails.setTotalPrice(request.getUnitPrice().multiply(request.getItemQuantity()));
+        dataToInsertToInvoiceDetails.setIsParentUom(invUom.isMaster());
+        dataToInsertToInvoiceDetails.setSalesInvoice(salesInvoice);
+
+
+        salesInvoiceDetailsRepo.save(dataToInsertToInvoiceDetails);
+
+        //خصم الكمية من الباتش
+        //كمية الصنف بكل المخازن قبل الحركة
+        BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+
+        //get Quantity Before any Action  حنجيب كيمة الصنف  بالمخزن المحدد معه   الحالي قبل الحركة
+        BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store );
+
+        InvItemCardBatch dataUpdateOldBatch = invItemCardBatchRepo.findById(request.getBatch()).orElseThrow();
+
+
+        //هنا حخصم الكمية لحظيا من باتش الصنف
+        //update current Batch تحديث علي الباتش القديمة
+        if (invUom.isMaster()) {
+            //حخصم بشكل مباشر لانه بنفس وحده الباتش الاب
+            dataUpdateOldBatch.setQuantity(batchData.getQuantity().subtract(request.getItemQuantity()));
+        } else {
+            //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
+            dataUpdateOldBatch.setQuantity((batchData.getQuantity().subtract( request.getItemQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
+        }
+
+
+        dataUpdateOldBatch.setTotalCostPrice(batchData.getUnitCostPrice().multiply(dataUpdateOldBatch.getQuantity()));
+        invItemCardBatchRepo.save(dataUpdateOldBatch);
+
+
+
+            BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+            BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
+
+            InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
+
+            dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
+            dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
+            dataInsertInvItemCardMovements.setItem(new InvItemCard(request.getInvItemCard()));
+            dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoice.getId());
+            dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
+            dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
+            dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());
+            dataInsertInvItemCardMovements.setQuantityAfterMoveStore( "عدد " + " " + ( quantityAfterMoveCurrentStore ) + " " +  invUom.getName());
+
+            dataInsertInvItemCardMovements.setStore(store);
+            //التاثير في حركة كارت الصنف
+            invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
+
+
+            invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
+
+            return  null;
 
     }
     @Transactional
-    public SalesInvoiceDetail updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SalesInvoiceDetail updateItemInOrder(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SalesInvoiceDetail supplierOrderDetails = salesInvoiceDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
         //map from DTO to the Original Entity
@@ -45,10 +134,10 @@ public class SalesInvoiceDetailsService {
         //
     }
     @Transactional
-    public SalesInvoiceDetail updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SalesInvoiceDetail updateItemBeingInsertedAgain(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
-        salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getDeliveredQuantity()));
+        salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getItemQuantity()));
         salesInvoiceDetail.setTotalPrice(salesInvoiceDetail.getUnitPrice().multiply(salesInvoiceDetail.getQuantity()));
         //map from DTO to the Original Entity
         //calculate the total price for the supplier order itself
@@ -89,15 +178,15 @@ public class SalesInvoiceDetailsService {
         return salesInvoiceRepo.save(salesInvoice);
     }
     @Transactional
-    public SalesInvoiceDetail mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(InvoiceItemDTO parsedInvoiceItemDto, SalesInvoiceDetail salesInvoiceDetail) {
+    public SalesInvoiceDetail mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(SalesInvoiceItemDTO parsedInvoiceItemDto, SalesInvoiceDetail salesInvoiceDetail) {
 
 
         salesInvoiceDetail.setSalesInvoice(new SalesInvoice(parsedInvoiceItemDto.getOrderId()));
         salesInvoiceDetail.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
         salesInvoiceDetail.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
-        salesInvoiceDetail.setQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
+        salesInvoiceDetail.setQuantity(parsedInvoiceItemDto.getItemQuantity());
         salesInvoiceDetail.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-        salesInvoiceDetail.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
+        salesInvoiceDetail.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getItemQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getItemQuantity()));
         salesInvoiceDetail.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
         salesInvoiceDetail.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
         salesInvoiceDetail.setSalesItemType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
@@ -120,7 +209,7 @@ public class SalesInvoiceDetailsService {
         SalesInvoice salesInvoice= salesInvoiceRepo.findById(id).orElseThrow();
         return salesInvoice.getIsApproved();
     }
-    public boolean checkItemInOrderOrNot(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public boolean checkItemInOrderOrNot(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
         System.out.println("entered checkItemInORderOrNot method");
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());

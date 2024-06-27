@@ -53,6 +53,9 @@ public class SupplierOrderService {
     AccountRepo accountRepo;
     @Autowired
     SupplierOrderDetailsRepo supplierOrderDetailsRepo;
+
+    @Autowired
+            StoreRepo storeRepo;
      SupplierOrderMapper mapper;
     public List<SupplierOrder> getAllSupplierOrders(){
         return supplierOrderRepo.findAll();
@@ -63,12 +66,14 @@ public class SupplierOrderService {
     public SupplierOrder saveSupplierOrder(SupplierOrderDTO supplierOrderDTO){
 
 
+        Store store = storeRepo.findById(supplierOrderDTO.getStore()).orElseThrow();
         Supplier supplier = supplierRepo.findById(supplierOrderDTO.getSupplier()).orElseThrow();
         SupplierOrder supplierOrder = new SupplierOrder();
+
         supplierOrder.setDocNo(supplierOrderDTO.getDocNo());
-        supplierOrder.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
+        supplierOrder.setSupplier(supplier);
         supplierOrder.setAccount(supplier.getAccount());
-        supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
+        supplierOrder.setStore(store);
         supplierOrder.setNotes(supplierOrderDTO.getNotes());
         supplierOrder.setPillType(supplierOrderDTO.getPillType());
         supplierOrder.setOrderDate(supplierOrder.getOrderDate());
@@ -122,19 +127,19 @@ public class SupplierOrderService {
         supplierOrder.setDiscountPercent(request.getDiscountPercent());
         supplierOrder.setDiscountValue(request.getDiscountValue());
         supplierOrder.setPillType(request.getPillType());
-        supplierOrder.setIsApproved(Boolean.TRUE);
+
         supplierOrder.setWhatPaid(request.getWhatPaid());
         supplierOrder.setWhatRemain(request.getWhatRemain());
         supplierOrder.setMoneyForAccount(supplierOrder.getTotalCost().multiply(new BigDecimal(-1)) );
 
         if(request.getPillType() ==1){
-            if(!Objects.equals(request.getWhatPaid(), supplierOrder.getTotalCost())){
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null , true);
+            if(request.getWhatPaid().compareTo( supplierOrder.getTotalCost() ) != 0 ){
+                return AppResponse.generateResponse("عفوا يجب ان يكون المبلغ بالكامل مدفوع في حالة الفاتورة كاش !!", HttpStatus.OK, null , true);
             }
         }
 
         if(request.getPillType() ==2){
-            if(Objects.equals(request.getWhatPaid(), supplierOrder.getTotalCost())){
+            if(request.getWhatPaid().compareTo( supplierOrder.getTotalCost() ) == 0){
                 return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null , true);
             }
         }
@@ -149,7 +154,7 @@ public class SupplierOrderService {
                 return AppResponse.generateResponse("عفوا لاتملتك الان رصيد كافي بخزنة الصرف  لكي تتمكن من اتمام عمليه الصرف ", HttpStatus.OK, null , true);
             }
         }
-
+        supplierOrder.setIsApproved(Boolean.TRUE);
         supplierOrderRepo.save(supplierOrder);
 
         if(request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0){

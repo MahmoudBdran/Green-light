@@ -21,7 +21,7 @@ public class StoreService {
     }
 
 
-    public Store findById(Long id){
+    public Store findById(Integer id){
 
         return repo.findById(id).orElseThrow();
     }

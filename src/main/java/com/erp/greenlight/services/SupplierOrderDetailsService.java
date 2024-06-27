@@ -95,15 +95,17 @@ public class SupplierOrderDetailsService {
     public List<SupplierOrderDetails> mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
 
 
+        InvItemCard invItemCard = invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).orElseThrow();
+        InvUom invUom = invUomRepo.findById(parsedInvoiceItemDto.getUom()).orElseThrow();
+
         supplierOrderDetails.setOrder(new SupplierOrder(parsedInvoiceItemDto.getOrderId()));
-        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
-        supplierOrderDetails.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
+        supplierOrderDetails.setInvItemCard(invItemCard);
+        supplierOrderDetails.setUom(invUom);
         supplierOrderDetails.setDeliveredQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
         supplierOrderDetails.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
         supplierOrderDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
         supplierOrderDetails.setOrderType(supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getOrderType());
         supplierOrderDetails.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
-        supplierOrderDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
         supplierOrderDetails.setBatchAutoSerial(1L);
         supplierOrderDetails.setItemCardType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
         //saving the supplierOrderDetails in the DB.

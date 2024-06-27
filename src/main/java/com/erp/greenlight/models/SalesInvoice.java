@@ -29,9 +29,7 @@ public class SalesInvoice {
     @ManyToOne()
     @JoinColumn(name = "sales_matrial_types",referencedColumnName = "id")
     private SalesMaterialType salesMaterialType;
-//
-//    @Column(name = "auto_serial")
-//    private Long autoSerial=1L;
+
 
     @Column(name = "invoice_date")
     @CreatedDate

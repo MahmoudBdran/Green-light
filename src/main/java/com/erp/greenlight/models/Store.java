@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Table(name = "stores")
+@EntityListeners({AuditingEntityListener.class})
 public class Store {
 
     @Id
@@ -34,7 +37,7 @@ public class Store {
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    @LastModifiedBy
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @CreatedBy
@@ -47,14 +50,9 @@ public class Store {
     @JoinColumn(name ="updated_by",referencedColumnName = "id")
     private Admin updatedBy;
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
-
-    @Column(name = "date")
-    private LocalDate date;
 
     @Column(name = "active", nullable = false)
-    private Boolean isActive;
+    private Boolean active;
 
     public Store(Integer id) {
         this.id = id;

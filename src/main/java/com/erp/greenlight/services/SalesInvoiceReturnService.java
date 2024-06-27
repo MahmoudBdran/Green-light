@@ -84,7 +84,6 @@ public class SalesInvoiceReturnService {
         salesInvoiceReturn.setTotalCost(BigDecimal.ZERO);
         salesInvoiceReturn.setMoneyForAccount(BigDecimal.ZERO);
         salesInvoiceReturn.setPillType(salesInvoiceDTO.getPillType());
-        salesInvoiceReturn.setStore(new Store(salesInvoiceDTO.getStore()));
         salesInvoiceReturn.setWhatPaid(BigDecimal.ZERO);
         salesInvoiceReturn.setWhatRemain(BigDecimal.ZERO);
         salesInvoiceReturn.setTotalCost(BigDecimal.ZERO);

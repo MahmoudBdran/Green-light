@@ -1,6 +1,12 @@
 package com.erp.greenlight.controllers;
 
+import com.erp.greenlight.DTOs.GetItemBatchDto;
 import com.erp.greenlight.DTOs.InvoiceItemDTO;
+import com.erp.greenlight.DTOs.SalesInvoiceItemDTO;
+import com.erp.greenlight.models.InvItemCard;
+import com.erp.greenlight.models.InvItemCardBatch;
+import com.erp.greenlight.repositories.InvItemCardBatchRepo;
+import com.erp.greenlight.repositories.InvUomRepo;
 import com.erp.greenlight.services.*;
 import com.erp.greenlight.utils.AppResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +35,13 @@ public class SalesInvoiceDetailsController {
     @Autowired
     private SalesInvoiceService salesInvoiceService;
 
+    @Autowired
+    InvItemCardBatchRepo invItemCardBatchRepo;
+
+    @Autowired
+    InvUomRepo invUomRepo;
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Object>  getSalesInvoiceDetails(@PathVariable Long id){
         Map<String, Object> data = new HashMap<>();
@@ -39,8 +53,9 @@ public class SalesInvoiceDetailsController {
        // return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceDetailsService.findBySalesInvoiceId(id) , true);
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
+
     @PostMapping("/saveItemInSalesInvoice")
-    public ResponseEntity<Object> saveItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+    public ResponseEntity<Object> saveItemInOrder(@RequestBody SalesInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         System.out.println("entered saveItemInOrder");
         if(salesInvoiceDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
@@ -51,7 +66,7 @@ public class SalesInvoiceDetailsController {
         }
     }
     @PutMapping("/updateItemInSalesInvoice")
-    public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+    public ResponseEntity<Object> updateItemInOrder(@RequestBody SalesInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.updateItemInOrder(invoiceItemDTO) , true);
     }
 
@@ -62,6 +77,23 @@ public class SalesInvoiceDetailsController {
         }
         return AppResponse.generateResponse("تم حذف الصنف من الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.deleteItemFromSalesInvoice(id) , true);
     }
+
+    @PostMapping("/getItemBatches")
+    public ResponseEntity<Object> getItemBatches(@RequestBody GetItemBatchDto request){
+
+
+        InvItemCard invItemCard = invItemCardService.getInvItemCardById(request.getInvItemId()).orElseThrow();
+        List<InvItemCardBatch> invItemCardBatch = invItemCardBatchRepo.findAllByStoreIdAndItemIdAndInvUomId(request.getStoreId(), invItemCard.getId(),invItemCard.getUom().getId());
+
+
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("uom", invUomRepo.findById(request.getUomId()));
+        data.put("invItemCardBatch",invItemCardBatch);
+
+        return AppResponse.generateResponse("invItemCardBatch", HttpStatus.OK,  data, true);
+    }
+
 
 
 }
