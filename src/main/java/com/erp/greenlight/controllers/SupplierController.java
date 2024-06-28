@@ -63,15 +63,15 @@ public class SupplierController {
 
         return AppResponse.generateResponse("تم تحديث معلومات المورد بنجاح", HttpStatus.OK, supplierService.updateSupplier(supplier) , true);
     }
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<Object> deleteSupplier(@PathVariable Long id){
-        if(supplierService.getSupplierById(id).isPresent()){
-            supplierService.deleteSupplier(id);
-            return AppResponse.generateResponse("تم حذف المورد والحساب الخاص به بنجاح", HttpStatus.OK,"deleted" , true);
-        }else{
-            return AppResponse.generateResponse("لم نتمكن من ايجاد المورد", HttpStatus.BAD_REQUEST, "ERROR", true);
-
-        }
-    }
+//    @DeleteMapping("delete/{id}")
+//    public ResponseEntity<Object> deleteSupplier(@PathVariable Long id){
+//        if(supplierService.getSupplierById(id).isPresent()){
+//            supplierService.deleteSupplier(id);
+//            return AppResponse.generateResponse("تم حذف المورد والحساب الخاص به بنجاح", HttpStatus.OK,"deleted" , true);
+//        }else{
+//            return AppResponse.generateResponse("لم نتمكن من ايجاد المورد", HttpStatus.BAD_REQUEST, "ERROR", true);
+//
+//        }
+//    }
 
 }
