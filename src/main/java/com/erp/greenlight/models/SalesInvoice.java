@@ -78,7 +78,7 @@ public class SalesInvoice {
 
     @ManyToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
-    private Account accountNumber; //relation with account
+    private Account account; //relation with account
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;
@@ -96,7 +96,7 @@ public class SalesInvoice {
     private BigDecimal whatRemain;  // Decimal for remaining amount
 
     @Column(name = "treasuries_transactions_id")
-    private Long treasuriesTransactionsId;  // Likely a foreign key for a TreasuryTransaction table
+    private Long treasuriesTransactionsId = 1L;  // Likely a foreign key for a TreasuryTransaction table
 
     @Column(name = "customer_balance_befor", precision = 10, scale = 2)
     private BigDecimal customerBalanceBefore;  // Decimal for customer balance before invoice
@@ -124,6 +124,7 @@ public class SalesInvoice {
     private Admin updatedBy;
 
     @ManyToOne()
+    @LastModifiedBy
     @JoinColumn(name = "approved_by",referencedColumnName = "id")
     private Admin approvedBy;
 

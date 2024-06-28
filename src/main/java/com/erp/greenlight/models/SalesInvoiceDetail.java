@@ -42,7 +42,7 @@ public class SalesInvoiceDetail {
     @Column(name = "sales_item_type", nullable = false)
     private Byte salesItemType=1;  // Byte for tinyint(1) - sales item type
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "item_code",referencedColumnName = "id") //inv item f k
     private InvItemCard item;  // Likely a foreign key referencing an Item table
 

@@ -6,9 +6,7 @@ import com.erp.greenlight.models.Account;
 import com.erp.greenlight.models.AccountType;
 import com.erp.greenlight.models.AdminPanelSettings;
 import com.erp.greenlight.models.Customer;
-import com.erp.greenlight.repositories.AccountRepo;
-import com.erp.greenlight.repositories.AdminPanelSettingsRepo;
-import com.erp.greenlight.repositories.CustomerRepo;
+import com.erp.greenlight.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,12 @@ public class CustomerService {
     AccountRepo accountRepo;
     @Autowired
     private AdminPanelSettingsRepo adminPanelSettingsRepo;
+
+    @Autowired
+    SalesInvoiceRepo salesInvoiceRepo;
+
+    @Autowired
+    TreasuriesTransactionsRepo treasuriesTransactionsRepo;
 
     public List<CustomerDto> getAllCustomers(){
         List<Customer> customers= repo.findAll();
@@ -124,5 +128,36 @@ public class CustomerService {
     }
     public void deleteCustomer( Long id){
         repo.deleteById(id);
+    }
+
+
+    public  void refreshAccountForCustomer(Account accountData, Customer customerData){
+        //حنجيب الرصيد الافتتاحي  للحساب اول المده لحظة تكويده
+
+        //لو عميل
+        if (accountData.getAccountType().getId()  == 3) {
+            //صافي مجموع المبيعات والمرتجعات للمورد
+            BigDecimal the_net_sales_invoicesForCustomer = salesInvoiceRepo.netSalesInvoicesForCustomer(accountData);
+            //    صافي  مرتجع المبيعات بس لما نعمله
+            BigDecimal the_net_sales_invoicesReturnForCustomer = BigDecimal.ZERO;// $SalesReturnModel::where(["account_number" => $account_number])->sum("money_for_account");
+            //صافي حركة النقديه بالخزن علي حساب العميل
+            BigDecimal the_net_in_treasuries_transactions = treasuriesTransactionsRepo.getNet(accountData);
+            //الرصيد النهائي للعميل
+            //حساب اول المده +صافي المبيعات والمرتجعات +صافي حركة النقدية بالخزن للحساب المالي للعميل الحالي
+
+
+            BigDecimal finalBalance = accountData.getStartBalance()
+                    .add(the_net_sales_invoicesForCustomer)
+                    .add(the_net_in_treasuries_transactions)
+                    .add(the_net_sales_invoicesReturnForCustomer);
+
+            accountData.setCurrentBalance(finalBalance);
+
+            accountRepo.save(accountData);
+
+            customerData.setCurrentBalance(finalBalance);
+            repo.save(customerData);
+
+        }
     }
 }

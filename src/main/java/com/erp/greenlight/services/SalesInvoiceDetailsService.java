@@ -48,7 +48,7 @@ public class SalesInvoiceDetailsService {
     }
 
     @Transactional
-    public SalesInvoiceDetail saveItemInOrder(SalesInvoiceItemDTO request) throws JsonProcessingException {
+    public List<SalesInvoiceDetail> saveItemInOrder(SalesInvoiceItemDTO request) throws JsonProcessingException {
 
 
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(request.getOrderId()).orElseThrow();
@@ -71,6 +71,9 @@ public class SalesInvoiceDetailsService {
         dataToInsertToInvoiceDetails.setTotalPrice(request.getUnitPrice().multiply(request.getItemQuantity()));
         dataToInsertToInvoiceDetails.setIsParentUom(invUom.isMaster());
         dataToInsertToInvoiceDetails.setSalesInvoice(salesInvoice);
+
+        salesInvoice.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
+        salesInvoiceRepo.save(salesInvoice);
 
 
         salesInvoiceDetailsRepo.save(dataToInsertToInvoiceDetails);
@@ -122,9 +125,10 @@ public class SalesInvoiceDetailsService {
 
             invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
 
-            return  null;
+            return  salesInvoice.getSalesInvoiceDetails();
 
     }
+
     @Transactional
     public SalesInvoiceDetail updateItemInOrder(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
@@ -162,6 +166,10 @@ public class SalesInvoiceDetailsService {
 
     @Transactional
     public SalesInvoice deleteItemFromSalesInvoice(Long id) {
+
+
+
+
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
         //map from DTO to the Original Entity
         //calculate the total price for the supplier order itself

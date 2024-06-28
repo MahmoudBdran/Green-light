@@ -87,12 +87,7 @@ public class SalesInvoiceController {
 
     @PostMapping("/approveSalesInvoice")
     public ResponseEntity<Object> approveSalesInvoice(@RequestBody SalesInvoice salesInvoice){
-        if(salesInvoiceService.checkOrderIsApproved(salesInvoice.getId())){
-            return AppResponse.generateResponse("الفاتوره بالفعل محفوظه", HttpStatus.BAD_REQUEST,null , false);
-        }else{
-
-            return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK,  salesInvoiceService.approveSalesInvoice(salesInvoice) , true);
-        }
+       return salesInvoiceService.approveSalesInvoice(salesInvoice);
     }
 
 
