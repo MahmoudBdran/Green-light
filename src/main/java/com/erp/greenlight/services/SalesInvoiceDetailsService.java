@@ -72,7 +72,8 @@ public class SalesInvoiceDetailsService {
         dataToInsertToInvoiceDetails.setIsParentUom(invUom.isMaster());
         dataToInsertToInvoiceDetails.setSalesInvoice(salesInvoice);
 
-        salesInvoice.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
+        salesInvoice.setTotalCost(salesInvoice.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
+        //salesInvoice.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
         salesInvoiceRepo.save(salesInvoice);
 
 
@@ -166,24 +167,86 @@ public class SalesInvoiceDetailsService {
 
     @Transactional
     public SalesInvoice deleteItemFromSalesInvoice(Long id) {
-
-
-
-
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
-        //map from DTO to the Original Entity
-        //calculate the total price for the supplier order itself
+        SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
+        //SalesInvoice salesInvoice = salesInvoiceRepo.findById(request.getOrderId()).orElseThrow();
+        InvItemCardBatch batchData = invItemCardBatchRepo.findById(salesInvoiceDetail.getBatch().getId()).orElseThrow();
+        InvItemCard invItemCard = invItemCardRepo.findById(salesInvoiceDetail.getItem().getId()).orElseThrow();
+        InvUom invUom = invUomRepo.findById(salesInvoiceDetail.getUom().getId()).orElseThrow();
+        Store store = storeRepo.findById(salesInvoiceDetail.getStore().getId()).orElseThrow();
+        Customer customer = salesInvoice.getCustomer();
+
+
         salesInvoiceDetailsRepo.deleteById(id);
         float totalPrice=0;
         for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())){
             totalPrice+=details.getTotalPrice().floatValue();
         }
-        SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
         salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
-        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
-        salesInvoice.setUpdatedBy(new Admin(1));
-        totalPrice=0;
-        return salesInvoiceRepo.save(salesInvoice);
+        salesInvoiceRepo.save(salesInvoice);
+
+        //خصم الكمية من الباتش
+        //كمية الصنف بكل المخازن قبل الحركة
+        BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+
+        //get Quantity Before any Action  حنجيب كيمة الصنف  بالمخزن المحدد معه   الحالي قبل الحركة
+        BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store );
+
+        InvItemCardBatch dataUpdateOldBatch = invItemCardBatchRepo.findById(salesInvoiceDetail.getBatch().getId()).orElseThrow();
+
+
+        //هنا حخصم الكمية لحظيا من باتش الصنف
+        //update current Batch تحديث علي الباتش القديمة
+        if (invUom.isMaster()) {
+            //حخصم بشكل مباشر لانه بنفس وحده الباتش الاب
+            dataUpdateOldBatch.setQuantity(batchData.getQuantity().subtract(salesInvoiceDetail.getQuantity()));
+        } else {
+            //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
+            dataUpdateOldBatch.setQuantity((batchData.getQuantity().subtract( salesInvoiceDetail.getQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
+        }
+
+
+        dataUpdateOldBatch.setTotalCostPrice(batchData.getUnitCostPrice().multiply(dataUpdateOldBatch.getQuantity()));
+        invItemCardBatchRepo.save(dataUpdateOldBatch);
+
+
+
+        BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+        BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
+
+        InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
+
+        dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
+        dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
+        dataInsertInvItemCardMovements.setItem(new InvItemCard(salesInvoiceDetail.getItem().getId()));
+        dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoice.getId());
+        dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityAfterMoveStore( "عدد " + " " + ( quantityAfterMoveCurrentStore ) + " " +  invUom.getName());
+
+        dataInsertInvItemCardMovements.setStore(store);
+        //التاثير في حركة كارت الصنف
+        invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
+
+
+        invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
+
+        return  salesInvoice;
+//        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
+//        //map from DTO to the Original Entity
+//        //calculate the total price for the supplier order itself
+//        salesInvoiceDetailsRepo.deleteById(id);
+//        float totalPrice=0;
+//        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())){
+//            totalPrice+=details.getTotalPrice().floatValue();
+//        }
+//        SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
+//        salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
+//        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
+//        salesInvoice.setUpdatedBy(new Admin(1));
+//        totalPrice=0;
+//        return salesInvoiceRepo.save(salesInvoice);
     }
     @Transactional
     public SalesInvoiceDetail mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(SalesInvoiceItemDTO parsedInvoiceItemDto, SalesInvoiceDetail salesInvoiceDetail) {
