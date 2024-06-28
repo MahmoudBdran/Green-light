@@ -21,6 +21,7 @@ public class SupplierOrderDTO {
     private String docNo;
 
     private Long orderId;
+    @CreatedDate
     private String orderDate;
 
     private Long supplier;

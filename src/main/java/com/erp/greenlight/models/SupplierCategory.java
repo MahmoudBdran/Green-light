@@ -11,7 +11,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "suppliers_categories")
 @EntityListeners({AuditingEntityListener.class})
 public class SupplierCategory {
@@ -43,4 +46,8 @@ public class SupplierCategory {
 
     @Column(name = "active", nullable = false)
     private Boolean active;
+
+    public SupplierCategory(Integer id) {
+        this.id = id;
+    }
 }
