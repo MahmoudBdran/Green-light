@@ -58,7 +58,6 @@ public class SupplierOrderReturnService {
 
         Supplier supplier = supplierRepo.findById(supplierOrderDTO.getSupplier()).orElseThrow();
         SupplierOrderReturn supplierOrderReturn = new SupplierOrderReturn();
-        supplierOrderReturn.setDocNo(supplierOrderDTO.getDocNo());
         supplierOrderReturn.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
         supplierOrderReturn.setAccount(supplier.getAccount());
         supplierOrderReturn.setStore(new Store(supplierOrderDTO.getStore()));

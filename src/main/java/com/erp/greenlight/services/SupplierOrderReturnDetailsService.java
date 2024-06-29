@@ -1,6 +1,6 @@
 package com.erp.greenlight.services;
 
-import com.erp.greenlight.DTOs.InvoiceItemDTO;
+import com.erp.greenlight.DTOs.ReturnInvoiceItemDTO;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,7 +28,7 @@ public class SupplierOrderReturnDetailsService {
     }
 
     @Transactional
-    public List<SupplierOrderReturnDetails> saveItemInOrderReturn(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public List<SupplierOrderReturnDetails> saveItemInOrderReturn(ReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SupplierOrderReturnDetails supplierOrderReturnDetails = new SupplierOrderReturnDetails();
         //map from DTO to the Original Entity
@@ -37,7 +37,7 @@ public class SupplierOrderReturnDetailsService {
 
     }
     @Transactional
-    public List<SupplierOrderReturnDetails> updateItemInOrderReturn(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public List<SupplierOrderReturnDetails> updateItemInOrderReturn(ReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SupplierOrderReturnDetails supplierOrderReturnDetails = supplierOrderReturnDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
         //map from DTO to the Original Entity
@@ -45,10 +45,10 @@ public class SupplierOrderReturnDetailsService {
         //
     }
     @Transactional
-    public SupplierOrderReturnDetails updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SupplierOrderReturnDetails updateItemBeingInsertedAgain(ReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SupplierOrderReturnDetails supplierOrderReturnDetails = supplierOrderReturnDetailsRepo.findByOrderReturnIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
-        supplierOrderReturnDetails.setDeliveredQuantity(supplierOrderReturnDetails.getDeliveredQuantity().add(parsedInvoiceItemDto.getDeliveredQuantity()));
+        supplierOrderReturnDetails.setDeliveredQuantity(supplierOrderReturnDetails.getDeliveredQuantity().add(parsedInvoiceItemDto.getItemQuantity()));
         supplierOrderReturnDetails.setTotalPrice(supplierOrderReturnDetails.getUnitPrice().multiply(supplierOrderReturnDetails.getDeliveredQuantity()));
         //map from DTO to the Original Entity
         //calculate the total price for the supplier order itself
@@ -89,15 +89,15 @@ public class SupplierOrderReturnDetailsService {
         return supplierOrderReturn.getSupplierOrderReturnDetailsItems();
     }
     @Transactional
-    public List<SupplierOrderReturnDetails> mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderReturnDetails supplierOrderReturnDetails) {
+    public List<SupplierOrderReturnDetails> mapSupplierOrderDetailsDtoToSupplierOrderDetails(ReturnInvoiceItemDTO parsedInvoiceItemDto,SupplierOrderReturnDetails supplierOrderReturnDetails) {
 
 
         supplierOrderReturnDetails.setOrderReturn(new SupplierOrderReturn(parsedInvoiceItemDto.getOrderId()));
         supplierOrderReturnDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
         supplierOrderReturnDetails.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
-        supplierOrderReturnDetails.setDeliveredQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
+        supplierOrderReturnDetails.setDeliveredQuantity(parsedInvoiceItemDto.getItemQuantity());
         supplierOrderReturnDetails.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-        supplierOrderReturnDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
+        supplierOrderReturnDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getItemQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getItemQuantity()));
         supplierOrderReturnDetails.setOrderType(supplierOrderReturnRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getOrderType());
         supplierOrderReturnDetails.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
         supplierOrderReturnDetails.setInvItemCard(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
@@ -122,7 +122,7 @@ public class SupplierOrderReturnDetailsService {
         SupplierOrderReturn supplierOrderReturn= supplierOrderReturnRepo.findById(supplierOrderReturnDetails.getOrderReturn().getId()).orElseThrow();
         return supplierOrderReturn.getIsApproved();
     }
-    public boolean checkItemInOrderOrNot(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public boolean checkItemInOrderOrNot(ReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
         System.out.println("entered checkItemInORderOrNot method");
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());

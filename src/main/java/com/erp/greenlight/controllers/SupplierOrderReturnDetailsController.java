@@ -1,6 +1,7 @@
 package com.erp.greenlight.controllers;
 
 import com.erp.greenlight.DTOs.InvoiceItemDTO;
+import com.erp.greenlight.DTOs.ReturnInvoiceItemDTO;
 import com.erp.greenlight.services.*;
 import com.erp.greenlight.utils.AppResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +41,7 @@ public class SupplierOrderReturnDetailsController {
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
     @PostMapping("/saveItemInOrderReturn")
-    public ResponseEntity<Object> saveItemInOrderReturn(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+    public ResponseEntity<Object> saveItemInOrderReturn(@RequestBody ReturnInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         System.out.println("entered saveItemInOrder");
         if(supplierOrderReturnDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
@@ -51,7 +52,7 @@ public class SupplierOrderReturnDetailsController {
         }
     }
     @PutMapping("/updateItemInOrderReturn")
-    public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+    public ResponseEntity<Object> updateItemInOrder(@RequestBody ReturnInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  supplierOrderReturnDetailsService.updateItemInOrderReturn(invoiceItemDTO) , true);
     }
 

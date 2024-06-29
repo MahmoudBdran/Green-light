@@ -31,11 +31,7 @@ public class SupplierOrderReturn {
     @Column(name = "order_type", nullable = false)
     private Byte orderType=1;  // Byte for tinyint(1)
 
-    @Column(name = "auto_serial")
-    private Long autoSerial;
 
-    @Column(name = "DOC_NO", length = 25)
-    private String docNo;
 
     @Column(name = "order_date")
     @CreatedDate
@@ -48,7 +44,6 @@ public class SupplierOrderReturn {
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved=false;  // Boolean for tinyint(1)
-
 
     @OneToMany(mappedBy = "orderReturn")
     private List<SupplierOrderReturnDetails> supplierOrderReturnDetailsItems;

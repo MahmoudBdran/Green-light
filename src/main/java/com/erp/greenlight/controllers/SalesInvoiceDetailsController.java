@@ -78,21 +78,7 @@ public class SalesInvoiceDetailsController {
         return AppResponse.generateResponse("تم حذف الصنف من الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.deleteItemFromSalesInvoice(id) , true);
     }
 
-    @PostMapping("/getItemBatches")
-    public ResponseEntity<Object> getItemBatches(@RequestBody GetItemBatchDto request){
 
-
-        InvItemCard invItemCard = invItemCardService.getInvItemCardById(request.getInvItemId()).orElseThrow();
-        List<InvItemCardBatch> invItemCardBatch = invItemCardBatchRepo.findAllByStoreIdAndItemIdAndInvUomId(request.getStoreId(), invItemCard.getId(),invItemCard.getUom().getId());
-
-
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("uom", invUomRepo.findById(request.getUomId()));
-        data.put("invItemCardBatch",invItemCardBatch);
-
-        return AppResponse.generateResponse("invItemCardBatch", HttpStatus.OK,  data, true);
-    }
 
 
 

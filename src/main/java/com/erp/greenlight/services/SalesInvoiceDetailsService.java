@@ -277,7 +277,7 @@ public class SalesInvoiceDetailsService {
     @Transactional
     public boolean checkOrderDetailsItemIsApproved(Long id){
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
-        SalesInvoice salesInvoice= salesInvoiceRepo.findById(id).orElseThrow();
+        SalesInvoice salesInvoice= salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
         return salesInvoice.getIsApproved();
     }
     public boolean checkItemInOrderOrNot(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
