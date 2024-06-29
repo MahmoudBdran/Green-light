@@ -199,10 +199,10 @@ public class SalesInvoiceDetailsService {
         //update current Batch تحديث علي الباتش القديمة
         if (invUom.isMaster()) {
             //حخصم بشكل مباشر لانه بنفس وحده الباتش الاب
-            dataUpdateOldBatch.setQuantity(batchData.getQuantity().subtract(salesInvoiceDetail.getQuantity()));
+            dataUpdateOldBatch.setQuantity(batchData.getQuantity().add(salesInvoiceDetail.getQuantity()));
         } else {
             //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
-            dataUpdateOldBatch.setQuantity((batchData.getQuantity().subtract( salesInvoiceDetail.getQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
+            dataUpdateOldBatch.setQuantity((batchData.getQuantity().add( salesInvoiceDetail.getQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
         }
 
 

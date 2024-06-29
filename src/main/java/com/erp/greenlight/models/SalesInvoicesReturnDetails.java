@@ -38,11 +38,15 @@ public class SalesInvoicesReturnDetails {
 
     @Column(name = "sales_item_type", nullable = false)
     private Byte salesItemType;
-
+    @ManyToOne()
+    @JoinColumn(name = "store_id",referencedColumnName = "id")
+    private Store store;  // Likely a foreign key referencing a Store
     @OneToOne()
     @JoinColumn(name = "item_Id",referencedColumnName = "id") //inv item f k
     private InvItemCard item;  // Likely a foreign key referencing an Item table
-
+    @ManyToOne()
+    @JoinColumn(name = "batch_id",referencedColumnName = "id")
+    private InvItemCardBatch batch;  // Likely a foreign key referencing a Batch table
     @ManyToOne()
     @JoinColumn(name = "uom_id",referencedColumnName = "id")
     private InvUom uom;
