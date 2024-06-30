@@ -2,10 +2,7 @@ package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.CustomerDto;
 import com.erp.greenlight.enums.StartBalanceStatusEnum;
-import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.AccountType;
-import com.erp.greenlight.models.AdminPanelSettings;
-import com.erp.greenlight.models.Customer;
+import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,5 +156,10 @@ public class CustomerService {
             repo.save(customerData);
 
         }
+    }
+
+    public Customer getCustomerByAccount(Long accountId){
+
+        return repo.findByAccountId(accountId);
     }
 }

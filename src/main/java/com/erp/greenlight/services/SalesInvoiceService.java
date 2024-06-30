@@ -26,7 +26,7 @@ public class SalesInvoiceService {
     SalesInvoiceDetailsRepo salesInvoiceDetailsRepo;
     SupplierOrderMapper mapper;
     @Autowired
-    private AccountRepo accountRepo;
+    private SalesInvoiceDetailsService salesInvoiceDetailsService;
     @Autowired
     private CustomerRepo customerRepo;
 
@@ -113,7 +113,9 @@ public class SalesInvoiceService {
     @Transactional
     public boolean deleteSalesInvoice(Long id) {
         for (SalesInvoiceDetail salesInvoiceDetail : salesInvoiceRepo.findById(id).get().getSalesInvoiceDetails()) {
-            salesInvoiceDetailsRepo.deleteById(salesInvoiceDetail.getId());
+
+            salesInvoiceDetailsService.deleteItem(salesInvoiceDetail.getId());
+
         }
         salesInvoiceRepo.deleteById(id);
         return true;

@@ -20,6 +20,8 @@ public interface TreasuriesTransactionsRepo extends JpaRepository<TreasuryTransa
     @Query("SELECT SUM(t.moneyForAccount) FROM TreasuryTransaction t WHERE t.account=:account")
     BigDecimal getNet(Account account);
 
+    @Query("SELECT SUM(t.money) FROM TreasuryTransaction t")
+    BigDecimal getAvailableBalance();
 
     List<TreasuryTransaction> findByMoneyGreaterThan(BigDecimal money);
     List<TreasuryTransaction> findByMoneyLessThan(BigDecimal money);

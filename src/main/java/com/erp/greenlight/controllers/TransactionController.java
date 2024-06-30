@@ -9,10 +9,7 @@ import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,27 +33,51 @@ public class TransactionController {
     @Autowired
     TreasuresTransactionService treasuresTransactionService;
 
-    @GetMapping("/collect")
+    @GetMapping("/collectFindAll")
     public ResponseEntity<Object> collectFindAll() {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accounts", accountService.getAllAccounts());
         data.put("treasuresTransactions", treasuresTransactionService.collectFindAll());
-        data.put("availableBalance", 0);
+        data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
 
-        return AppResponse.generateResponse("all_batches", HttpStatus.OK, data, true);
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
     }
 
-    @GetMapping("/exchange")
+    @GetMapping("/exchangeFindAll")
     public ResponseEntity<Object> exchangeFindAll() {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accounts", accountService.getAllAccounts());
         data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll());
-        data.put("availableBalance", 0);
+        data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
 
-        return AppResponse.generateResponse("all_batches", HttpStatus.OK, data, true);
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
     }
+
+    @PostMapping("/collect")
+    public ResponseEntity<Object> collect() {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("accounts", accountService.getAllAccounts());
+        data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll());
+        data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
+    }
+
+
+    @PostMapping("/exchange")
+    public ResponseEntity<Object> exchange() {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("accounts", accountService.getAllAccounts());
+        data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll());
+        data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
+    }
+
 
 
 

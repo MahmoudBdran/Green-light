@@ -166,4 +166,10 @@ public class SupplierService {
             accountRepo.save(accountData);
         }
     }
+
+
+    public Supplier getSupplierByAccount(Long accountId){
+
+        return supplierRepo.findByAccountId(accountId);
+    }
 }

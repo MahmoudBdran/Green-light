@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SupplierRepo extends JpaRepository<Supplier,Long> {
     Supplier findByName(String name);
+
+    Supplier findByAccountId(Long accountId);
 }

@@ -30,8 +30,6 @@ public class SalesInvoiceDetailsService {
     @Autowired
     InvItemCardBatchRepo invItemCardBatchRepo;
 
-    @Autowired
-    CustomerRepo customerRepo;
 
     @Autowired
     InvItemcardMovementRepo invItemcardMovementRepo;
@@ -43,7 +41,6 @@ public class SalesInvoiceDetailsService {
 
 
     public List<SalesInvoiceDetail> findBySalesInvoiceId(Long id){
-
         return salesInvoiceDetailsRepo.findBySalesInvoiceId(id);
     }
 
@@ -135,9 +132,7 @@ public class SalesInvoiceDetailsService {
     public SalesInvoiceDetail updateItemInOrder(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SalesInvoiceDetail supplierOrderDetails = salesInvoiceDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
-        //map from DTO to the Original Entity
         return mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(parsedInvoiceItemDto, supplierOrderDetails);
-        //
     }
     @Transactional
     public SalesInvoiceDetail updateItemBeingInsertedAgain(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
@@ -168,17 +163,26 @@ public class SalesInvoiceDetailsService {
 
     @Transactional
     public SalesInvoice deleteItemFromSalesInvoice(Long id) {
+
+        deleteItem(id);
+        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
+        return  salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
+     }
+
+
+    @Transactional
+    public void deleteItem(Long id){
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
-        //SalesInvoice salesInvoice = salesInvoiceRepo.findById(request.getOrderId()).orElseThrow();
         InvItemCardBatch batchData = invItemCardBatchRepo.findById(salesInvoiceDetail.getBatch().getId()).orElseThrow();
         InvItemCard invItemCard = invItemCardRepo.findById(salesInvoiceDetail.getItem().getId()).orElseThrow();
         InvUom invUom = invUomRepo.findById(salesInvoiceDetail.getUom().getId()).orElseThrow();
         Store store = storeRepo.findById(salesInvoiceDetail.getStore().getId()).orElseThrow();
         Customer customer = salesInvoice.getCustomer();
 
-
         salesInvoiceDetailsRepo.deleteById(id);
+
+
         float totalPrice=0;
         for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())){
             totalPrice+=details.getTotalPrice().floatValue();
@@ -196,7 +200,6 @@ public class SalesInvoiceDetailsService {
 
         InvItemCardBatch dataUpdateOldBatch = invItemCardBatchRepo.findById(salesInvoiceDetail.getBatch().getId()).orElseThrow();
 
-
         //هنا حخصم الكمية لحظيا من باتش الصنف
         //update current Batch تحديث علي الباتش القديمة
         if (invUom.isMaster()) {
@@ -206,12 +209,8 @@ public class SalesInvoiceDetailsService {
             //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
             dataUpdateOldBatch.setQuantity((batchData.getQuantity().add( salesInvoiceDetail.getQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
         }
-
-
         dataUpdateOldBatch.setTotalCostPrice(batchData.getUnitCostPrice().multiply(dataUpdateOldBatch.getQuantity()));
         invItemCardBatchRepo.save(dataUpdateOldBatch);
-
-
 
         BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
         BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
@@ -219,37 +218,23 @@ public class SalesInvoiceDetailsService {
         InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
 
         dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
-        dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
+        dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(16));
         dataInsertInvItemCardMovements.setItem(new InvItemCard(salesInvoiceDetail.getItem().getId()));
         dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoice.getId());
         dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityAfterMoveStore( "عدد " + " " + ( quantityAfterMoveCurrentStore ) + " " +  invUom.getName());
-
         dataInsertInvItemCardMovements.setStore(store);
+
         //التاثير في حركة كارت الصنف
         invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
 
-
         invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
 
-        return  salesInvoice;
-//        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
-//        //map from DTO to the Original Entity
-//        //calculate the total price for the supplier order itself
-//        salesInvoiceDetailsRepo.deleteById(id);
-//        float totalPrice=0;
-//        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())){
-//            totalPrice+=details.getTotalPrice().floatValue();
-//        }
-//        SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
-//        salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
-//        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
-//        salesInvoice.setUpdatedBy(new Admin(1));
-//        totalPrice=0;
-//        return salesInvoiceRepo.save(salesInvoice);
     }
+
+
     @Transactional
     public SalesInvoiceDetail mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(SalesInvoiceItemDTO parsedInvoiceItemDto, SalesInvoiceDetail salesInvoiceDetail) {
 

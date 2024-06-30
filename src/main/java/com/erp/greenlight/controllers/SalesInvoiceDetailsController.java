@@ -1,12 +1,6 @@
 package com.erp.greenlight.controllers;
 
-import com.erp.greenlight.DTOs.GetItemBatchDto;
-import com.erp.greenlight.DTOs.InvoiceItemDTO;
 import com.erp.greenlight.DTOs.SalesInvoiceItemDTO;
-import com.erp.greenlight.models.InvItemCard;
-import com.erp.greenlight.models.InvItemCardBatch;
-import com.erp.greenlight.repositories.InvItemCardBatchRepo;
-import com.erp.greenlight.repositories.InvUomRepo;
 import com.erp.greenlight.services.*;
 import com.erp.greenlight.utils.AppResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,14 +25,6 @@ public class SalesInvoiceDetailsController {
 
     @Autowired
     private InvUomService invUomService;
-    @Autowired
-    private SalesInvoiceService salesInvoiceService;
-
-    @Autowired
-    InvItemCardBatchRepo invItemCardBatchRepo;
-
-    @Autowired
-    InvUomRepo invUomRepo;
 
 
     @GetMapping("/{id}")

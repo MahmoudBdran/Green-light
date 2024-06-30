@@ -56,7 +56,8 @@ public class Treasure {
     @Column(name = "active", nullable = false)
     private Boolean isActive;  // Boolean for tinyint(1)
 
-    // Getters and setters (optional but recommended)
-    // ...
+    public Treasure(Integer id) {
+        this.id = id;
+    }
 }
 
