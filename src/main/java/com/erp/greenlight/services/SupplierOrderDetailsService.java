@@ -31,7 +31,7 @@ public class SupplierOrderDetailsService {
     }
 
     @Transactional
-    public List<SupplierOrderDetails> saveItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SupplierOrder saveItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SupplierOrderDetails supplierOrderDetails = new SupplierOrderDetails();
         //map from DTO to the Original Entity
@@ -40,7 +40,7 @@ public class SupplierOrderDetailsService {
 
     }
     @Transactional
-    public List<SupplierOrderDetails> updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SupplierOrder updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
         //map from DTO to the Original Entity
@@ -75,7 +75,7 @@ public class SupplierOrderDetailsService {
     }
 
     @Transactional
-    public  List<SupplierOrderDetails> deleteItemFromSupplierOrder(Long id) {
+    public  SupplierOrder deleteItemFromSupplierOrder(Long id) {
         SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(id).orElseThrow();
         //map from DTO to the Original Entity
         //calculate the total price for the supplier order itself
@@ -89,10 +89,10 @@ public class SupplierOrderDetailsService {
         supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost().add(supplierOrder.getTaxValue()==null? BigDecimal.ZERO:supplierOrder.getTaxValue()));
         totalPrice=0;
          supplierOrderRepo.save(supplierOrder);
-        return supplierOrder.getSupplierOrderDetailsItems();
+        return supplierOrder;
     }
     @Transactional
-    public List<SupplierOrderDetails> mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
+    public SupplierOrder mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
 
 
         InvItemCard invItemCard = invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).orElseThrow();
@@ -119,7 +119,7 @@ public class SupplierOrderDetailsService {
         supplierOrderRepo.save(supplierOrder);
 
 
-      return supplierOrderRepo.findById(supplierOrderDetails.getOrder().getId()).orElseThrow().getSupplierOrderDetailsItems();
+      return supplierOrderRepo.findById(supplierOrderDetails.getOrder().getId()).orElseThrow();
     }
     @Transactional
     public boolean checkOrderDetailsItemIsApproved(Long id){

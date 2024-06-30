@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -31,6 +32,9 @@ public class SupplierOrderService {
     InvItemCardRepo invItemCardRepo;
 
     @Autowired
+    InvItemCardService invItemCardService;
+
+    @Autowired
     TreasureRepo treasureRepo;
 
     @Autowired
@@ -47,15 +51,21 @@ public class SupplierOrderService {
     SupplierOrderDetailsRepo supplierOrderDetailsRepo;
 
     @Autowired
-            StoreRepo storeRepo;
-     SupplierOrderMapper mapper;
-    public List<SupplierOrder> getAllSupplierOrders(){
+    SupplierService supplierService;
+
+    @Autowired
+    StoreRepo storeRepo;
+    SupplierOrderMapper mapper;
+
+    public List<SupplierOrder> getAllSupplierOrders() {
         return supplierOrderRepo.findAllByOrderType(SupplierOrderType.BURSHASE);
     }
-    public Optional<SupplierOrder> getSupplierOrderById( Long id){
+
+    public Optional<SupplierOrder> getSupplierOrderById(Long id) {
         return Optional.of(supplierOrderRepo.findById(id).get());
     }
-    public SupplierOrder saveSupplierOrder(SupplierOrderDTO supplierOrderDTO){
+
+    public SupplierOrder saveSupplierOrder(SupplierOrderDTO supplierOrderDTO) {
 
 
         Store store = storeRepo.findById(supplierOrderDTO.getStore()).orElseThrow();
@@ -75,36 +85,37 @@ public class SupplierOrderService {
         return supplierOrderRepo.save(supplierOrder);
     }
 
-    public SupplierOrder updateSupplierOrder(SupplierOrder supplierOrder){
+    public SupplierOrder updateSupplierOrder(SupplierOrder supplierOrder) {
         return supplierOrderRepo.save(supplierOrder);
     }
+
     @Transactional
-    public boolean deleteSupplierOrder(Long id){
-         for(SupplierOrderDetails supplierOrderDetails: supplierOrderRepo.findById(id).get().getSupplierOrderDetailsItems()){
-             supplierOrderDetailsRepo.deleteById(supplierOrderDetails.getId());
-         }
-         supplierOrderRepo.deleteById(id);
+    public boolean deleteSupplierOrder(Long id) {
+        for (SupplierOrderDetails supplierOrderDetails : supplierOrderRepo.findById(id).get().getSupplierOrderDetailsItems()) {
+            supplierOrderDetailsRepo.deleteById(supplierOrderDetails.getId());
+        }
+        supplierOrderRepo.deleteById(id);
         return true;
 
     }
 
     @Transactional
-    public boolean checkOrderIsApproved(Long id){
-        SupplierOrder supplierOrder=supplierOrderRepo.findById(id).orElseThrow();
-       return supplierOrder.getIsApproved();
+    public boolean checkOrderIsApproved(Long id) {
+        SupplierOrder supplierOrder = supplierOrderRepo.findById(id).orElseThrow();
+        return supplierOrder.getIsApproved();
     }
 
 
     @Transactional
-    public ResponseEntity<Object> approve(ApproveSupplierOrderDTO request){
+    public ResponseEntity<Object> approve(ApproveSupplierOrderDTO request) {
 
         SupplierOrder supplierOrder = supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
 
         Supplier supplier = supplierOrder.getSupplier();
         Store store = supplierOrder.getStore();
 
-        if(supplierOrder.getIsApproved()){
-            return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null , true);
+        if (supplierOrder.getIsApproved()) {
+            return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null, true);
         }
 
         supplierOrder.setTaxPercent(request.getTaxPercent());
@@ -117,34 +128,34 @@ public class SupplierOrderService {
 
         supplierOrder.setWhatPaid(request.getWhatPaid());
         supplierOrder.setWhatRemain(request.getWhatRemain());
-        supplierOrder.setMoneyForAccount(supplierOrder.getTotalCost().multiply(new BigDecimal(-1)) );
+        supplierOrder.setMoneyForAccount(supplierOrder.getTotalCost().multiply(new BigDecimal(-1)));
 
-        if(request.getPillType() ==1){
-            if(request.getWhatPaid().compareTo( supplierOrder.getTotalCost() ) != 0 ){
-                return AppResponse.generateResponse("عفوا يجب ان يكون المبلغ بالكامل مدفوع في حالة الفاتورة كاش !!", HttpStatus.OK, null , true);
+        if (request.getPillType() == 1) {
+            if (request.getWhatPaid().compareTo(supplierOrder.getTotalCost()) != 0) {
+                return AppResponse.generateResponse("عفوا يجب ان يكون المبلغ بالكامل مدفوع في حالة الفاتورة كاش !!", HttpStatus.OK, null, true);
             }
         }
 
-        if(request.getPillType() ==2){
-            if(request.getWhatPaid().compareTo( supplierOrder.getTotalCost() ) == 0){
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null , true);
+        if (request.getPillType() == 2) {
+            if (request.getWhatPaid().compareTo(supplierOrder.getTotalCost()) == 0) {
+                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null, true);
             }
         }
 
-        if(request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0){
+        if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
             if (request.getWhatPaid().compareTo(supplierOrder.getTotalCost()) > 0) {
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة ", HttpStatus.OK, null , true);
+                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة ", HttpStatus.OK, null, true);
             }
 
             BigDecimal balance = treasuriesTransactionsRepo.getBalance();
             if (balance.compareTo(request.getWhatPaid()) < 0) {
-                return AppResponse.generateResponse("عفوا لاتملتك الان رصيد كافي بخزنة الصرف  لكي تتمكن من اتمام عمليه الصرف ", HttpStatus.OK, null , true);
+                return AppResponse.generateResponse("عفوا لاتملتك الان رصيد كافي بخزنة الصرف  لكي تتمكن من اتمام عمليه الصرف ", HttpStatus.OK, null, true);
             }
         }
         supplierOrder.setIsApproved(Boolean.TRUE);
         supplierOrderRepo.save(supplierOrder);
 
-        if(request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0){
+        if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
             Treasure treasure = treasureRepo.findById(1L).orElseThrow();
             Account account = supplier.getAccount();
 
@@ -167,26 +178,13 @@ public class SupplierOrderService {
             treasure.setLastIsalExchange(newTreasureTransaction.getId());
             treasureRepo.save(treasure);
 
-            if(account.getAccountType().getId() == 2L){
-                BigDecimal the_net_in_suppliers_with_orders = supplierOrderRepo.getNet(account);
-                BigDecimal the_net_in_treasuries_transactions = treasuriesTransactionsRepo.getNet(account);
-
-                BigDecimal finalBalance =account.getStartBalance()
-                        .add(the_net_in_treasuries_transactions)
-                        .add(the_net_in_suppliers_with_orders);
-
-                supplier.setCurrentBalance(finalBalance);
-                supplierRepo.save(supplier);
-
-                account.setCurrentBalance(finalBalance);
-                accountRepo.save(account);
-            }
+            supplierService.refreshAccountForSupplier(account, supplier);
         }
         ///////////////////ok
 
         List<SupplierOrderDetails> items = supplierOrder.getSupplierOrderDetailsItems();
 
-        items.forEach( item->{
+        items.forEach(item -> {
 
             BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(item.getInvItemCard());
             BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(item.getInvItemCard(), store);
@@ -196,16 +194,16 @@ public class SupplierOrderService {
             BigDecimal quantity = null;
             BigDecimal unitPrice = null;
 
-            if(item.getIsParentUom()){
+            if (item.getIsParentUom()) {
                 quantity = item.getDeliveredQuantity();
                 unitPrice = item.getUnitPrice();
-            }else{
-                quantity = ( item.getDeliveredQuantity().divide(item.getInvItemCard().getRetailUomQuntToParent())) ;
+            } else {
+                quantity = (item.getDeliveredQuantity().divide(item.getInvItemCard().getRetailUomQuntToParent()));
                 unitPrice = item.getUnitPrice().multiply(item.getInvItemCard().getRetailUomQuntToParent());
             }
 
 
-            InvItemCardBatch newInvItemCardBatch  = new InvItemCardBatch();
+            InvItemCardBatch newInvItemCardBatch = new InvItemCardBatch();
 
             newInvItemCardBatch.setStore(store);
             newInvItemCardBatch.setItem(item.getInvItemCard());
@@ -213,15 +211,15 @@ public class SupplierOrderService {
             newInvItemCardBatch.setUnitCostPrice(unitPrice);
             newInvItemCardBatch.setInvUom(uom);
 
-            List<InvItemCardBatch> oldBatches = invItemCardBatchRepo.findAllByStoreIdAndItemIdAndInvUomIdAndUnitCostPriceAndQuantity(store.getId(), item.getInvItemCard().getId(), uom.getId(), unitPrice,quantity);
+            List<InvItemCardBatch> oldBatches = invItemCardBatchRepo.findAllByStoreIdAndItemIdAndInvUomIdAndUnitCostPriceAndQuantity(store.getId(), item.getInvItemCard().getId(), uom.getId(), unitPrice, quantity);
 
-            if (!oldBatches.isEmpty()){
-                InvItemCardBatch updateInvItemCardBatch  = oldBatches.get(0);
+            if (!oldBatches.isEmpty()) {
+                InvItemCardBatch updateInvItemCardBatch = oldBatches.get(0);
                 updateInvItemCardBatch.setQuantity(quantity);
                 updateInvItemCardBatch.setTotalCostPrice(updateInvItemCardBatch.getUnitCostPrice().multiply(updateInvItemCardBatch.getQuantity()));
 
                 invItemCardBatchRepo.save(updateInvItemCardBatch);
-            }else{
+            } else {
                 newInvItemCardBatch.setTotalCostPrice(item.getTotalPrice());
                 invItemCardBatchRepo.save(newInvItemCardBatch);
             }
@@ -231,49 +229,47 @@ public class SupplierOrderService {
             BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(item.getInvItemCard(), store);
 
 
-
             InvItemcardMovement newMovement = new InvItemcardMovement();
 
             newMovement.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(1));
             newMovement.setInvItemcardMovementsType(new InvItemcardMovementsType(1));
             newMovement.setItem(item.getInvItemCard());
-            newMovement.setByan("نظير مشتريات من المورد " +" " + supplier.getName() + " فاتورة رقم" + " " + supplierOrder.getId());
+            newMovement.setByan("نظير مشتريات من المورد " + " " + supplier.getName() + " فاتورة رقم" + " " + supplierOrder.getId());
 
-            newMovement.setQuantityBeforMovement("عدد " + " " + quantityBeforeMove  + " " + uom.getName());
-            newMovement.setQuantityAfterMove("عدد " + " " + quantityAfterMove  + " " + uom.getName());
+            newMovement.setQuantityBeforMovement("عدد " + " " + quantityBeforeMove + " " + uom.getName());
+            newMovement.setQuantityAfterMove("عدد " + " " + quantityAfterMove + " " + uom.getName());
 
 
-            newMovement.setQuantityBeforMoveStore("عدد " + " " + quantityBeforeMoveCurrentStore  + " " + uom.getName());
-            newMovement.setQuantityAfterMoveStore("عدد " + " " + quantityAfterMoveCurrentStore  + " " + uom.getName());
+            newMovement.setQuantityBeforMoveStore("عدد " + " " + quantityBeforeMoveCurrentStore + " " + uom.getName());
+            newMovement.setQuantityAfterMoveStore("عدد " + " " + quantityAfterMoveCurrentStore + " " + uom.getName());
             newMovement.setStore(store);
 
 
             invItemcardMovementRepo.save(newMovement);
 
-            InvItemCard updateInvItemCard =item.getInvItemCard();
+            InvItemCard updateInvItemCard = item.getInvItemCard();
 
 
             //update last Cost price   تحديث اخر سعر شراء للصنف
             if (item.getIsParentUom()) {
                 updateInvItemCard.setCostPrice(item.getUnitPrice());
                 if (item.getInvItemCard().isDoesHasRetailUnit()) {
-
                     updateInvItemCard.setCostPriceRetail(item.getUnitPrice().divide(item.getInvItemCard().getRetailUomQuntToParent(), 2, RoundingMode.CEILING));
-
-                } else {
+                }
+            }else {
                     updateInvItemCard.setCostPrice(item.getUnitPrice().multiply(item.getInvItemCard().getRetailUomQuntToParent()));
                     updateInvItemCard.setCostPriceRetail(item.getUnitPrice());
-                }
-
-                invItemCardRepo.save(updateInvItemCard);
-
             }
-            });
+
+            invItemCardRepo.save(updateInvItemCard);
+
+            invItemCardService.doUpdateItemCardQuantity(updateInvItemCard, null);
 
 
+        });
 
 
-        return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, null , true);
+        return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, null, true);
     }
 
 }
