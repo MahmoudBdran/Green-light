@@ -1,5 +1,6 @@
 package com.erp.greenlight.models;
 
+import com.erp.greenlight.enums.SupplierOrderType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -29,7 +30,7 @@ public class SupplierOrder {
     private Long id;
 
     @Column(name = "order_type", nullable = false)
-    private Byte orderType=1;  // Byte for tinyint(1)
+    private SupplierOrderType orderType;  // Byte for tinyint(1)
 
     @Column(name = "auto_serial")
     private Long autoSerial;

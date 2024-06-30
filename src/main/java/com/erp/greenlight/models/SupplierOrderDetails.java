@@ -1,5 +1,6 @@
 package com.erp.greenlight.models;
 
+import com.erp.greenlight.enums.SupplierOrderType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,11 +36,7 @@ public class SupplierOrderDetails {
 
 
     @Column(name = "order_type", nullable = false)
-
-    private Byte orderType;  // Byte for tinyint(1)
-
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
+    private SupplierOrderType orderType;
 
     @Column(name = "deliverd_quantity", nullable = false, precision = 10, scale = 2)
     private BigDecimal deliveredQuantity;

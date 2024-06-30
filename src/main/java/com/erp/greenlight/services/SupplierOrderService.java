@@ -1,30 +1,22 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.ApproveSupplierOrderDTO;
-import com.erp.greenlight.DTOs.InvoiceItemDTO;
 import com.erp.greenlight.DTOs.SupplierOrderDTO;
+import com.erp.greenlight.enums.SupplierOrderType;
 import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.beans.Transient;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -58,7 +50,7 @@ public class SupplierOrderService {
             StoreRepo storeRepo;
      SupplierOrderMapper mapper;
     public List<SupplierOrder> getAllSupplierOrders(){
-        return supplierOrderRepo.findAll();
+        return supplierOrderRepo.findAllByOrderType(SupplierOrderType.BURSHASE);
     }
     public Optional<SupplierOrder> getSupplierOrderById( Long id){
         return Optional.of(supplierOrderRepo.findById(id).get());
@@ -79,16 +71,11 @@ public class SupplierOrderService {
         supplierOrder.setOrderDate(supplierOrder.getOrderDate());
         supplierOrder.setTotalCost(BigDecimal.ZERO);
         supplierOrder.setDiscountValue(BigDecimal.ZERO);
+        supplierOrder.setOrderType(SupplierOrderType.BURSHASE);
         return supplierOrderRepo.save(supplierOrder);
     }
 
     public SupplierOrder updateSupplierOrder(SupplierOrder supplierOrder){
-//        SupplierOrder supplierOrder = supplierOrderRepo.findById(supplierOrderDTO.getOrderId()).get();
-//        supplierOrder.setDocNo(supplierOrderDTO.getDocNo());
-//        supplierOrder.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
-//        supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
-//        supplierOrder.setNotes(supplierOrderDTO.getNotes());
-//        supplierOrder.setPillType(supplierOrderDTO.getPillType());
         return supplierOrderRepo.save(supplierOrder);
     }
     @Transactional

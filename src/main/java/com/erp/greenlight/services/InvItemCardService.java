@@ -2,8 +2,10 @@ package com.erp.greenlight.services;
 
 import com.erp.greenlight.models.InvItemCard;
 import com.erp.greenlight.models.InvItemCardBatch;
+import com.erp.greenlight.models.InvUom;
 import com.erp.greenlight.repositories.InvItemCardBatchRepo;
 import com.erp.greenlight.repositories.InvItemCardRepo;
+import com.erp.greenlight.repositories.InvUomRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,9 @@ public class InvItemCardService {
     @Autowired
     InvItemCardBatchRepo batchRepo;
 
+    @Autowired
+    InvUomRepo invUomRepo;
+
     public List<InvItemCard> getAllInvItemCards(){
         return repo.findAll();
     }
@@ -35,10 +40,13 @@ public class InvItemCardService {
         if(invItemcard.getParentInvItemCard().getId() == null){
             invItemcard.setParentInvItemCard(null);
         }
+
+        //InvUom uom = invUomRepo.findById(invItemcard.getUom().getId()).orElseThrow();
+        //invItemcard.setUom(uom);
         return repo.save(invItemcard);
     }
     public void deleteInvItemCard( Long id){
-        repo.deleteById(id);
+       // repo.deleteById(id);
     }
 
 

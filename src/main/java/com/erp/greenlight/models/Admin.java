@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,16 +36,12 @@ public class Admin {
     private String password;
 
     @Column(updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @Column(updatable = false)
+    @LastModifiedDate
     private LocalDateTime updatedAt;
-
-
-    private Integer addedBy=0;
-
-    @Column(updatable = false)
-    private Integer updatedBy;
 
 
 

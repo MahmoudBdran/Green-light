@@ -46,25 +46,12 @@ public class AdminPanelSettings {
     @Column(nullable = false)
     private Long suppliersParentAccountNumber;
 
-    @Column(nullable = false)
-    private Long employeesParentAccountNumber;
-
 
     @ManyToOne()
     @JoinColumn(name = "added_by",referencedColumnName = "id")
     @CreatedBy
     private Admin addedBy;
 
-    @ManyToOne()
-    @JoinColumn(name = "updated_by",referencedColumnName = "id")
-    @LastModifiedBy
-    private Admin updatedBy;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt=LocalDateTime.now();
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     private String notes;
 }

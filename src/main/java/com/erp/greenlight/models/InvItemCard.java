@@ -61,11 +61,11 @@ public class InvItemCard {
     private boolean doesHasRetailUnit;
 
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "retail_uom_id", referencedColumnName = "id")
     private InvUom retailUom;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "uom_id", referencedColumnName = "id")
     private InvUom uom;
     

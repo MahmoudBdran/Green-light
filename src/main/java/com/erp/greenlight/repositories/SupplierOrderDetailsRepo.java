@@ -14,4 +14,5 @@ public interface SupplierOrderDetailsRepo extends JpaRepository<SupplierOrderDet
     Optional<SupplierOrderDetails> findByOrderIdAndInvItemCard_IdAndUomId(Long orderId, Long invItemCardId, Long uomId);
 
     List<SupplierOrderDetails>findByOrderId(Long id);
-}
+
+ }

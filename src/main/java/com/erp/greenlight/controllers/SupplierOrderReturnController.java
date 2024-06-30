@@ -3,7 +3,6 @@ package com.erp.greenlight.controllers;
 import com.erp.greenlight.DTOs.ApproveSupplierOrderDTO;
 import com.erp.greenlight.DTOs.SupplierOrderDTO;
 import com.erp.greenlight.models.SupplierOrder;
-import com.erp.greenlight.models.SupplierOrderReturn;
 import com.erp.greenlight.services.StoreService;
 import com.erp.greenlight.services.SupplierOrderReturnService;
 import com.erp.greenlight.services.SupplierService;
@@ -56,7 +55,7 @@ public class SupplierOrderReturnController {
         return AppResponse.generateResponse("تم حفط فاتورة مرتجع المشتريات بنجاح", HttpStatus.OK, supplierOrderReturnService.saveSupplierOrderReturn(supplierOrderDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSupplierOrderReturn(@RequestBody SupplierOrderReturn supplierOrderReturn){
+    public ResponseEntity<Object> updateSupplierOrderReturn(@RequestBody SupplierOrder supplierOrderReturn){
         return AppResponse.generateResponse("تم تحديث اوردر مرتجعات المورد بنجاح", HttpStatus.OK, supplierOrderReturnService.updateSupplierOrderReturn(supplierOrderReturn) , true);
     }
 

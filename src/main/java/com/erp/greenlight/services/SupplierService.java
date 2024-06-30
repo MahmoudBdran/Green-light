@@ -27,7 +27,7 @@ public class SupplierService {
     private AdminPanelSettingsRepo adminPanelSettingsRepo;
 
     @Autowired
-    SupplierOrderReturnRepo supplierOrderReturnRepo;
+    SupplierOrderRepo supplierOrderRepo;
 
     @Autowired
     TreasuriesTransactionsRepo treasuriesTransactionsRepo;
@@ -152,7 +152,7 @@ public class SupplierService {
     public  void refreshAccountForSupplier(Account accountData, Supplier supplier){
 
         if (accountData.getAccountType().getId() == 2L) {
-            BigDecimal the_net_in_suppliers_with_orders = supplierOrderReturnRepo.getNet(accountData);
+            BigDecimal the_net_in_suppliers_with_orders = supplierOrderRepo.getNet(accountData);
             BigDecimal the_net_in_treasuries_transactions = treasuriesTransactionsRepo.getNet(accountData);
 
             BigDecimal finalBalance = accountData.getStartBalance()

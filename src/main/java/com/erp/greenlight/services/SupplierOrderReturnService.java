@@ -2,6 +2,7 @@ package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.ApproveSupplierOrderDTO;
 import com.erp.greenlight.DTOs.SupplierOrderDTO;
+import com.erp.greenlight.enums.SupplierOrderType;
 import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @Service
 public class SupplierOrderReturnService {
     @Autowired
-    SupplierOrderReturnRepo supplierOrderReturnRepo;
+    SupplierOrderRepo supplierOrderRepo;
 
     @Autowired
     TreasuriesTransactionsRepo treasuriesTransactionsRepo;
@@ -45,7 +46,7 @@ public class SupplierOrderReturnService {
     @Autowired
     AccountRepo accountRepo;
     @Autowired
-    SupplierOrderReturnDetailsRepo supplierOrderReturnDetailsRepo;
+    SupplierOrderDetailsRepo SupplierOrderDetailsRepo;
 
     @Autowired
     SupplierService supplierService;
@@ -54,95 +55,91 @@ public class SupplierOrderReturnService {
     InvItemCardService invItemCardService;
     SupplierOrderMapper mapper;
 
-    public List<SupplierOrderReturn> getAllSupplierOrdersReturns() {
-        return supplierOrderReturnRepo.findAll();
+    public List<SupplierOrder> getAllSupplierOrdersReturns() {
+        return supplierOrderRepo.findAllByOrderType(SupplierOrderType.RETURN_ON_GENERAL);
     }
 
-    public Optional<SupplierOrderReturn> getSupplierOrderReturnById(Long id) {
-        return Optional.of(supplierOrderReturnRepo.findById(id).orElseThrow());
+    public Optional<SupplierOrder> getSupplierOrderReturnById(Long id) {
+        return Optional.of(supplierOrderRepo.findById(id).orElseThrow());
     }
 
-    public SupplierOrderReturn saveSupplierOrderReturn(SupplierOrderDTO supplierOrderDTO) {
+    public SupplierOrder saveSupplierOrderReturn(SupplierOrderDTO supplierOrderDTO) {
 
 
         Supplier supplier = supplierRepo.findById(supplierOrderDTO.getSupplier()).orElseThrow();
-        SupplierOrderReturn supplierOrderReturn = new SupplierOrderReturn();
-        supplierOrderReturn.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
-        supplierOrderReturn.setAccount(supplier.getAccount());
-        supplierOrderReturn.setStore(new Store(supplierOrderDTO.getStore()));
-        supplierOrderReturn.setNotes(supplierOrderDTO.getNotes());
-        supplierOrderReturn.setPillType(supplierOrderDTO.getPillType());
-        supplierOrderReturn.setOrderDate(supplierOrderReturn.getOrderDate());
-        supplierOrderReturn.setTotalCost(BigDecimal.ZERO);
-        supplierOrderReturn.setDiscountValue(BigDecimal.ZERO);
-        return supplierOrderReturnRepo.save(supplierOrderReturn);
+        SupplierOrder supplierOrder = new SupplierOrder();
+        supplierOrder.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
+        supplierOrder.setAccount(supplier.getAccount());
+        supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
+        supplierOrder.setNotes(supplierOrderDTO.getNotes());
+        supplierOrder.setPillType(supplierOrderDTO.getPillType());
+        supplierOrder.setOrderDate(supplierOrder.getOrderDate());
+        supplierOrder.setTotalCost(BigDecimal.ZERO);
+        supplierOrder.setDiscountValue(BigDecimal.ZERO);
+        supplierOrder.setOrderType(SupplierOrderType.RETURN_ON_SAME_PILL);
+
+        return supplierOrderRepo.save(supplierOrder);
     }
 
-    public SupplierOrderReturn updateSupplierOrderReturn(SupplierOrderReturn supplierOrderReturn) {
-//        SupplierOrder supplierOrderReturn = supplierOrderRepo.findById(supplierOrderDTO.getOrderId()).get();
-//        supplierOrderReturn.setDocNo(supplierOrderDTO.getDocNo());
-//        supplierOrderReturn.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
-//        supplierOrderReturn.setStore(new Store(supplierOrderDTO.getStore()));
-//        supplierOrderReturn.setNotes(supplierOrderDTO.getNotes());
-//        supplierOrderReturn.setPillType(supplierOrderDTO.getPillType());
-        return supplierOrderReturnRepo.save(supplierOrderReturn);
+    public SupplierOrder updateSupplierOrderReturn(SupplierOrder SupplierOrder) {
+        return supplierOrderRepo.save(SupplierOrder);
     }
 
     @Transactional
     public boolean deleteSupplierOrderReturn(Long id) {
-        for (SupplierOrderReturnDetails supplierOrderReturnDetails : supplierOrderReturnRepo.findById(id).get().getSupplierOrderReturnDetailsItems()) {
-            supplierOrderReturnDetailsRepo.deleteById(supplierOrderReturnDetails.getId());
+        for (SupplierOrderDetails SupplierOrderDetails : supplierOrderRepo.findById(id).get().getSupplierOrderDetailsItems()) {
+            SupplierOrderDetailsRepo.deleteById(SupplierOrderDetails.getId());
         }
-        supplierOrderReturnRepo.deleteById(id);
+        supplierOrderRepo.deleteById(id);
         return true;
 
     }
 
     @Transactional
     public boolean checkOrderReturnIsApproved(Long id) {
-        SupplierOrderReturn supplierOrderReturn = supplierOrderReturnRepo.findById(id).orElseThrow();
-        return supplierOrderReturn.getIsApproved();
+        SupplierOrder SupplierOrder = supplierOrderRepo.findById(id).orElseThrow();
+        return SupplierOrder.getIsApproved();
     }
 
 
     @Transactional
     public ResponseEntity<Object> approve(ApproveSupplierOrderDTO request) {
 
-        SupplierOrderReturn supplierOrderReturn = supplierOrderReturnRepo.findById(request.getOrderId()).orElseThrow();
+        SupplierOrder SupplierOrder = supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
 
-        Supplier supplier = supplierOrderReturn.getSupplier();
-        Store store = supplierOrderReturn.getStore();
+        Supplier supplier = SupplierOrder.getSupplier();
+        Store store = SupplierOrder.getStore();
 
-        if (supplierOrderReturn.getIsApproved()) {
+        if (SupplierOrder.getIsApproved()) {
             return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null, true);
         }
 
-        supplierOrderReturn.setTaxPercent(request.getTaxPercent());
-        supplierOrderReturn.setTaxValue(request.getTaxValue());
-        supplierOrderReturn.setTotalBeforeDiscount(supplierOrderReturn.getTotalCost());
-        supplierOrderReturn.setDiscountType(request.getDiscountType());
-        supplierOrderReturn.setDiscountPercent(request.getDiscountPercent());
-        supplierOrderReturn.setDiscountValue(request.getDiscountValue());
-        supplierOrderReturn.setPillType(request.getPillType());
-        supplierOrderReturn.setIsApproved(Boolean.TRUE);
-        supplierOrderReturn.setWhatPaid(request.getWhatPaid());
-        supplierOrderReturn.setWhatRemain(request.getWhatRemain());
-        supplierOrderReturn.setMoneyForAccount(supplierOrderReturn.getTotalCost().multiply(new BigDecimal(-1)));
+        SupplierOrder.setTaxPercent(request.getTaxPercent());
+        SupplierOrder.setTaxValue(request.getTaxValue());
+        SupplierOrder.setTotalBeforeDiscount(SupplierOrder.getTotalCost());
+        SupplierOrder.setDiscountType(request.getDiscountType());
+        SupplierOrder.setDiscountPercent(request.getDiscountPercent());
+        SupplierOrder.setDiscountValue(request.getDiscountValue());
+        SupplierOrder.setPillType(request.getPillType());
+        SupplierOrder.setIsApproved(Boolean.TRUE);
+        SupplierOrder.setWhatPaid(request.getWhatPaid());
+        SupplierOrder.setWhatRemain(request.getWhatRemain());
+        SupplierOrder.setMoneyForAccount(SupplierOrder.getTotalCost().multiply(new BigDecimal(-1)));
 
         if (request.getPillType() == 1) {
-            if (!Objects.equals(request.getWhatPaid(), supplierOrderReturn.getTotalCost())) {
+            if (!Objects.equals(request.getWhatPaid(), SupplierOrder.getTotalCost())) {
                 return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null, true);
             }
         }
 
         if (request.getPillType() == 2) {
-            if (Objects.equals(request.getWhatPaid(), supplierOrderReturn.getTotalCost())) {
+            if (Objects.equals(request.getWhatPaid(), SupplierOrder.getTotalCost())) {
                 return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null, true);
             }
         }
 
         if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
-            if (request.getWhatPaid().compareTo(supplierOrderReturn.getTotalCost()) > 0) {
+            if (request.getWhatPaid().compareTo(SupplierOrder.getTotalCost()) > 0) {
                 return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة ", HttpStatus.OK, null, true);
             }
 
@@ -152,7 +149,7 @@ public class SupplierOrderReturnService {
             }
         }
 
-        supplierOrderReturnRepo.save(supplierOrderReturn);
+        supplierOrderRepo.save(SupplierOrder);
 
         if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
             Treasure treasure = treasureRepo.findById(1L).orElseThrow();
@@ -168,7 +165,7 @@ public class SupplierOrderReturnService {
             newTreasureTransaction.setIsAccount(Boolean.TRUE);
             newTreasureTransaction.setIsApproved(Boolean.TRUE);
             newTreasureTransaction.setMoneyForAccount(request.getWhatPaid().multiply(new BigDecimal(-1)));
-            newTreasureTransaction.setByan("صرف نظير فاتورة مشتريات  رقم" + supplierOrderReturn.getId());
+            newTreasureTransaction.setByan("صرف نظير فاتورة مشتريات  رقم" + SupplierOrder.getId());
             newTreasureTransaction.setIsalNumber(1L);
             newTreasureTransaction.setShiftCode(1L);
 
@@ -183,7 +180,7 @@ public class SupplierOrderReturnService {
         }
         ///////////////////ok
 
-        List<SupplierOrderReturnDetails> items = supplierOrderReturn.getSupplierOrderReturnDetailsItems();
+        List<SupplierOrderDetails> items = SupplierOrder.getSupplierOrderDetailsItems();
 
         items.forEach(item -> {
 
@@ -235,7 +232,7 @@ public class SupplierOrderReturnService {
             newMovement.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(1));
             newMovement.setInvItemcardMovementsType(new InvItemcardMovementsType(1));
             newMovement.setItem(item.getInvItemCard());
-            newMovement.setByan("نظير مشتريات من المورد " + " " + supplier.getName() + " فاتورة رقم" + " " + supplierOrderReturn.getId());
+            newMovement.setByan("نظير مشتريات من المورد " + " " + supplier.getName() + " فاتورة رقم" + " " + SupplierOrder.getId());
 
             newMovement.setQuantityBeforMovement("عدد " + " " + quantityBeforeMove + " " + uom.getName());
             newMovement.setQuantityAfterMove("عدد " + " " + quantityAfterMove + " " + uom.getName());

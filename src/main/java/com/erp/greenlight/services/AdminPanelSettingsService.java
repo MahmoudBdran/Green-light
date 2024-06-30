@@ -36,7 +36,6 @@ public class AdminPanelSettingsService {
         existingAdminPanelSettings.setPhone(adminPanelSettings.getPhone() != null ? adminPanelSettings.getPhone() : existingAdminPanelSettings.getPhone());
         existingAdminPanelSettings.setCustomerParentAccountNumber(adminPanelSettings.getCustomerParentAccountNumber() != null ? adminPanelSettings.getCustomerParentAccountNumber() : existingAdminPanelSettings.getCustomerParentAccountNumber());
         existingAdminPanelSettings.setSuppliersParentAccountNumber(adminPanelSettings.getSuppliersParentAccountNumber() != null ? adminPanelSettings.getSuppliersParentAccountNumber() : existingAdminPanelSettings.getSuppliersParentAccountNumber());
-        existingAdminPanelSettings.setEmployeesParentAccountNumber(adminPanelSettings.getEmployeesParentAccountNumber() != null ? adminPanelSettings.getEmployeesParentAccountNumber() : existingAdminPanelSettings.getEmployeesParentAccountNumber());
         existingAdminPanelSettings.setNotes(adminPanelSettings.getNotes() != null ? adminPanelSettings.getNotes() : existingAdminPanelSettings.getNotes());
 
 
