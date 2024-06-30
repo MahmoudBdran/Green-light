@@ -54,13 +54,6 @@ public class SalesInvoiceController {
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
     }
 
-
-/*    @GetMapping()
-    public ResponseEntity<Object> getAllSupplierOrders(){
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,supplierOrderService.getAllSupplierOrders() , true);
-
-    }*/
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSalesInvoiceById(@PathVariable Long id){
         return AppResponse.generateResponse("all_data", HttpStatus.OK,Optional.of(salesInvoiceService.getSalesInvoiceById(id).get()) , true);
@@ -72,8 +65,8 @@ public class SalesInvoiceController {
         return AppResponse.generateResponse("تم حفط فاتورة المبيعات بنجاح", HttpStatus.OK, salesInvoiceService.saveSalesInvoice(salesInvoiceDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSalesInvoice(@RequestBody SalesInvoice salesInvoice){
-        return AppResponse.generateResponse("تم تحديث اوردر العميل بنجاح", HttpStatus.OK, salesInvoiceService.updateSalesInvoice(salesInvoice) , true);
+    public ResponseEntity<Object> updateSalesInvoice(@RequestBody SalesInvoiceDTO salesInvoiceDTO){
+        return AppResponse.generateResponse("تم تحديث اوردر العميل بنجاح", HttpStatus.OK, salesInvoiceService.updateSalesInvoice(salesInvoiceDTO) , true);
     }
 
     @DeleteMapping("/{id}")

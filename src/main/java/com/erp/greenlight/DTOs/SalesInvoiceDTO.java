@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 public class SalesInvoiceDTO {
 
-    private Long orderId;
+    private Long id;
     private String date;
 
     private Long customer;
