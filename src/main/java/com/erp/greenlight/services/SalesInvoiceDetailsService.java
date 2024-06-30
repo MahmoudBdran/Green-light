@@ -164,8 +164,9 @@ public class SalesInvoiceDetailsService {
     @Transactional
     public SalesInvoice deleteItemFromSalesInvoice(Long id) {
 
-        deleteItem(id);
+
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
+        deleteItem(id);
         return  salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
      }
 
