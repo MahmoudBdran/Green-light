@@ -85,7 +85,23 @@ public class SupplierOrderService {
         return supplierOrderRepo.save(supplierOrder);
     }
 
-    public SupplierOrder updateSupplierOrder(SupplierOrder supplierOrder) {
+    public SupplierOrder updateSupplierOrder(SupplierOrderDTO supplierOrderDTO) {
+
+
+        Store store = storeRepo.findById(supplierOrderDTO.getStore()).orElseThrow();
+        Supplier supplier = supplierRepo.findById(supplierOrderDTO.getSupplier()).orElseThrow();
+        SupplierOrder supplierOrder = supplierOrderRepo.findById(supplierOrderDTO.getId()).orElseThrow();
+
+        supplierOrder.setDocNo(supplierOrderDTO.getDocNo());
+        supplierOrder.setSupplier(supplier);
+        supplierOrder.setAccount(supplier.getAccount());
+        supplierOrder.setStore(store);
+        supplierOrder.setNotes(supplierOrderDTO.getNotes());
+        supplierOrder.setPillType(supplierOrderDTO.getPillType());
+        supplierOrder.setOrderDate(supplierOrder.getOrderDate());
+        supplierOrder.setTotalCost(BigDecimal.ZERO);
+        supplierOrder.setDiscountValue(BigDecimal.ZERO);
+        supplierOrder.setOrderType(SupplierOrderType.BURSHASE);
         return supplierOrderRepo.save(supplierOrder);
     }
 

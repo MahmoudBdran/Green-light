@@ -39,12 +39,6 @@ public class SupplierOrderController {
     }
 
 
-/*    @GetMapping()
-    public ResponseEntity<Object> getAllSupplierOrders(){
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,supplierOrderService.getAllSupplierOrders() , true);
-
-    }*/
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSupplierOrderById(@PathVariable Long id){
         return AppResponse.generateResponse("all_data", HttpStatus.OK,Optional.of(supplierOrderService.getSupplierOrderById(id).get()) , true);
@@ -56,14 +50,14 @@ public class SupplierOrderController {
         return AppResponse.generateResponse("تم حفط فاتورة المشتريات بنجاح", HttpStatus.OK,supplierOrderService.saveSupplierOrder(supplierOrderDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSupplierOrder(@RequestBody SupplierOrder supplierOrder){
-        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.updateSupplierOrder(supplierOrder) , true);
+    public ResponseEntity<Object> updateSupplierOrder(@RequestBody  SupplierOrderDTO supplierOrderDTO){
+        return AppResponse.generateResponse("تم تحديث اوردر المورد بنجاح", HttpStatus.OK,supplierOrderService.updateSupplierOrder(supplierOrderDTO) , true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSupplierOrder(@PathVariable Long id){
         if(supplierOrderService.checkOrderIsApproved(id)){
-            return AppResponse.generateResponse("تعذر حذف الفاتورة لأنها مغلقه", HttpStatus.BAD_REQUEST,null , false);
+            return AppResponse.generateResponse("تعذر حذف الفاتورة لأنها مغلقه", HttpStatus.OK,null , true);
         }
         return AppResponse.generateResponse("تم حذف الفاتورة بمحتوياتها بنجاح", HttpStatus.OK,  supplierOrderService.deleteSupplierOrder(id) , true);
     }
