@@ -76,7 +76,7 @@ public class SupplierOrderReturnService {
         supplierOrder.setOrderDate(supplierOrder.getOrderDate());
         supplierOrder.setTotalCost(BigDecimal.ZERO);
         supplierOrder.setDiscountValue(BigDecimal.ZERO);
-        supplierOrder.setOrderType(SupplierOrderType.RETURN_ON_SAME_PILL);
+        supplierOrder.setOrderType(SupplierOrderType.RETURN_ON_GENERAL);
 
         return supplierOrderRepo.save(supplierOrder);
     }

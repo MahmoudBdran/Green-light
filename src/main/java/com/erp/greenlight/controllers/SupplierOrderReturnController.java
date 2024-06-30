@@ -37,13 +37,6 @@ public class SupplierOrderReturnController {
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
     }
 
-
-/*    @GetMapping()
-    public ResponseEntity<Object> getAllSupplierOrders(){
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,supplierOrderService.getAllSupplierOrders() , true);
-
-    }*/
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSupplierOrderReturnById(@PathVariable Long id){
         return AppResponse.generateResponse("all_data", HttpStatus.OK,Optional.of(supplierOrderReturnService.getSupplierOrderReturnById(id).get()) , true);
