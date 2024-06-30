@@ -174,7 +174,7 @@ public class SalesInvoiceService {
                 //Credit دائن
                 dataInsertTreasuriesTransactions.setMoney(request.getWhatPaid());
                 dataInsertTreasuriesTransactions.setTreasure(treasure);
-                dataInsertTreasuriesTransactions.setMovType(5);
+                dataInsertTreasuriesTransactions.setMovType(new MovType(5));
                 dataInsertTreasuriesTransactions.setMoveDate(LocalDate.from(LocalDateTime.now()));
 
                 if (invoiceData.getIsHasCustomer()) {

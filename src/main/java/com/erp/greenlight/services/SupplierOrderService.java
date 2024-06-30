@@ -165,7 +165,7 @@ public class SupplierOrderService {
 
             newTreasureTransaction.setMoney(request.getWhatPaid());
             newTreasureTransaction.setTreasure(treasure);
-            newTreasureTransaction.setMovType(9);
+            newTreasureTransaction.setMovType(new MovType(9));
             newTreasureTransaction.setMoveDate(LocalDate.from(LocalDateTime.now()));
             newTreasureTransaction.setAccount(account);
             newTreasureTransaction.setIsAccount(Boolean.TRUE);

@@ -25,6 +25,13 @@ public class SupplierService {
     AccountRepo accountRepo;
     @Autowired
     private AdminPanelSettingsRepo adminPanelSettingsRepo;
+
+    @Autowired
+    SupplierOrderReturnRepo supplierOrderReturnRepo;
+
+    @Autowired
+    TreasuriesTransactionsRepo treasuriesTransactionsRepo;
+
     public List<Supplier> getAllSuppliers(){
         return  supplierRepo.findAll();
     }
@@ -139,5 +146,24 @@ public class SupplierService {
         existingAccount.setName(supplier.getName());
         accountRepo.save(existingAccount);
         return savedSupplier;
+    }
+
+
+    public  void refreshAccountForSupplier(Account accountData, Supplier supplier){
+
+        if (accountData.getAccountType().getId() == 2L) {
+            BigDecimal the_net_in_suppliers_with_orders = supplierOrderReturnRepo.getNet(accountData);
+            BigDecimal the_net_in_treasuries_transactions = treasuriesTransactionsRepo.getNet(accountData);
+
+            BigDecimal finalBalance = accountData.getStartBalance()
+                    .add(the_net_in_treasuries_transactions)
+                    .add(the_net_in_suppliers_with_orders);
+
+            supplier.setCurrentBalance(finalBalance);
+            supplierRepo.save(supplier);
+
+            accountData.setCurrentBalance(finalBalance);
+            accountRepo.save(accountData);
+        }
     }
 }

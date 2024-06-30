@@ -1,8 +1,13 @@
 package com.erp.greenlight.models;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MovType {
 
     @Id
@@ -21,5 +26,9 @@ public class MovType {
 
     @Column(name = "is_private_internal")
     private Boolean isPrivateInternal;
+
+    public MovType(Integer id) {
+        this.id = id;
+    }
 }
 

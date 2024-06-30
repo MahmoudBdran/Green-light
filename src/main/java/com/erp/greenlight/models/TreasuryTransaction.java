@@ -43,8 +43,9 @@ public class TreasuryTransaction {
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;  // Boolean for tinyint(1)
 
-    @Column(name = "mov_type", nullable = false)
-    private Integer movType;  // Likely an enum or integer representing transaction type
+    @ManyToOne
+    @JoinColumn(name = "mov_type", nullable = false)
+    private MovType movType;  // Likely an enum or integer representing transaction type
 
     @Column(name = "move_date", nullable = false)
     private LocalDate moveDate;

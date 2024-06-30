@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 public interface TreasuriesTransactionsRepo extends JpaRepository<TreasuryTransaction,Long> {
@@ -18,4 +19,8 @@ public interface TreasuriesTransactionsRepo extends JpaRepository<TreasuryTransa
 
     @Query("SELECT SUM(t.moneyForAccount) FROM TreasuryTransaction t WHERE t.account=:account")
     BigDecimal getNet(Account account);
+
+
+    List<TreasuryTransaction> findByMoneyGreaterThan(BigDecimal money);
+    List<TreasuryTransaction> findByMoneyLessThan(BigDecimal money);
 }
