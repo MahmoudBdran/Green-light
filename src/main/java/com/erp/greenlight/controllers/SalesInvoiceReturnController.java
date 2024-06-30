@@ -69,7 +69,7 @@ public class SalesInvoiceReturnController {
     }
 
 
-    @PostMapping("/approveSalesInvoice")
+    @PostMapping("/approveSalesReturnInvoice")
     public ResponseEntity<Object> approveSalesInvoiceReturn(@RequestBody SalesInvoiceReturn salesInvoiceReturn){
         if(salesInvoiceReturnService.checkOrderIsApproved(salesInvoiceReturn.getId())){
             return AppResponse.generateResponse("الفاتوره بالفعل محفوظه", HttpStatus.BAD_REQUEST,null , false);

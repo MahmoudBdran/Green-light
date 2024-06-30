@@ -2,6 +2,7 @@ package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.InvoiceItemDTO;
 import com.erp.greenlight.DTOs.SalesInvoiceItemDTO;
+import com.erp.greenlight.DTOs.SalesReturnInvoiceItemDTO;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,12 +40,7 @@ public class SalesInvoiceReturnDetailsService {
     }
 
     @Transactional
-    public SalesInvoicesReturnDetails saveItemInOrder(SalesInvoiceItemDTO request) throws JsonProcessingException {
-
-//        SalesInvoicesReturnDetails salesInvoicesReturnDetails = new SalesInvoicesReturnDetails();
-//        //map from DTO to the Original Entity
-//
-//        return mapSalesInvoiceReturnDetailsDtoToSalesInvoiceReturnDetails(parsedInvoiceItemDto, salesInvoicesReturnDetails);
+    public SalesInvoicesReturnDetails saveItemInOrder(SalesReturnInvoiceItemDTO request) throws JsonProcessingException {
 
         SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(request.getOrderId()).orElseThrow();
         InvItemCardBatch batchData = invItemCardBatchRepo.findById(request.getBatch()).orElseThrow();
@@ -63,11 +59,13 @@ public class SalesInvoiceReturnDetailsService {
         dataToInsertToInvoiceDetails.setBatch(batchData);
         dataToInsertToInvoiceDetails.setQuantity(request.getItemQuantity());
         dataToInsertToInvoiceDetails.setUnitPrice(request.getUnitPrice());
+        dataToInsertToInvoiceDetails.setUnitCostPrice(request.getUnitCostPrice());
         dataToInsertToInvoiceDetails.setTotalPrice(request.getUnitPrice().multiply(request.getItemQuantity()));
         dataToInsertToInvoiceDetails.setIsparentuom(invUom.isMaster());
         dataToInsertToInvoiceDetails.setSalesInvoiceReturn(salesInvoiceReturn);
 
         salesInvoiceReturn.setTotalCost(salesInvoiceReturn.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
+        salesInvoiceReturn.setTotalBeforeDiscount(salesInvoiceReturn.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
         //salesInvoiceReturn.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
         salesInvoiceReturnRepo.save(salesInvoiceReturn);
 
@@ -134,7 +132,7 @@ public class SalesInvoiceReturnDetailsService {
         //
     }
     @Transactional
-    public SalesInvoicesReturnDetails updateItemBeingInsertedAgain(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SalesInvoicesReturnDetails updateItemBeingInsertedAgain(SalesReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SalesInvoicesReturnDetails salesInvoiceDetail = salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
         salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getItemQuantity()));
@@ -278,7 +276,7 @@ public class SalesInvoiceReturnDetailsService {
         SalesInvoiceReturn salesInvoiceReturn= salesInvoiceReturnRepo.findById(id).orElseThrow();
         return salesInvoiceReturn.getIsApproved();
     }
-    public boolean checkItemInOrderOrNot(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public boolean checkItemInOrderOrNot(SalesReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
         System.out.println("entered checkItemInORderOrNot method");
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());

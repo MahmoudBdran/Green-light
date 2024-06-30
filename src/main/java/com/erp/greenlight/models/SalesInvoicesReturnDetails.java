@@ -37,22 +37,22 @@ public class SalesInvoicesReturnDetails {
 
 
     @Column(name = "sales_item_type", nullable = false)
-    private Byte salesItemType;
+    private Byte salesItemType=1;
     @ManyToOne()
     @JoinColumn(name = "store_id",referencedColumnName = "id")
     private Store store;  // Likely a foreign key referencing a Store
     @OneToOne()
     @JoinColumn(name = "item_Id",referencedColumnName = "id") //inv item f k
     private InvItemCard item;  // Likely a foreign key referencing an Item table
+
     @ManyToOne()
     @JoinColumn(name = "batch_id",referencedColumnName = "id")
     private InvItemCardBatch batch;  // Likely a foreign key referencing a Batch table
+
     @ManyToOne()
     @JoinColumn(name = "uom_id",referencedColumnName = "id")
     private InvUom uom;
 
-//    @Column(name = "batch_auto_serial")
-//    private Long batchAutoSerial;
 
     @Column(precision = 10, scale = 4)
     private BigDecimal quantity= BigDecimal.valueOf(0.0000);
@@ -66,18 +66,9 @@ public class SalesInvoicesReturnDetails {
     @Column(name = "total_price", precision = 10, scale = 2)
     private BigDecimal totalPrice=BigDecimal.valueOf(0.00);
 
-    @Column(name = "is_normal_orOther", nullable = false)
-    private Integer isNormalOrOther;
 
     @Column(name = "isparentuom", nullable = false)
     private Boolean isparentuom;
-
-//    @Column(nullable = false)
-//    private Integer comCode;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDate invoiceDate;
 
     @CreatedBy
     @JoinColumn(name = "added_by",referencedColumnName = "id")
@@ -102,9 +93,5 @@ public class SalesInvoicesReturnDetails {
 
     @Column(name = "expire_date")
     private LocalDate expireDate;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDate date;
 }
 

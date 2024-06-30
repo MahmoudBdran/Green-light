@@ -91,6 +91,8 @@ public class SalesInvoiceReturnService {
         salesInvoiceReturn.setWhatPaid(BigDecimal.ZERO);
         salesInvoiceReturn.setWhatRemain(BigDecimal.ZERO);
         salesInvoiceReturn.setTotalCost(BigDecimal.ZERO);
+        salesInvoiceReturn.setIsApproved(Boolean.FALSE);
+
         salesInvoiceReturn.setAccountNumber(customer.getAccount());
         return salesInvoiceReturnRepo.save(salesInvoiceReturn);
     }

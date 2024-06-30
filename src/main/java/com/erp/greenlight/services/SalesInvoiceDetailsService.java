@@ -183,6 +183,7 @@ public class SalesInvoiceDetailsService {
             totalPrice+=details.getTotalPrice().floatValue();
         }
         salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
+        salesInvoice.setTotalBeforeDiscount(BigDecimal.valueOf(totalPrice));
         salesInvoiceRepo.save(salesInvoice);
 
         //خصم الكمية من الباتش

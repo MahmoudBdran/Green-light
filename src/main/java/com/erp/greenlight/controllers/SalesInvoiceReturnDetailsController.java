@@ -2,6 +2,7 @@ package com.erp.greenlight.controllers;
 
 import com.erp.greenlight.DTOs.InvoiceItemDTO;
 import com.erp.greenlight.DTOs.SalesInvoiceItemDTO;
+import com.erp.greenlight.DTOs.SalesReturnInvoiceItemDTO;
 import com.erp.greenlight.services.*;
 import com.erp.greenlight.utils.AppResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,7 +40,7 @@ public class SalesInvoiceReturnDetailsController {
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
     @PostMapping("/saveItemInSalesInvoiceReturn")
-    public ResponseEntity<Object> saveItemInOrder(@RequestBody SalesInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+    public ResponseEntity<Object> saveItemInOrder(@RequestBody SalesReturnInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
         System.out.println("entered saveItemInOrder");
         if(salesInvoiceReturnDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");

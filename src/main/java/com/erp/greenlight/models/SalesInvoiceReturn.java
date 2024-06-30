@@ -27,14 +27,7 @@ public class SalesInvoiceReturn {
     private Long id;
 
     @Column(name = "return_type", nullable = false)
-    private Byte returnType;  // Byte for tinyint(1) - return type (invoice-based or general)
-    @ManyToOne()
-    @JoinColumn(name = "store_id",referencedColumnName = "id")
-    private Store store;
-    //@Column(name = "sales_matrial_types")
-    @ManyToOne()
-    @JoinColumn(name = "sales_matrial_types",referencedColumnName = "id")
-    private SalesMaterialType salesMaterialType;  // Likely an integer representing sales material type
+    private Byte returnType=1;  // Byte for tinyint(1) - return type (invoice-based or general)
 
 
     @OneToMany(mappedBy = "salesInvoiceReturn")
@@ -50,14 +43,10 @@ public class SalesInvoiceReturn {
     @JoinColumn(name = "customer",referencedColumnName = "id")
     private Customer customer;
 
-//    @Column(name = "delegate_code")
-//    private Long delegateCode;  // Likely a foreign key referencing an Employee or Delegate table
 
-    @Column(name = "is_approved", nullable = false, insertable = false, updatable = false)  // Default value set in SQL
+    @Column(name = "is_approved", nullable = false)  // Default value set in SQL
     private Boolean isApproved;  // Boolean for tinyint(1)
 
-//    @Column(name = "com_code", nullable = false)
-//    private Integer comCode;
 
     @Column(name = "notes", length = 225)
     private String notes;
@@ -103,7 +92,7 @@ public class SalesInvoiceReturn {
     private BigDecimal whatRemain;  // Decimal for remaining amount
 
     @Column(name = "treasuries_transactions_id")
-    private Long treasuriesTransactionsId;  // Likely a foreign key for a TreasuryTransaction table
+    private Long treasuriesTransactionsId=1L;  // Likely a foreign key for a TreasuryTransaction table
 
     @Column(name = "customer_balance_befor", precision = 10, scale = 2)
     private BigDecimal customerBalanceBefore;  // Decimal for customer balance before invoice
@@ -132,10 +121,6 @@ public class SalesInvoiceReturn {
     @JoinColumn(name = "approved_by",referencedColumnName = "id")
     private Admin approvedBy;
 
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDate date;
 
     public SalesInvoiceReturn(Long id) {
         this.id = id;
