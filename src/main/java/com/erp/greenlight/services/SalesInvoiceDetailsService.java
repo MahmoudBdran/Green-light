@@ -48,7 +48,7 @@ public class SalesInvoiceDetailsService {
     }
 
     @Transactional
-    public List<SalesInvoiceDetail> saveItemInOrder(SalesInvoiceItemDTO request) throws JsonProcessingException {
+    public SalesInvoice saveItemInOrder(SalesInvoiceItemDTO request) throws JsonProcessingException {
 
 
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(request.getOrderId()).orElseThrow();
@@ -73,6 +73,7 @@ public class SalesInvoiceDetailsService {
         dataToInsertToInvoiceDetails.setSalesInvoice(salesInvoice);
 
         salesInvoice.setTotalCost(salesInvoice.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
+        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost());
         //salesInvoice.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
         salesInvoiceRepo.save(salesInvoice);
 
@@ -126,7 +127,7 @@ public class SalesInvoiceDetailsService {
 
             invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
 
-            return  salesInvoice.getSalesInvoiceDetails();
+            return  salesInvoice;
 
     }
 

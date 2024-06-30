@@ -161,7 +161,7 @@ public class SupplierOrderService {
 
             TreasuryTransaction newTreasureTransaction = new TreasuryTransaction();
 
-            newTreasureTransaction.setMoney(request.getWhatPaid());
+            newTreasureTransaction.setMoney(request.getWhatPaid().multiply(new BigDecimal(-1)));
             newTreasureTransaction.setTreasure(treasure);
             newTreasureTransaction.setMovType(new MovType(9));
             newTreasureTransaction.setMoveDate(LocalDate.from(LocalDateTime.now()));
