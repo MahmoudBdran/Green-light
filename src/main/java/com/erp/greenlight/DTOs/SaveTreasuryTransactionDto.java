@@ -16,5 +16,5 @@ public class SaveTreasuryTransactionDto {
     private Long account;
     private Integer movType;
     private BigDecimal money;
-    private String bayn;
+    private String byan;
 }

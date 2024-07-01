@@ -1,6 +1,7 @@
 package com.erp.greenlight.controllers;
 
 
+import com.erp.greenlight.DTOs.SaveTreasuryTransactionDto;
 import com.erp.greenlight.repositories.InvItemCardBatchRepo;
 import com.erp.greenlight.services.AccountService;
 import com.erp.greenlight.services.InvItemCardService;
@@ -56,26 +57,26 @@ public class TransactionController {
     }
 
     @PostMapping("/collect")
-    public ResponseEntity<Object> collect() {
+    public ResponseEntity<Object> collect(@RequestBody SaveTreasuryTransactionDto request) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accounts", accountService.getAllAccounts());
-        data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll());
+        data.put("transaction",treasuresTransactionService.collect(request));
         data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
 
-        return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
+        return AppResponse.generateResponse("تم التحصيل بنجاح", HttpStatus.OK, data, true);
     }
 
 
     @PostMapping("/exchange")
-    public ResponseEntity<Object> exchange() {
+    public ResponseEntity<Object> exchange(@RequestBody SaveTreasuryTransactionDto request) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accounts", accountService.getAllAccounts());
-        data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll());
+        data.put("transaction",treasuresTransactionService.exchange(request));
         data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
 
-        return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
+        return AppResponse.generateResponse("تم الصرف بنجاح", HttpStatus.OK, data, true);
     }
 
 
