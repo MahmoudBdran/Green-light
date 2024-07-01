@@ -37,7 +37,6 @@ public class SupplierOrderReturnDetailsController {
         data.put("invItems", invItemCardService.getAllInvItemCards());
         data.put("invUoms",invUomService.getAllInvUoms());
 
-       // return AppResponse.generateResponse("all_data", HttpStatus.OK,  supplierOrderDetailsService.findByOrderId(id) , true);
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
     @PostMapping("/saveItemInOrderReturn")
@@ -51,15 +50,11 @@ public class SupplierOrderReturnDetailsController {
             return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  supplierOrderReturnDetailsService.saveItemInOrderReturn(invoiceItemDTO) , true);
         }
     }
-    @PutMapping("/updateItemInOrderReturn")
-    public ResponseEntity<Object> updateItemInOrder(@RequestBody ReturnInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  supplierOrderReturnDetailsService.updateItemInOrderReturn(invoiceItemDTO) , true);
-    }
 
     @DeleteMapping("/deleteItemInOrderReturn/{id}")
     public ResponseEntity<Object> deleteItemInOrder(@PathVariable Long id){
         if(supplierOrderReturnDetailsService.checkOrderDetailsItemIsApproved(id)){
-            return AppResponse.generateResponse("تعذر حذف المنتج من الفاتوره لأنها مغلقه", HttpStatus.BAD_REQUEST,null , false);
+            return AppResponse.generateResponse("تعذر حذف المنتج من الفاتوره لأنها مغلقه", HttpStatus.OK,null , true);
         }
         return AppResponse.generateResponse("تم حذف الصنف من الفاتورة", HttpStatus.OK,  supplierOrderReturnDetailsService.deleteItemFromSupplierOrderReturn(id) , true);
     }

@@ -40,7 +40,6 @@ public class SupplierOrderReturnController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSupplierOrderReturnById(@PathVariable Long id){
         return AppResponse.generateResponse("all_data", HttpStatus.OK,Optional.of(supplierOrderReturnService.getSupplierOrderReturnById(id).get()) , true);
-
     }
 
     @PostMapping()
@@ -48,8 +47,8 @@ public class SupplierOrderReturnController {
         return AppResponse.generateResponse("تم حفط فاتورة مرتجع المشتريات بنجاح", HttpStatus.OK, supplierOrderReturnService.saveSupplierOrderReturn(supplierOrderDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSupplierOrderReturn(@RequestBody SupplierOrder supplierOrderReturn){
-        return AppResponse.generateResponse("تم تحديث اوردر مرتجعات المورد بنجاح", HttpStatus.OK, supplierOrderReturnService.updateSupplierOrderReturn(supplierOrderReturn) , true);
+    public ResponseEntity<Object> updateSupplierOrderReturn(@RequestBody SupplierOrderDTO supplierOrderDTO){
+        return AppResponse.generateResponse("تم تحديث فاتورة مرتجعات المورد بنجاح", HttpStatus.OK, supplierOrderReturnService.updateSupplierOrderReturn(supplierOrderDTO) , true);
     }
 
     @DeleteMapping("/{id}")

@@ -81,8 +81,19 @@ public class SupplierOrderReturnService {
         return supplierOrderRepo.save(supplierOrder);
     }
 
-    public SupplierOrder updateSupplierOrderReturn(SupplierOrder SupplierOrder) {
-        return supplierOrderRepo.save(SupplierOrder);
+    public SupplierOrder updateSupplierOrderReturn(SupplierOrderDTO supplierOrderDTO) {
+        Supplier supplier = supplierRepo.findById(supplierOrderDTO.getSupplier()).orElseThrow();
+
+        SupplierOrder supplierOrder = supplierOrderRepo.findById(supplierOrderDTO.getId()).orElseThrow();
+
+        supplierOrder.setSupplier(new Supplier(supplierOrderDTO.getSupplier()));
+        supplierOrder.setAccount(supplier.getAccount());
+        supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
+        supplierOrder.setNotes(supplierOrderDTO.getNotes());
+        supplierOrder.setPillType(supplierOrderDTO.getPillType());
+        supplierOrder.setOrderType(SupplierOrderType.RETURN_ON_GENERAL);
+
+        return supplierOrderRepo.save(supplierOrder);
     }
 
     @Transactional

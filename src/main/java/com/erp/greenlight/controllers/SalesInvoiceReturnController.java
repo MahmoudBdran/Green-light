@@ -39,16 +39,9 @@ public class SalesInvoiceReturnController {
     }
 
 
-/*    @GetMapping()
-    public ResponseEntity<Object> getAllSupplierOrders(){
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,supplierOrderService.getAllSupplierOrders() , true);
-
-    }*/
-
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSalesInvoiceReturnById(@PathVariable Long id){
         return AppResponse.generateResponse("all_data", HttpStatus.OK,Optional.of(salesInvoiceReturnService.getSalesInvoiceReturnById(id).get()) , true);
-
     }
 
     @PostMapping()

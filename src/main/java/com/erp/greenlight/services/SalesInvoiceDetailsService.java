@@ -40,7 +40,7 @@ public class SalesInvoiceDetailsService {
     InvItemCardService invItemCardService;
 
 
-    public List<SalesInvoiceDetail> findBySalesInvoiceId(Long id){
+    public List<SalesInvoiceDetail> findBySalesInvoiceId(Long id) {
         return salesInvoiceDetailsRepo.findBySalesInvoiceId(id);
     }
 
@@ -71,7 +71,6 @@ public class SalesInvoiceDetailsService {
 
         salesInvoice.setTotalCost(salesInvoice.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
         salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost());
-        //salesInvoice.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
         salesInvoiceRepo.save(salesInvoice);
 
 
@@ -82,7 +81,7 @@ public class SalesInvoiceDetailsService {
         BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
 
         //get Quantity Before any Action  حنجيب كيمة الصنف  بالمخزن المحدد معه   الحالي قبل الحركة
-        BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store );
+        BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
 
         InvItemCardBatch dataUpdateOldBatch = invItemCardBatchRepo.findById(request.getBatch()).orElseThrow();
 
@@ -94,7 +93,7 @@ public class SalesInvoiceDetailsService {
             dataUpdateOldBatch.setQuantity(batchData.getQuantity().subtract(request.getItemQuantity()));
         } else {
             //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
-            dataUpdateOldBatch.setQuantity((batchData.getQuantity().subtract( request.getItemQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
+            dataUpdateOldBatch.setQuantity((batchData.getQuantity().subtract(request.getItemQuantity().divide(invItemCard.getRetailUomQuntToParent()))));
         }
 
 
@@ -102,29 +101,28 @@ public class SalesInvoiceDetailsService {
         invItemCardBatchRepo.save(dataUpdateOldBatch);
 
 
+        BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+        BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
 
-            BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
-            BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
+        InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
 
-            InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
+        dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
+        dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
+        dataInsertInvItemCardMovements.setItem(new InvItemCard(request.getInvItemCard()));
+        dataInsertInvItemCardMovements.setByan("نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم" + " " + salesInvoice.getId());
+        dataInsertInvItemCardMovements.setQuantityBeforMovement("عدد " + " " + (quantityBeforeMove) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + (quantityAfterMove) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " + " " + (quantityBeforeMoveCurrentStore) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityAfterMoveStore("عدد " + " " + (quantityAfterMoveCurrentStore) + " " + invUom.getName());
 
-            dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
-            dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
-            dataInsertInvItemCardMovements.setItem(new InvItemCard(request.getInvItemCard()));
-            dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoice.getId());
-            dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
-            dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
-            dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());
-            dataInsertInvItemCardMovements.setQuantityAfterMoveStore( "عدد " + " " + ( quantityAfterMoveCurrentStore ) + " " +  invUom.getName());
-
-            dataInsertInvItemCardMovements.setStore(store);
-            //التاثير في حركة كارت الصنف
-            invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
+        dataInsertInvItemCardMovements.setStore(store);
+        //التاثير في حركة كارت الصنف
+        invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
 
 
-            invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
+        invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
 
-            return  salesInvoice;
+        return salesInvoice;
 
     }
 
@@ -134,30 +132,31 @@ public class SalesInvoiceDetailsService {
         SalesInvoiceDetail supplierOrderDetails = salesInvoiceDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
         return mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(parsedInvoiceItemDto, supplierOrderDetails);
     }
+
     @Transactional
     public SalesInvoiceDetail updateItemBeingInsertedAgain(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
+        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom()).orElseThrow();
         salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getItemQuantity()));
         salesInvoiceDetail.setTotalPrice(salesInvoiceDetail.getUnitPrice().multiply(salesInvoiceDetail.getQuantity()));
         //map from DTO to the Original Entity
         //calculate the total price for the supplier order itself
 
-        float totalPrice=0;
-        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(parsedInvoiceItemDto.getOrderId())){
+        float totalPrice = 0;
+        for (SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(parsedInvoiceItemDto.getOrderId())) {
             System.out.println(details.getTotalPrice());
-            totalPrice+=details.getTotalPrice().floatValue();
+            totalPrice += details.getTotalPrice().floatValue();
         }
 
-        System.out.println("totalPrice : "+totalPrice);
+        System.out.println("totalPrice : " + totalPrice);
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
         salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
-        System.out.println("totalPrice in obj : "+salesInvoice.getTotalCost());
-        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
-        System.out.println("totalPrice : "+salesInvoice.getTotalBeforeDiscount());
-        System.out.println("totalPrice : "+salesInvoice.getTaxValue());
+        System.out.println("totalPrice in obj : " + salesInvoice.getTotalCost());
+        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue() == null ? BigDecimal.ZERO : salesInvoice.getTaxValue()));
+        System.out.println("totalPrice : " + salesInvoice.getTotalBeforeDiscount());
+        System.out.println("totalPrice : " + salesInvoice.getTaxValue());
         salesInvoiceRepo.save(salesInvoice);
-        totalPrice=0;
+        totalPrice = 0;
         return salesInvoiceDetailsRepo.save(salesInvoiceDetail);
     }
 
@@ -167,12 +166,12 @@ public class SalesInvoiceDetailsService {
 
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
         deleteItem(id);
-        return  salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
-     }
+        return salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
+    }
 
 
     @Transactional
-    public void deleteItem(Long id){
+    public void deleteItem(Long id) {
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
         InvItemCardBatch batchData = invItemCardBatchRepo.findById(salesInvoiceDetail.getBatch().getId()).orElseThrow();
@@ -184,9 +183,9 @@ public class SalesInvoiceDetailsService {
         salesInvoiceDetailsRepo.deleteById(id);
 
 
-        float totalPrice=0;
-        for(SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())){
-            totalPrice+=details.getTotalPrice().floatValue();
+        float totalPrice = 0;
+        for (SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())) {
+            totalPrice += details.getTotalPrice().floatValue();
         }
         salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
         salesInvoice.setTotalBeforeDiscount(BigDecimal.valueOf(totalPrice));
@@ -197,7 +196,7 @@ public class SalesInvoiceDetailsService {
         BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
 
         //get Quantity Before any Action  حنجيب كيمة الصنف  بالمخزن المحدد معه   الحالي قبل الحركة
-        BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store );
+        BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
 
         InvItemCardBatch dataUpdateOldBatch = invItemCardBatchRepo.findById(salesInvoiceDetail.getBatch().getId()).orElseThrow();
 
@@ -208,7 +207,7 @@ public class SalesInvoiceDetailsService {
             dataUpdateOldBatch.setQuantity(batchData.getQuantity().add(salesInvoiceDetail.getQuantity()));
         } else {
             //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
-            dataUpdateOldBatch.setQuantity((batchData.getQuantity().add( salesInvoiceDetail.getQuantity().divide(invItemCard.getRetailUomQuntToParent()) )));
+            dataUpdateOldBatch.setQuantity((batchData.getQuantity().add(salesInvoiceDetail.getQuantity().divide(invItemCard.getRetailUomQuntToParent()))));
         }
         dataUpdateOldBatch.setTotalCostPrice(batchData.getUnitCostPrice().multiply(dataUpdateOldBatch.getQuantity()));
         invItemCardBatchRepo.save(dataUpdateOldBatch);
@@ -221,11 +220,11 @@ public class SalesInvoiceDetailsService {
         dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
         dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(16));
         dataInsertInvItemCardMovements.setItem(new InvItemCard(salesInvoiceDetail.getItem().getId()));
-        dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoice.getId());
-        dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
-        dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
-        dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());
-        dataInsertInvItemCardMovements.setQuantityAfterMoveStore( "عدد " + " " + ( quantityAfterMoveCurrentStore ) + " " +  invUom.getName());
+        dataInsertInvItemCardMovements.setByan("نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم" + " " + salesInvoice.getId());
+        dataInsertInvItemCardMovements.setQuantityBeforMovement("عدد " + " " + (quantityBeforeMove) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + (quantityAfterMove) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " + " " + (quantityBeforeMoveCurrentStore) + " " + invUom.getName());
+        dataInsertInvItemCardMovements.setQuantityAfterMoveStore("عدد " + " " + (quantityAfterMoveCurrentStore) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setStore(store);
 
         //التاثير في حركة كارت الصنف
@@ -245,38 +244,40 @@ public class SalesInvoiceDetailsService {
         salesInvoiceDetail.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
         salesInvoiceDetail.setQuantity(parsedInvoiceItemDto.getItemQuantity());
         salesInvoiceDetail.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-        salesInvoiceDetail.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getItemQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getItemQuantity()));
+        salesInvoiceDetail.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getItemQuantity() == null ? BigDecimal.ONE : parsedInvoiceItemDto.getItemQuantity()));
         salesInvoiceDetail.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
         salesInvoiceDetail.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
         salesInvoiceDetail.setSalesItemType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
         //saving the salesInvoiceDetail in the DB.
 
-        SalesInvoiceDetail savedSalesInvoiceDetails= salesInvoiceDetailsRepo.save(salesInvoiceDetail);
+        SalesInvoiceDetail savedSalesInvoiceDetails = salesInvoiceDetailsRepo.save(salesInvoiceDetail);
 
         System.out.println("saved savedSalesInvoiceDetails service method");
         //updating the Order itself with the updates.
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        salesInvoice.setTotalCost(salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getTotalCost().add(salesInvoiceDetail.getTotalPrice()==null?BigDecimal.ZERO:salesInvoiceDetail.getTotalPrice()));
-        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue()==null? BigDecimal.ZERO:salesInvoice.getTaxValue()));
+        salesInvoice.setTotalCost(salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getTotalCost().add(salesInvoiceDetail.getTotalPrice() == null ? BigDecimal.ZERO : salesInvoiceDetail.getTotalPrice()));
+        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue() == null ? BigDecimal.ZERO : salesInvoice.getTaxValue()));
         salesInvoiceRepo.save(salesInvoice);
 
         return savedSalesInvoiceDetails;
     }
+
     @Transactional
-    public boolean checkOrderDetailsItemIsApproved(Long id){
+    public boolean checkOrderDetailsItemIsApproved(Long id) {
         SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findById(id).orElseThrow();
-        SalesInvoice salesInvoice= salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
+        SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDetail.getSalesInvoice().getId()).orElseThrow();
         return salesInvoice.getIsApproved();
     }
+
     public boolean checkItemInOrderOrNot(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
         System.out.println("entered checkItemInORderOrNot method");
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
-        Optional<SalesInvoiceDetail> salesInvoiceDetails= salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
-        if (salesInvoiceDetails.isEmpty()){
+        System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getOrderId());
+        System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getUom());
+        System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getInvItemCard());
+        Optional<SalesInvoiceDetail> salesInvoiceDetails = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+        if (salesInvoiceDetails.isEmpty()) {
             return false;
-        }else{
+        } else {
             System.out.println(salesInvoiceDetails.get().getSalesInvoice().getId());
             System.out.println(salesInvoiceDetails.get().getItem().getId());
             System.out.println(salesInvoiceDetails.get().getUom().getId());

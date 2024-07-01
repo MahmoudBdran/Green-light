@@ -79,8 +79,15 @@ public class SupplierOrderDetails {
     @JoinColumn(name = "inv_item_id", referencedColumnName = "id")
     private InvItemCard invItemCard;  // Likely a foreign key for an Items table
 
-    @Column(name = "batch_auto_serial")
-    private Long batchAutoSerial;  // Potentially a foreign key for a Batch table
+    @ManyToOne()
+    @JoinColumn(name = "item_code",referencedColumnName = "id") //inv item f k
+    private InvItemCard item;  // Likely a foreign key referencing an Item table
+
+
+
+    @ManyToOne()
+    @JoinColumn(name = "batch_id",referencedColumnName = "id")
+    private InvItemCardBatch batch;  // Likely a foreign key referencing a Batch table
 
     @Column(name = "production_date")
     private LocalDate productionDate;

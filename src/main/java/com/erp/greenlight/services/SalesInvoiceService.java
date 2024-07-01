@@ -1,7 +1,6 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.SalesInvoiceDTO;
-import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
@@ -22,9 +21,6 @@ public class SalesInvoiceService {
     @Autowired
     SalesInvoiceRepo salesInvoiceRepo;
 
-    @Autowired
-    SalesInvoiceDetailsRepo salesInvoiceDetailsRepo;
-    SupplierOrderMapper mapper;
     @Autowired
     private SalesInvoiceDetailsService salesInvoiceDetailsService;
     @Autowired
@@ -105,24 +101,12 @@ public class SalesInvoiceService {
         }
         salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
         Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
         salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
-        salesInvoice.setIsApproved(Boolean.FALSE);
-        salesInvoice.setNotes(salesInvoiceDTO.getNotes());
-        salesInvoice.setDiscountPercent(BigDecimal.ZERO);
-        salesInvoice.setDiscountValue(BigDecimal.ZERO);
-        salesInvoice.setTaxPercent(BigDecimal.ZERO);
-        salesInvoice.setTaxValue(BigDecimal.ZERO);
-        salesInvoice.setTotalCostItems(BigDecimal.ZERO);
-        salesInvoice.setTotalBeforeDiscount(BigDecimal.ZERO);
-        salesInvoice.setTotalCost(BigDecimal.ZERO);
-        salesInvoice.setMoneyForAccount(BigDecimal.ZERO);
-        salesInvoice.setPillType(salesInvoiceDTO.getPillType());
-        salesInvoice.setWhatPaid(BigDecimal.ZERO);
-        salesInvoice.setWhatRemain(BigDecimal.ZERO);
-        salesInvoice.setTotalCost(BigDecimal.ZERO);
         salesInvoice.setAccount(customer.getAccount());
+
         return salesInvoiceRepo.save(salesInvoice);
     }
 
@@ -144,7 +128,7 @@ public class SalesInvoiceService {
         return salesInvoice.getIsApproved();
     }
 
-
+    @Transactional
     public ResponseEntity<Object> approveSalesInvoice(SalesInvoice request) {
 
         SalesInvoice invoiceData = salesInvoiceRepo.findById(request.getId()).orElseThrow();
@@ -219,7 +203,6 @@ public class SalesInvoiceService {
         }
     }
 
-
     public List<Map<String, Object>> getSalesInvoicesByMonth() {
         List<Object[]> results = salesInvoiceRepo.findSalesInvoiceCountsByMonth();
         Map<Integer, Long> salesCountMap = new HashMap<>();
@@ -239,7 +222,6 @@ public class SalesInvoiceService {
         }
         return data;
     }
-
 
 }
 
