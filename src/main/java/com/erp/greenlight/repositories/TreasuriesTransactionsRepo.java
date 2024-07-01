@@ -25,4 +25,8 @@ public interface TreasuriesTransactionsRepo extends JpaRepository<TreasuryTransa
 
     List<TreasuryTransaction> findByMoneyGreaterThan(BigDecimal money);
     List<TreasuryTransaction> findByMoneyLessThan(BigDecimal money);
+
+
+    @Query(value = "SELECT * FROM treasuries_transactions ORDER BY id DESC LIMIT 5", nativeQuery = true)
+    List<TreasuryTransaction> getLast5Transaction();
 }

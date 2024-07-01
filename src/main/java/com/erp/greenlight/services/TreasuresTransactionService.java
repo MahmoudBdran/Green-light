@@ -137,4 +137,10 @@ public class TreasuresTransactionService {
             accountRepo.save(accountData);
         }
     }
+
+
+    public List<TreasuryTransaction> getLast5Transaction(){
+
+        return treasuriesTransactionsRepo.getLast5Transaction();
+    }
 }

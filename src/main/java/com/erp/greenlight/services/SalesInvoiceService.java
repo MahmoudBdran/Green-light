@@ -11,11 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SalesInvoiceService {
@@ -38,6 +38,22 @@ public class SalesInvoiceService {
 
     @Autowired
     CustomerService customerService;
+
+
+    private Map<Integer, String> MONTHS = Map.ofEntries(
+            Map.entry(1, "يناير"),
+            Map.entry(2, "فبراير"),
+            Map.entry(3, "مارس"),
+            Map.entry(4, "ابريل"),
+            Map.entry(5, "مايو"),
+            Map.entry(6, "يونيو"),
+            Map.entry(7, "يوليو"),
+            Map.entry(8, "أغسطس "),
+            Map.entry(9, "سبتمبر"),
+            Map.entry(10, "أكتوبر"),
+            Map.entry(11, "نوفمبر"),
+            Map.entry(12, "ديسمبر ")
+    );
 
     public List<SalesInvoice> getAllSalesInvoices() {
         return salesInvoiceRepo.findAll();
@@ -79,7 +95,7 @@ public class SalesInvoiceService {
         return salesInvoiceRepo.save(salesInvoice);
     }
 
-    public SalesInvoice updateSalesInvoice(SalesInvoiceDTO salesInvoiceDTO)     {
+    public SalesInvoice updateSalesInvoice(SalesInvoiceDTO salesInvoiceDTO) {
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDTO.getId()).orElseThrow();
 
         if (salesInvoiceDTO.getCustomer() != null) {
@@ -151,11 +167,10 @@ public class SalesInvoiceService {
             BigDecimal newTotalCost = BigDecimal.ZERO;
 
 
-
-            if(request.getDiscountPercent().compareTo(BigDecimal.ZERO) >0){
-                newTotalCost = invoiceData.getTotalCost().subtract( request.getDiscountPercent().divide(new BigDecimal(100)).multiply(invoiceData.getTotalCost()));
-            }else{
-                newTotalCost = invoiceData.getTotalCost().subtract( request.getDiscountValue());
+            if (request.getDiscountPercent().compareTo(BigDecimal.ZERO) > 0) {
+                newTotalCost = invoiceData.getTotalCost().subtract(request.getDiscountPercent().divide(new BigDecimal(100)).multiply(invoiceData.getTotalCost()));
+            } else {
+                newTotalCost = invoiceData.getTotalCost().subtract(request.getDiscountValue());
             }
 
             dataUpdateParent.setTotalCost(newTotalCost.add(invoiceData.getTaxValue()));
@@ -197,11 +212,34 @@ public class SalesInvoiceService {
             if (invoiceData.getIsHasCustomer()) {
                 customerService.refreshAccountForCustomer(customerData.getAccount(), customerData);
             }
-            return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK, invoiceData , true);
+            return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK, invoiceData, true);
 
-        }else{
-            return AppResponse.generateResponse(" الفاتوره بالفعل محفوظه", HttpStatus.OK,  null, true);
+        } else {
+            return AppResponse.generateResponse(" الفاتوره بالفعل محفوظه", HttpStatus.OK, null, true);
         }
     }
+
+
+    public List<Map<String, Object>> getSalesInvoicesByMonth() {
+        List<Object[]> results = salesInvoiceRepo.findSalesInvoiceCountsByMonth();
+        Map<Integer, Long> salesCountMap = new HashMap<>();
+
+        for (Object[] result : results) {
+            Integer month = (Integer) result[0];
+            Long count = (Long) result[1];
+            salesCountMap.put(month, count);
+        }
+
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (int month = 1; month <= 12; month++) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("month", MONTHS.get(month));
+            map.put("count", salesCountMap.getOrDefault(month, 0L));
+            data.add(map);
+        }
+        return data;
+    }
+
+
 }
 
