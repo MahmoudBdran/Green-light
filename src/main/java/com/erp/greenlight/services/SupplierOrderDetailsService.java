@@ -31,21 +31,43 @@ public class SupplierOrderDetailsService {
     }
 
     @Transactional
-    public SupplierOrder saveItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public SupplierOrder saveItemInOrder(InvoiceItemDTO request) throws JsonProcessingException {
+
+        InvItemCard invItemCard = invItemCardRepo.findById(request.getInvItemCard()).orElseThrow();
+        InvUom invUom = invUomRepo.findById(request.getUom()).orElseThrow();
 
         SupplierOrderDetails supplierOrderDetails = new SupplierOrderDetails();
-        //map from DTO to the Original Entity
 
-        return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
+        BigDecimal rowTotalCoat = request.getUnitPrice().multiply(request.getDeliveredQuantity());
 
+
+        supplierOrderDetails.setOrder(new SupplierOrder(request.getOrderId()));
+        supplierOrderDetails.setInvItemCard(invItemCard);
+        supplierOrderDetails.setUom(invUom);
+        supplierOrderDetails.setDeliveredQuantity(request.getDeliveredQuantity());
+        supplierOrderDetails.setUnitPrice(request.getUnitPrice());
+        supplierOrderDetails.setTotalPrice(rowTotalCoat);
+        supplierOrderDetails.setOrderType(supplierOrderRepo.findById(request.getOrderId()).get().getOrderType());
+        supplierOrderDetails.setIsParentUom(invUomRepo.findById(request.getUom()).get().isMaster());
+        supplierOrderDetails.setItemCardType((byte) invItemCardRepo.findById(request.getInvItemCard()).get().getItemType());
+
+        supplierOrderDetailsRepo.save(supplierOrderDetails);
+
+        SupplierOrder supplierOrder =supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
+
+        supplierOrder.setTotalCost(supplierOrder.getTotalCost().add(rowTotalCoat));
+        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost());
+        supplierOrderRepo.save(supplierOrder);
+
+        return supplierOrder;
     }
     @Transactional
     public SupplierOrder updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
         SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
         //map from DTO to the Original Entity
-        return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
-        //
+       // return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
+        return null;
     }
     @Transactional
     public SupplierOrderDetails updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
@@ -91,35 +113,7 @@ public class SupplierOrderDetailsService {
          supplierOrderRepo.save(supplierOrder);
         return supplierOrder;
     }
-    @Transactional
-    public SupplierOrder mapSupplierOrderDetailsDtoToSupplierOrderDetails(InvoiceItemDTO parsedInvoiceItemDto,SupplierOrderDetails supplierOrderDetails) {
 
-
-        InvItemCard invItemCard = invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).orElseThrow();
-        InvUom invUom = invUomRepo.findById(parsedInvoiceItemDto.getUom()).orElseThrow();
-
-        supplierOrderDetails.setOrder(new SupplierOrder(parsedInvoiceItemDto.getOrderId()));
-        supplierOrderDetails.setInvItemCard(invItemCard);
-        supplierOrderDetails.setUom(invUom);
-        supplierOrderDetails.setDeliveredQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
-        supplierOrderDetails.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-        supplierOrderDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
-        supplierOrderDetails.setOrderType(supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getOrderType());
-        supplierOrderDetails.setIsParentUom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
-        supplierOrderDetails.setItemCardType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
-        //saving the supplierOrderDetails in the DB.
-
-        SupplierOrderDetails savedSupplierOrderDetails= supplierOrderDetailsRepo.save(supplierOrderDetails);
-        System.out.println("saved savedSupplierOrderDetails service method");
-        //updating the Order itself with the updates.
-        SupplierOrder supplierOrder =supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        supplierOrder.setTotalCost(supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getTotalCost().add(supplierOrderDetails.getTotalPrice()==null?BigDecimal.ZERO:supplierOrderDetails.getTotalPrice()));
-        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost().add(supplierOrder.getTaxValue()==null? BigDecimal.ZERO:supplierOrder.getTaxValue()));
-        supplierOrderRepo.save(supplierOrder);
-
-
-      return supplierOrderRepo.findById(supplierOrderDetails.getOrder().getId()).orElseThrow();
-    }
     @Transactional
     public boolean checkOrderDetailsItemIsApproved(Long id){
         SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findById(id).orElseThrow();
@@ -127,17 +121,11 @@ public class SupplierOrderDetailsService {
         return supplierOrder.getIsApproved();
     }
     public boolean checkItemInOrderOrNot(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-        System.out.println("entered checkItemInORderOrNot method");
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getOrderId());
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getUom());
-        System.out.println("parsedInvoiceItemDto : "+parsedInvoiceItemDto.getInvItemCard());
+
         Optional<SupplierOrderDetails> supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
         if (supplierOrderDetails.isEmpty()){
             return false;
         }else{
-            System.out.println(supplierOrderDetails.get().getOrder().getId());
-            System.out.println(supplierOrderDetails.get().getInvItemCard().getId());
-            System.out.println(supplierOrderDetails.get().getUom().getId());
             return true;
         }
     }

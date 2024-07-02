@@ -3,6 +3,7 @@ package com.erp.greenlight.services;
 import com.erp.greenlight.DTOs.ApproveSupplierOrderDTO;
 import com.erp.greenlight.DTOs.SupplierOrderDTO;
 import com.erp.greenlight.enums.SupplierOrderType;
+import com.erp.greenlight.exception.InternalServerErrorException;
 import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
@@ -71,7 +72,6 @@ public class SupplierOrderService {
         Store store = storeRepo.findById(supplierOrderDTO.getStore()).orElseThrow();
         Supplier supplier = supplierRepo.findById(supplierOrderDTO.getSupplier()).orElseThrow();
         SupplierOrder supplierOrder = new SupplierOrder();
-
         supplierOrder.setDocNo(supplierOrderDTO.getDocNo());
         supplierOrder.setSupplier(supplier);
         supplierOrder.setAccount(supplier.getAccount());
@@ -80,8 +80,10 @@ public class SupplierOrderService {
         supplierOrder.setPillType(supplierOrderDTO.getPillType());
         supplierOrder.setOrderDate(supplierOrder.getOrderDate());
         supplierOrder.setTotalCost(BigDecimal.ZERO);
+        supplierOrder.setDiscountType((byte) 0);
         supplierOrder.setDiscountValue(BigDecimal.ZERO);
-        supplierOrder.setOrderType(SupplierOrderType.BURSHASE);
+        supplierOrder.setDiscountPercent(BigDecimal.ZERO);
+         supplierOrder.setOrderType(SupplierOrderType.BURSHASE);
         return supplierOrderRepo.save(supplierOrder);
     }
 
@@ -132,38 +134,45 @@ public class SupplierOrderService {
             return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null, true);
         }
 
+        BigDecimal totalCost = supplierOrder.getTotalCost();
+        BigDecimal totalCostAfterDiscount = calculateTotalAfterDiscount(totalCost, request.getDiscountType(), request.getDiscountValue(), request.getDiscountPercent());
+
+
         supplierOrder.setTaxPercent(request.getTaxPercent());
         supplierOrder.setTaxValue(request.getTaxValue());
+
         supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost());
+        supplierOrder.setTotalCost(totalCostAfterDiscount);
         supplierOrder.setDiscountType(request.getDiscountType());
         supplierOrder.setDiscountPercent(request.getDiscountPercent());
         supplierOrder.setDiscountValue(request.getDiscountValue());
-        supplierOrder.setPillType(request.getPillType());
 
+        supplierOrder.setPillType(request.getPillType());
         supplierOrder.setWhatPaid(request.getWhatPaid());
         supplierOrder.setWhatRemain(request.getWhatRemain());
         supplierOrder.setMoneyForAccount(supplierOrder.getTotalCost().multiply(new BigDecimal(-1)));
 
         if (request.getPillType() == 1) {
-            if (request.getWhatPaid().compareTo(supplierOrder.getTotalCost()) != 0) {
-                return AppResponse.generateResponse("عفوا يجب ان يكون المبلغ بالكامل مدفوع في حالة الفاتورة كاش !!", HttpStatus.OK, null, true);
-            }
+            if (request.getWhatPaid().compareTo(totalCostAfterDiscount) != 0) {
+
+                throw new InternalServerErrorException("عفوا يجب ان يكون المبلغ بالكامل مدفوع في حالة الفاتورة كاش !!");
+             }
         }
 
         if (request.getPillType() == 2) {
-            if (request.getWhatPaid().compareTo(supplierOrder.getTotalCost()) == 0) {
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null, true);
+            if (request.getWhatPaid().compareTo(totalCostAfterDiscount) == 0) {
+                throw new InternalServerErrorException("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !");
             }
         }
 
         if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
-            if (request.getWhatPaid().compareTo(supplierOrder.getTotalCost()) > 0) {
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة ", HttpStatus.OK, null, true);
+            if (request.getWhatPaid().compareTo(totalCostAfterDiscount) > 0) {
+                throw new InternalServerErrorException("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة");
             }
 
             BigDecimal balance = treasuriesTransactionsRepo.getBalance();
             if (balance.compareTo(request.getWhatPaid()) < 0) {
-                return AppResponse.generateResponse("عفوا لاتملتك الان رصيد كافي بخزنة الصرف  لكي تتمكن من اتمام عمليه الصرف ", HttpStatus.OK, null, true);
+                throw new InternalServerErrorException("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة");
             }
         }
         supplierOrder.setIsApproved(Boolean.TRUE);
@@ -270,9 +279,9 @@ public class SupplierOrderService {
                 if (item.getInvItemCard().isDoesHasRetailUnit()) {
                     updateInvItemCard.setCostPriceRetail(item.getUnitPrice().divide(item.getInvItemCard().getRetailUomQuntToParent(), 2, RoundingMode.CEILING));
                 }
-            }else {
-                    updateInvItemCard.setCostPrice(item.getUnitPrice().multiply(item.getInvItemCard().getRetailUomQuntToParent()));
-                    updateInvItemCard.setCostPriceRetail(item.getUnitPrice());
+            } else {
+                updateInvItemCard.setCostPrice(item.getUnitPrice().multiply(item.getInvItemCard().getRetailUomQuntToParent()));
+                updateInvItemCard.setCostPriceRetail(item.getUnitPrice());
             }
 
             invItemCardRepo.save(updateInvItemCard);
@@ -284,6 +293,19 @@ public class SupplierOrderService {
 
 
         return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, null, true);
+    }
+
+
+    private BigDecimal calculateTotalAfterDiscount(BigDecimal invoiceTotal, Byte discountType, BigDecimal discountValue, BigDecimal discountPercentage) {
+        if (discountType == 0) {
+            return invoiceTotal;
+        } else if (discountType == 1) {
+            return invoiceTotal.subtract(discountPercentage.divide(new BigDecimal(100)).multiply(invoiceTotal));
+        } else if (discountType == 2) {
+            return invoiceTotal.subtract(discountValue);
+        }else {
+            return null;
+        }
     }
 
 }

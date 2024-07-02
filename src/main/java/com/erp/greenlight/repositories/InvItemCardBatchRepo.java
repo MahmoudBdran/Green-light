@@ -28,6 +28,8 @@ public interface InvItemCardBatchRepo extends JpaRepository<InvItemCardBatch,Lon
 
     List<InvItemCardBatch> findAllByStoreIdAndItemIdAndInvUomId(Integer storeId, Long itemId, Long invUomId);
 
+    List<InvItemCardBatch> findAllByStoreIdAndItemId(Integer storeId, Long itemId);
+
     List<InvItemCardBatch> findAllByItemId( Long itemId);
 
 }

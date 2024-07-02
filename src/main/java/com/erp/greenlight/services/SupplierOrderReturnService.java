@@ -3,6 +3,7 @@ package com.erp.greenlight.services;
 import com.erp.greenlight.DTOs.ApproveSupplierOrderDTO;
 import com.erp.greenlight.DTOs.SupplierOrderDTO;
 import com.erp.greenlight.enums.SupplierOrderType;
+import com.erp.greenlight.exception.InternalServerErrorException;
 import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
@@ -91,19 +92,80 @@ public class SupplierOrderReturnService {
         supplierOrder.setStore(new Store(supplierOrderDTO.getStore()));
         supplierOrder.setNotes(supplierOrderDTO.getNotes());
         supplierOrder.setPillType(supplierOrderDTO.getPillType());
-        supplierOrder.setOrderType(SupplierOrderType.RETURN_ON_GENERAL);
 
         return supplierOrderRepo.save(supplierOrder);
     }
 
     @Transactional
     public boolean deleteSupplierOrderReturn(Long id) {
-        for (SupplierOrderDetails SupplierOrderDetails : supplierOrderRepo.findById(id).get().getSupplierOrderDetailsItems()) {
-            SupplierOrderDetailsRepo.deleteById(SupplierOrderDetails.getId());
-        }
-        supplierOrderRepo.deleteById(id);
-        return true;
 
+
+            SupplierOrder parentPillData = supplierOrderRepo.findById(id).orElseThrow();
+            Store store = parentPillData.getStore();
+            Supplier supplier = parentPillData.getSupplier();
+
+            if (parentPillData.getIsApproved()) {
+                throw new InternalServerErrorException("عفوا  لايمكن الحذف بتفاصيل فاتورة معتمده ومؤرشفة");
+            }
+
+            //حنجيب الاصناف المضافة علي الفاتورة
+            List<SupplierOrderDetails> itemsDetails = parentPillData.getSupplierOrderDetailsItems();
+
+            //حنحذف الفاتورة الاب
+            supplierOrderRepo.deleteById(id);
+
+
+            //حنلف علي الاصناف المضافه علي الفاتورة ونطبق عليهم نفس اللي عملناها في حذف تفاصيل عنصر علي الفاتورة
+
+            for (SupplierOrderDetails item : itemsDetails) {
+
+                SupplierOrderDetailsRepo.deleteById(item.getId());
+
+                InvItemCard itemCardData = item.getInvItemCard();
+                InvItemCardBatch batchData = item.getBatch();
+                InvUom uom = itemCardData.getUom();
+
+
+                //خصم الكمية من الباتش
+                //كمية الصنف بكل المخازن قبل الحركة
+
+                BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(item.getInvItemCard());
+                BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(item.getInvItemCard(), store);
+
+                //هنا حنرجع الكمية لحظيا من باتش الصنف
+                //update current Batch تحديث علي الباتش القديمة
+
+                if (item.getUom().isMaster()) {
+                    batchData.setQuantity(batchData.getQuantity().add(item.getDeliveredQuantity()));
+                } else {
+                    //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
+                    batchData.setQuantity(batchData.getQuantity().add(item.getDeliveredQuantity().divide(itemCardData.getRetailUomQuntToParent())));
+                }
+                batchData.setTotalCostPrice(batchData.getUnitCostPrice().multiply(batchData.getQuantity()));
+
+                invItemCardBatchRepo.save(batchData);
+
+
+                BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(item.getInvItemCard());
+                BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(item.getInvItemCard(), store);
+
+                InvItemcardMovement newMovement = new InvItemcardMovement();
+
+                newMovement.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(1));
+                newMovement.setInvItemcardMovementsType(new InvItemcardMovementsType(3));
+                newMovement.setItem(item.getInvItemCard());
+                newMovement.setByan(" نظير حذف سطر الصنف من فاتورة مرتجع مشتريات عام   الي المورد " + " " + supplier.getName() + " فاتورة رقم" + " " + parentPillData.getId());
+                newMovement.setQuantityBeforMovement("عدد " + " " + quantityBeforeMove + " " + uom.getName());
+                newMovement.setQuantityAfterMove("عدد " + " " + quantityAfterMove + " " + uom.getName());
+                newMovement.setQuantityBeforMoveStore("عدد " + " " + quantityBeforeMoveCurrentStore + " " + uom.getName());
+                newMovement.setQuantityAfterMoveStore("عدد " + " " + quantityAfterMoveCurrentStore + " " + uom.getName());
+                newMovement.setStore(store);
+
+                invItemcardMovementRepo.save(newMovement);
+
+                invItemCardService.doUpdateItemCardQuantity(itemCardData, batchData);
+            }
+        return true;
     }
 
     @Transactional
@@ -116,51 +178,57 @@ public class SupplierOrderReturnService {
     @Transactional
     public ResponseEntity<Object> approve(ApproveSupplierOrderDTO request) {
 
-        SupplierOrder SupplierOrder = supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
+        SupplierOrder supplierOrder = supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
 
-        Supplier supplier = SupplierOrder.getSupplier();
-        Store store = SupplierOrder.getStore();
+        Supplier supplier = supplierOrder.getSupplier();
+        Store store = supplierOrder.getStore();
 
-        if (SupplierOrder.getIsApproved()) {
+        if (supplierOrder.getIsApproved()) {
             return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null, true);
         }
 
-        SupplierOrder.setTaxPercent(request.getTaxPercent());
-        SupplierOrder.setTaxValue(request.getTaxValue());
-        SupplierOrder.setTotalBeforeDiscount(SupplierOrder.getTotalCost());
-        SupplierOrder.setDiscountType(request.getDiscountType());
-        SupplierOrder.setDiscountPercent(request.getDiscountPercent());
-        SupplierOrder.setDiscountValue(request.getDiscountValue());
-        SupplierOrder.setPillType(request.getPillType());
-        SupplierOrder.setIsApproved(Boolean.TRUE);
-        SupplierOrder.setWhatPaid(request.getWhatPaid());
-        SupplierOrder.setWhatRemain(request.getWhatRemain());
-        SupplierOrder.setMoneyForAccount(SupplierOrder.getTotalCost().multiply(new BigDecimal(-1)));
+        BigDecimal totalCost = supplierOrder.getTotalCost();
+        BigDecimal totalCostAfterDiscount = calculateTotalAfterDiscount(totalCost, request.getDiscountType(), request.getDiscountValue(), request.getDiscountPercent());
+
+        supplierOrder.setTaxPercent(request.getTaxPercent());
+        supplierOrder.setTaxValue(request.getTaxValue());
+
+        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost());
+        supplierOrder.setTotalCost(totalCostAfterDiscount);
+
+        supplierOrder.setDiscountType(request.getDiscountType());
+        supplierOrder.setDiscountPercent(request.getDiscountPercent());
+        supplierOrder.setDiscountValue(request.getDiscountValue());
+        supplierOrder.setPillType(request.getPillType());
+        supplierOrder.setIsApproved(Boolean.TRUE);
+        supplierOrder.setWhatPaid(request.getWhatPaid());
+        supplierOrder.setWhatRemain(request.getWhatRemain());
+        supplierOrder.setMoneyForAccount(supplierOrder.getTotalCost().multiply(new BigDecimal(-1)));
 
         if (request.getPillType() == 1) {
-            if (!Objects.equals(request.getWhatPaid(), SupplierOrder.getTotalCost())) {
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null, true);
+            if (request.getWhatPaid().compareTo(totalCostAfterDiscount) != 0) {
+               throw new InternalServerErrorException ("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!");
             }
         }
 
         if (request.getPillType() == 2) {
-            if (Objects.equals(request.getWhatPaid(), SupplierOrder.getTotalCost())) {
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!", HttpStatus.OK, null, true);
+            if (request.getWhatPaid().compareTo(totalCostAfterDiscount) == 0) {
+                throw new InternalServerErrorException ("عفوا يجب ان لايكون المبلغ بالكامل مدفوع في حالة الفاتورة اجل !!");
             }
         }
 
         if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
-            if (request.getWhatPaid().compareTo(SupplierOrder.getTotalCost()) > 0) {
-                return AppResponse.generateResponse("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة ", HttpStatus.OK, null, true);
+            if (request.getWhatPaid().compareTo(totalCostAfterDiscount) > 0) {
+                throw new InternalServerErrorException("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة");
             }
 
             BigDecimal balance = treasuriesTransactionsRepo.getBalance();
             if (balance.compareTo(request.getWhatPaid()) < 0) {
-                return AppResponse.generateResponse("عفوا لاتملتك الان رصيد كافي بخزنة الصرف  لكي تتمكن من اتمام عمليه الصرف ", HttpStatus.OK, null, true);
+                throw new InternalServerErrorException("عفوا يجب ان لايكون المبلغ المدفوع اكبر من اجمالي الفاتورة");
             }
         }
 
-        supplierOrderRepo.save(SupplierOrder);
+        supplierOrderRepo.save(supplierOrder);
 
         if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
             Treasure treasure = treasureRepo.findById(1L).orElseThrow();
@@ -176,7 +244,7 @@ public class SupplierOrderReturnService {
             newTreasureTransaction.setIsAccount(Boolean.TRUE);
             newTreasureTransaction.setIsApproved(Boolean.TRUE);
             newTreasureTransaction.setMoneyForAccount(request.getWhatPaid().multiply(new BigDecimal(-1)));
-            newTreasureTransaction.setByan("صرف نظير فاتورة مشتريات  رقم" + SupplierOrder.getId());
+            newTreasureTransaction.setByan("صرف نظير فاتورة مشتريات  رقم" + supplierOrder.getId());
             newTreasureTransaction.setIsalNumber(1L);
             newTreasureTransaction.setShiftCode(1L);
 
@@ -189,98 +257,21 @@ public class SupplierOrderReturnService {
 
 
         }
-        ///////////////////ok
-
-        List<SupplierOrderDetails> items = SupplierOrder.getSupplierOrderDetailsItems();
-
-        items.forEach(item -> {
-
-            BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(item.getInvItemCard());
-            BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(item.getInvItemCard(), store);
-
-            InvUom uom = item.getUom();
-
-            BigDecimal quantity = null;
-            BigDecimal unitPrice = null;
-
-            if (item.getIsParentUom()) {
-                quantity = item.getDeliveredQuantity();
-                unitPrice = item.getUnitPrice();
-            } else {
-                quantity = (item.getDeliveredQuantity().divide(item.getInvItemCard().getRetailUomQuntToParent()));
-                unitPrice = item.getUnitPrice().multiply(item.getInvItemCard().getRetailUomQuntToParent());
-            }
-
-
-            InvItemCardBatch newInvItemCardBatch = new InvItemCardBatch();
-
-            newInvItemCardBatch.setStore(store);
-            newInvItemCardBatch.setItem(item.getInvItemCard());
-            newInvItemCardBatch.setQuantity(quantity);
-            newInvItemCardBatch.setUnitCostPrice(unitPrice);
-            newInvItemCardBatch.setInvUom(uom);
-
-            List<InvItemCardBatch> oldBatches = invItemCardBatchRepo.findAllByStoreIdAndItemIdAndInvUomIdAndUnitCostPriceAndQuantity(store.getId(), item.getInvItemCard().getId(), uom.getId(), unitPrice, quantity);
-
-            if (!oldBatches.isEmpty()) {
-                InvItemCardBatch updateInvItemCardBatch = oldBatches.get(0);
-                updateInvItemCardBatch.setQuantity(quantity);
-                updateInvItemCardBatch.setTotalCostPrice(updateInvItemCardBatch.getUnitCostPrice().multiply(updateInvItemCardBatch.getQuantity()));
-
-                invItemCardBatchRepo.save(updateInvItemCardBatch);
-            } else {
-                newInvItemCardBatch.setTotalCostPrice(item.getTotalPrice());
-                invItemCardBatchRepo.save(newInvItemCardBatch);
-            }
-
-
-            BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(item.getInvItemCard());
-            BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(item.getInvItemCard(), store);
-
-
-            InvItemcardMovement newMovement = new InvItemcardMovement();
-
-            newMovement.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(1));
-            newMovement.setInvItemcardMovementsType(new InvItemcardMovementsType(1));
-            newMovement.setItem(item.getInvItemCard());
-            newMovement.setByan("نظير مشتريات من المورد " + " " + supplier.getName() + " فاتورة رقم" + " " + SupplierOrder.getId());
-
-            newMovement.setQuantityBeforMovement("عدد " + " " + quantityBeforeMove + " " + uom.getName());
-            newMovement.setQuantityAfterMove("عدد " + " " + quantityAfterMove + " " + uom.getName());
-
-
-            newMovement.setQuantityBeforMoveStore("عدد " + " " + quantityBeforeMoveCurrentStore + " " + uom.getName());
-            newMovement.setQuantityAfterMoveStore("عدد " + " " + quantityAfterMoveCurrentStore + " " + uom.getName());
-            newMovement.setStore(store);
-
-
-            invItemcardMovementRepo.save(newMovement);
-
-            InvItemCard updateInvItemCard = item.getInvItemCard();
-
-
-            //update last Cost price   تحديث اخر سعر شراء للصنف
-            if (item.getIsParentUom()) {
-                updateInvItemCard.setCostPrice(item.getUnitPrice());
-                if (item.getInvItemCard().isDoesHasRetailUnit()) {
-
-                    updateInvItemCard.setCostPriceRetail(item.getUnitPrice().divide(item.getInvItemCard().getRetailUomQuntToParent(), 2, RoundingMode.CEILING));
-
-                } else {
-                    updateInvItemCard.setCostPrice(item.getUnitPrice().multiply(item.getInvItemCard().getRetailUomQuntToParent()));
-                    updateInvItemCard.setCostPriceRetail(item.getUnitPrice());
-                }
-
-                invItemCardService.doUpdateItemCardQuantity(item.getInvItemCard(), null);
-
-                invItemCardRepo.save(updateInvItemCard);
-
-
-            }
-        });
 
 
         return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, null, true);
+    }
+
+    private BigDecimal calculateTotalAfterDiscount(BigDecimal invoiceTotal, Byte discountType, BigDecimal discountValue, BigDecimal discountPercentage) {
+        if (discountType == 0) {
+            return invoiceTotal;
+        } else if (discountType == 1) {
+            return invoiceTotal.subtract(discountPercentage.divide(new BigDecimal(100)).multiply(invoiceTotal));
+        } else if (discountType == 2) {
+            return invoiceTotal.subtract(discountValue);
+        }else {
+            return null;
+        }
     }
 
 }

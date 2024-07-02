@@ -32,8 +32,6 @@ public class SupplierOrder {
     @Column(name = "order_type", nullable = false)
     private SupplierOrderType orderType;  // Byte for tinyint(1)
 
-    @Column(name = "auto_serial")
-    private Long autoSerial;
 
     @Column(name = "DOC_NO", length = 25)
     private String docNo;
@@ -58,7 +56,7 @@ public class SupplierOrder {
     private String notes;
 
     @Column(name = "discount_type")
-    private Byte discountType;  // Byte for tinyint(1)
+    private Byte discountType;
 
     @Column(name = "discount_percent", precision = 10, scale = 2)
     private BigDecimal discountPercent;
