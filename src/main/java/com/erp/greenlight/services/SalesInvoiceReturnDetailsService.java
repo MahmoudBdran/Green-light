@@ -47,8 +47,13 @@ public class SalesInvoiceReturnDetailsService {
         InvItemCard invItemCard = invItemCardRepo.findById(request.getInvItemCard()).orElseThrow();
         InvUom invUom = invUomRepo.findById(request.getUom()).orElseThrow();
         Store store = storeRepo.findById(request.getStore()).orElseThrow();
-        Customer customer = salesInvoiceReturn.getCustomer();
 
+        String customerName = "طياري";
+
+        if(salesInvoiceReturn.getCustomer()!= null){
+            Customer customer = salesInvoiceReturn.getCustomer();
+            customerName = customer.getName();
+        }
 
         SalesInvoicesReturnDetails dataToInsertToInvoiceDetails = new SalesInvoicesReturnDetails();
 
@@ -108,7 +113,7 @@ public class SalesInvoiceReturnDetailsService {
         dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
         dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
         dataInsertInvItemCardMovements.setItem(new InvItemCard(request.getInvItemCard()));
-        dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoiceReturn.getId());
+        dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customerName + " فاتورة رقم"+" " + salesInvoiceReturn.getId());
         dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());
@@ -133,13 +138,19 @@ public class SalesInvoiceReturnDetailsService {
         InvItemCard invItemCard = invItemCardRepo.findById(salesInvoicesReturnDetails.getItem().getId()).orElseThrow();
         InvUom invUom = invUomRepo.findById(salesInvoicesReturnDetails.getUom().getId()).orElseThrow();
         Store store = storeRepo.findById(salesInvoicesReturnDetails.getStore().getId()).orElseThrow();
-        Customer customer = salesInvoiceReturn.getCustomer();
 
+        String customerName = "طياري";
+
+        if(salesInvoiceReturn.getCustomer()!= null){
+            Customer customer = salesInvoiceReturn.getCustomer();
+            customerName = customer.getName();
+        }
 
         salesInvoiceReturnDetailsRepo.deleteById(id);
 
+        List<SalesInvoicesReturnDetails> newDetails = salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnId(salesInvoiceReturn.getId());
         float totalPrice=0;
-        for(SalesInvoicesReturnDetails details : salesInvoiceReturn.getSalesInvoicesReturnDetails()){
+        for(SalesInvoicesReturnDetails details : newDetails){
             totalPrice+=details.getTotalPrice().floatValue();
         }
         salesInvoiceReturn.setTotalCost(BigDecimal.valueOf(totalPrice));
@@ -180,7 +191,7 @@ public class SalesInvoiceReturnDetailsService {
         dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(2));
         dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(4));
         dataInsertInvItemCardMovements.setItem(new InvItemCard(salesInvoicesReturnDetails.getItem().getId()));
-        dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customer.getName() + " فاتورة رقم"+" " + salesInvoiceReturn.getId());
+        dataInsertInvItemCardMovements.setByan( "نظير مبيعات  للعميل " + " " + customerName + " فاتورة رقم"+" " + salesInvoiceReturn.getId());
         dataInsertInvItemCardMovements.setQuantityBeforMovement( "عدد " +" " + ( quantityBeforeMove ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + ( quantityAfterMove ) + " " + invUom.getName());
         dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " +" "+( quantityBeforeMoveCurrentStore ) + " " + invUom.getName());

@@ -69,32 +69,7 @@ public class SupplierOrderDetailsService {
        // return mapSupplierOrderDetailsDtoToSupplierOrderDetails(parsedInvoiceItemDto, supplierOrderDetails);
         return null;
     }
-    @Transactional
-    public SupplierOrderDetails updateItemBeingInsertedAgain(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        SupplierOrderDetails supplierOrderDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
-        supplierOrderDetails.setDeliveredQuantity(supplierOrderDetails.getDeliveredQuantity().add(parsedInvoiceItemDto.getDeliveredQuantity()));
-        supplierOrderDetails.setTotalPrice(supplierOrderDetails.getUnitPrice().multiply(supplierOrderDetails.getDeliveredQuantity()));
-        //map from DTO to the Original Entity
-        //calculate the total price for the supplier order itself
-
-        float totalPrice=0;
-        for(SupplierOrderDetails details : supplierOrderDetailsRepo.findByOrderId(parsedInvoiceItemDto.getOrderId())){
-            System.out.println(details.getTotalPrice());
-            totalPrice+=details.getTotalPrice().floatValue();
-        }
-
-        System.out.println("totalPrice : "+totalPrice);
-        SupplierOrder supplierOrder =supplierOrderRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        supplierOrder.setTotalCost(BigDecimal.valueOf(totalPrice));
-        System.out.println("totalPrice in obj : "+supplierOrder.getTotalCost());
-        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost().add(supplierOrder.getTaxValue()==null? BigDecimal.ZERO:supplierOrder.getTaxValue()));
-        System.out.println("totalPrice : "+supplierOrder.getTotalBeforeDiscount());
-        System.out.println("totalPrice : "+supplierOrder.getTaxValue());
-        supplierOrderRepo.save(supplierOrder);
-        totalPrice=0;
-        return supplierOrderDetailsRepo.save(supplierOrderDetails);
-    }
 
     @Transactional
     public  SupplierOrder deleteItemFromSupplierOrder(Long id) {
