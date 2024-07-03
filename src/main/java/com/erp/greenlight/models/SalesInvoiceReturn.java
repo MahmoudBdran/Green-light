@@ -77,7 +77,7 @@ public class SalesInvoiceReturn {
 
     @ManyToOne()
     @JoinColumn(name = "account_number",referencedColumnName = "id")
-    private Account accountNumber; //relation with account
+    private Account account; //relation with account
 
     @Column(name = "money_for_account", precision = 10, scale = 2)
     private BigDecimal moneyForAccount;  // Decimal for money for account

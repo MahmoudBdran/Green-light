@@ -35,7 +35,6 @@ public class SalesInvoiceDetailsController {
         data.put("invItems", invItemCardService.getAllInvItemCards());
         data.put("invUoms",invUomService.getAllInvUoms());
 
-       // return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceDetailsService.findBySalesInvoiceId(id) , true);
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
 
@@ -44,15 +43,11 @@ public class SalesInvoiceDetailsController {
         System.out.println("entered saveItemInOrder");
         if(salesInvoiceDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceDetailsService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("عفوا الصنف موجود بالفعل بالفاتورة", HttpStatus.OK,  null , true);
         }else{
             System.out.println("entered if cond false checkItemInOrderOrNot ");
             return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.saveItemInOrder(invoiceItemDTO) , true);
         }
-    }
-    @PutMapping("/updateItemInSalesInvoice")
-    public ResponseEntity<Object> updateItemInOrder(@RequestBody SalesInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceDetailsService.updateItemInOrder(invoiceItemDTO) , true);
     }
 
     @DeleteMapping("/deleteItemInOrder/{id}")

@@ -39,6 +39,9 @@ public class SalesInvoiceReturnService {
     @Autowired
     TreasureRepo treasureRepo;
 
+    @Autowired
+    SalesInvoiceReturnDetailsService salesInvoiceReturnDetailsService;
+
     public List<SalesInvoiceReturn> getAllSalesInvoicesReturn() {
         return salesInvoiceReturnRepo.findAll();
     }
@@ -51,18 +54,20 @@ public class SalesInvoiceReturnService {
 
 
         SalesInvoiceReturn salesInvoiceReturn = new SalesInvoiceReturn();
-        if (salesInvoiceDTO.getCustomer() != null) {
-            salesInvoiceReturn.setIsHasCustomer(Boolean.TRUE);
-        } else {
-            salesInvoiceReturn.setIsHasCustomer(Boolean.FALSE);
+        salesInvoiceReturn.setIsHasCustomer(salesInvoiceDTO.getIsHasCustomer());
+
+        if(salesInvoiceReturn.getIsHasCustomer()){
+            Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+            salesInvoiceReturn.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
+            salesInvoiceReturn.setAccount(customer.getAccount());
+        }else{
+            salesInvoiceReturn.setAccount(null);
+            salesInvoiceReturn.setCustomer(null);
         }
-        salesInvoiceReturn.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
-        Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
         salesInvoiceReturn.setNotes(salesInvoiceDTO.getNotes());
         salesInvoiceReturn.setPillType(salesInvoiceDTO.getPillType());
         salesInvoiceReturn.setInvoiceDate(salesInvoiceReturn.getInvoiceDate());
         salesInvoiceReturn.setIsApproved(Boolean.FALSE);
-        salesInvoiceReturn.setNotes(salesInvoiceDTO.getNotes());
         salesInvoiceReturn.setDiscountPercent(BigDecimal.ZERO);
         salesInvoiceReturn.setDiscountValue(BigDecimal.ZERO);
         salesInvoiceReturn.setTaxPercent(BigDecimal.ZERO);
@@ -71,24 +76,40 @@ public class SalesInvoiceReturnService {
         salesInvoiceReturn.setTotalBeforeDiscount(BigDecimal.ZERO);
         salesInvoiceReturn.setTotalCost(BigDecimal.ZERO);
         salesInvoiceReturn.setMoneyForAccount(BigDecimal.ZERO);
-        salesInvoiceReturn.setPillType(salesInvoiceDTO.getPillType());
         salesInvoiceReturn.setWhatPaid(BigDecimal.ZERO);
         salesInvoiceReturn.setWhatRemain(BigDecimal.ZERO);
-        salesInvoiceReturn.setTotalCost(BigDecimal.ZERO);
-        salesInvoiceReturn.setIsApproved(Boolean.FALSE);
 
-        salesInvoiceReturn.setAccountNumber(customer.getAccount());
-        return salesInvoiceReturnRepo.save(salesInvoiceReturn);
+         return salesInvoiceReturnRepo.save(salesInvoiceReturn);
     }
 
-    public SalesInvoiceReturn updateSalesInvoiceReturn(SalesInvoiceReturn salesInvoiceReturn) {
+    public SalesInvoiceReturn updateSalesInvoiceReturn(SalesInvoiceDTO salesInvoiceDTO) {
+
+        SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(salesInvoiceDTO.getId()).orElseThrow();
+
+        salesInvoiceReturn.setIsHasCustomer(salesInvoiceDTO.getIsHasCustomer());
+
+        if(salesInvoiceReturn.getIsHasCustomer()){
+            Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+            salesInvoiceReturn.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
+            salesInvoiceReturn.setAccount(customer.getAccount());
+        }else{
+            salesInvoiceReturn.setAccount(null);
+            salesInvoiceReturn.setCustomer(null);
+        }
+
+        salesInvoiceReturn.setNotes(salesInvoiceDTO.getNotes());
+        salesInvoiceReturn.setPillType(salesInvoiceDTO.getPillType());
+        salesInvoiceReturn.setInvoiceDate(salesInvoiceReturn.getInvoiceDate());
+
+
         return salesInvoiceReturnRepo.save(salesInvoiceReturn);
     }
 
     @Transactional
     public boolean deleteSalesInvoiceReturn(Long id) {
         for (SalesInvoicesReturnDetails salesInvoiceDetail : salesInvoiceReturnRepo.findById(id).get().getSalesInvoicesReturnDetails()) {
-            salesInvoiceReturnDetailsRepo.deleteById(salesInvoiceDetail.getId());
+
+            salesInvoiceReturnDetailsService.deleteItem(salesInvoiceDetail.getId());
         }
         salesInvoiceReturnRepo.deleteById(id);
         return true;
@@ -99,7 +120,6 @@ public class SalesInvoiceReturnService {
         SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(id).orElseThrow();
         return salesInvoiceReturn.getIsApproved();
     }
-
 
     @Transactional
     public ResponseEntity<Object> approveSalesInvoiceReturn(SalesInvoiceReturn request) {
@@ -118,7 +138,7 @@ public class SalesInvoiceReturnService {
 
             if (invoiceData.getIsHasCustomer()) {
                 dataUpdateParent.setCustomer(customer);
-                dataUpdateParent.setAccountNumber(account);
+                dataUpdateParent.setAccount(account);
             }
 
             salesInvoiceReturnRepo.save(dataUpdateParent);
@@ -166,5 +186,8 @@ public class SalesInvoiceReturnService {
         }
 
     }
+
+
+
 }
 

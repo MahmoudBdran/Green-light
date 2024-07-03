@@ -44,15 +44,11 @@ public class SalesInvoiceReturnDetailsController {
         System.out.println("entered saveItemInOrder");
         if(salesInvoiceReturnDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("all_data", HttpStatus.OK,  salesInvoiceReturnDetailsService.updateItemBeingInsertedAgain(invoiceItemDTO) , true);
+            return AppResponse.generateResponse("عفوا غير الصنف موجود بالفعل في الفاتورة", HttpStatus.OK, null , true);
         }else{
             System.out.println("entered if cond false checkItemInOrderOrNot ");
             return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceReturnDetailsService.saveItemInOrder(invoiceItemDTO) , true);
         }
-    }
-    @PutMapping("/updateItemInSalesInvoiceReturn")
-    public ResponseEntity<Object> updateItemInOrder(@RequestBody InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        return AppResponse.generateResponse("تم تحديث الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceReturnDetailsService.updateItemInOrder(invoiceItemDTO) , true);
     }
 
     @DeleteMapping("/deleteItemInOrderReturn/{id}")

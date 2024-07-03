@@ -126,39 +126,6 @@ public class SalesInvoiceDetailsService {
 
     }
 
-    @Transactional
-    public SalesInvoiceDetail updateItemInOrder(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-
-        SalesInvoiceDetail supplierOrderDetails = salesInvoiceDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
-        return mapSalesInvoiceDetailsDtoToSalesInvoiceDetails(parsedInvoiceItemDto, supplierOrderDetails);
-    }
-
-    @Transactional
-    public SalesInvoiceDetail updateItemBeingInsertedAgain(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-
-        SalesInvoiceDetail salesInvoiceDetail = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom()).orElseThrow();
-        salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getItemQuantity()));
-        salesInvoiceDetail.setTotalPrice(salesInvoiceDetail.getUnitPrice().multiply(salesInvoiceDetail.getQuantity()));
-        //map from DTO to the Original Entity
-        //calculate the total price for the supplier order itself
-
-        float totalPrice = 0;
-        for (SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(parsedInvoiceItemDto.getOrderId())) {
-            System.out.println(details.getTotalPrice());
-            totalPrice += details.getTotalPrice().floatValue();
-        }
-
-        System.out.println("totalPrice : " + totalPrice);
-        SalesInvoice salesInvoice = salesInvoiceRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));
-        System.out.println("totalPrice in obj : " + salesInvoice.getTotalCost());
-        salesInvoice.setTotalBeforeDiscount(salesInvoice.getTotalCost().add(salesInvoice.getTaxValue() == null ? BigDecimal.ZERO : salesInvoice.getTaxValue()));
-        System.out.println("totalPrice : " + salesInvoice.getTotalBeforeDiscount());
-        System.out.println("totalPrice : " + salesInvoice.getTaxValue());
-        salesInvoiceRepo.save(salesInvoice);
-        totalPrice = 0;
-        return salesInvoiceDetailsRepo.save(salesInvoiceDetail);
-    }
 
     @Transactional
     public SalesInvoice deleteItemFromSalesInvoice(Long id) {
@@ -184,7 +151,7 @@ public class SalesInvoiceDetailsService {
 
 
         float totalPrice = 0;
-        for (SalesInvoiceDetail details : salesInvoiceDetailsRepo.findBySalesInvoiceId(salesInvoiceDetail.getSalesInvoice().getId())) {
+        for (SalesInvoiceDetail details : salesInvoice.getSalesInvoiceDetails()) {
             totalPrice += details.getTotalPrice().floatValue();
         }
         salesInvoice.setTotalCost(BigDecimal.valueOf(totalPrice));

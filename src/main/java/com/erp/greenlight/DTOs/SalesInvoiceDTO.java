@@ -21,5 +21,7 @@ public class SalesInvoiceDTO {
 
     private Byte pillType;
 
+    private Boolean isHasCustomer;
+
 
 }

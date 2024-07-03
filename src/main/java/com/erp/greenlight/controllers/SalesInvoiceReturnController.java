@@ -49,8 +49,8 @@ public class SalesInvoiceReturnController {
         return AppResponse.generateResponse("تم حفط فاتورة مرتجع المبيعات بنجاح", HttpStatus.OK, salesInvoiceReturnService.saveSalesInvoiceReturn(salesInvoiceDTO) , true);
     }
     @PutMapping()
-    public ResponseEntity<Object> updateSalesInvoiceReturn(@RequestBody SalesInvoiceReturn salesInvoiceReturn){
-        return AppResponse.generateResponse("تم تحديث اوردر مرتجع مبيعات بنجاح", HttpStatus.OK, salesInvoiceReturnService.updateSalesInvoiceReturn(salesInvoiceReturn) , true);
+    public ResponseEntity<Object> updateSalesInvoiceReturn(@RequestBody SalesInvoiceDTO salesInvoiceDTO){
+        return AppResponse.generateResponse("تم تحديث اوردر مرتجع مبيعات بنجاح", HttpStatus.OK, salesInvoiceReturnService.updateSalesInvoiceReturn(salesInvoiceDTO) , true);
     }
 
     @DeleteMapping("/{id}")

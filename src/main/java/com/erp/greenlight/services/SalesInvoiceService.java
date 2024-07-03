@@ -63,13 +63,18 @@ public class SalesInvoiceService {
 
         SalesInvoice salesInvoice = new SalesInvoice();
 
-        if (salesInvoiceDTO.getCustomer() != null) {
-            salesInvoice.setIsHasCustomer(Boolean.TRUE);
-        } else {
-            salesInvoice.setIsHasCustomer(Boolean.FALSE);
+        salesInvoice.setIsHasCustomer(salesInvoiceDTO.getIsHasCustomer());
+
+        if(salesInvoice.getIsHasCustomer()){
+            Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+            salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
+            salesInvoice.setAccount(customer.getAccount());
+        }else{
+            salesInvoice.setAccount(null);
+            salesInvoice.setCustomer(null);
         }
-        salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
-        Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+
+
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
         salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
@@ -87,25 +92,28 @@ public class SalesInvoiceService {
         salesInvoice.setWhatPaid(BigDecimal.ZERO);
         salesInvoice.setWhatRemain(BigDecimal.ZERO);
         salesInvoice.setTotalCost(BigDecimal.ZERO);
-        salesInvoice.setAccount(customer.getAccount());
+
         return salesInvoiceRepo.save(salesInvoice);
     }
 
     public SalesInvoice updateSalesInvoice(SalesInvoiceDTO salesInvoiceDTO) {
         SalesInvoice salesInvoice = salesInvoiceRepo.findById(salesInvoiceDTO.getId()).orElseThrow();
 
-        if (salesInvoiceDTO.getCustomer() != null) {
-            salesInvoice.setIsHasCustomer(Boolean.TRUE);
-        } else {
-            salesInvoice.setIsHasCustomer(Boolean.FALSE);
+        salesInvoice.setIsHasCustomer(salesInvoiceDTO.getIsHasCustomer());
+
+        if(salesInvoice.getIsHasCustomer()){
+            Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
+            salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
+            salesInvoice.setAccount(customer.getAccount());
+        }else{
+            salesInvoice.setAccount(null);
+            salesInvoice.setCustomer(null);
         }
-        salesInvoice.setCustomer(new Customer(salesInvoiceDTO.getCustomer()));
-        Customer customer = customerRepo.findById(salesInvoiceDTO.getCustomer()).orElseThrow();
 
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
         salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
-        salesInvoice.setAccount(customer.getAccount());
+
 
         return salesInvoiceRepo.save(salesInvoice);
     }
@@ -113,9 +121,7 @@ public class SalesInvoiceService {
     @Transactional
     public boolean deleteSalesInvoice(Long id) {
         for (SalesInvoiceDetail salesInvoiceDetail : salesInvoiceRepo.findById(id).get().getSalesInvoiceDetails()) {
-
             salesInvoiceDetailsService.deleteItem(salesInvoiceDetail.getId());
-
         }
         salesInvoiceRepo.deleteById(id);
         return true;

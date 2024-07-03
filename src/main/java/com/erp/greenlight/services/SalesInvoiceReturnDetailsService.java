@@ -40,7 +40,7 @@ public class SalesInvoiceReturnDetailsService {
     }
 
     @Transactional
-    public SalesInvoicesReturnDetails saveItemInOrder(SalesReturnInvoiceItemDTO request) throws JsonProcessingException {
+    public SalesInvoicesReturnDetails saveItemInOrder(SalesReturnInvoiceItemDTO request) {
 
         SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(request.getOrderId()).orElseThrow();
         InvItemCardBatch batchData = invItemCardBatchRepo.findById(request.getBatch()).orElseThrow();
@@ -123,61 +123,12 @@ public class SalesInvoiceReturnDetailsService {
 
         return savedSalesInvoicesReturnDetails ;
     }
-    @Transactional
-    public SalesInvoicesReturnDetails updateItemInOrder(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        SalesInvoicesReturnDetails salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get();
-        //map from DTO to the Original Entity
-        return mapSalesInvoiceReturnDetailsDtoToSalesInvoiceReturnDetails(parsedInvoiceItemDto, salesInvoicesReturnDetails);
-        //
-    }
-    @Transactional
-    public SalesInvoicesReturnDetails updateItemBeingInsertedAgain(SalesReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-
-        SalesInvoicesReturnDetails salesInvoiceDetail = salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(),parsedInvoiceItemDto.getUom()).orElseThrow();
-        salesInvoiceDetail.setQuantity(salesInvoiceDetail.getQuantity().add(parsedInvoiceItemDto.getItemQuantity()));
-        salesInvoiceDetail.setTotalPrice(salesInvoiceDetail.getUnitPrice().multiply(salesInvoiceDetail.getQuantity()));
-        //map from DTO to the Original Entity
-        //calculate the total price for the supplier order itself
-
-        float totalPrice=0;
-        for(SalesInvoicesReturnDetails details : salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnId(parsedInvoiceItemDto.getOrderId())){
-            System.out.println(details.getTotalPrice());
-            totalPrice+=details.getTotalPrice().floatValue();
-        }
-
-        System.out.println("totalPrice : "+totalPrice);
-        SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        salesInvoiceReturn.setTotalCost(BigDecimal.valueOf(totalPrice));
-        System.out.println("totalPrice in obj : "+salesInvoiceReturn.getTotalCost());
-        salesInvoiceReturn.setTotalBeforeDiscount(salesInvoiceReturn.getTotalCost().add(salesInvoiceReturn.getTaxValue()==null? BigDecimal.ZERO:salesInvoiceReturn.getTaxValue()));
-        System.out.println("totalPrice : "+salesInvoiceReturn.getTotalBeforeDiscount());
-        System.out.println("totalPrice : "+salesInvoiceReturn.getTaxValue());
-        salesInvoiceReturnRepo.save(salesInvoiceReturn);
-        totalPrice=0;
-        return salesInvoiceReturnDetailsRepo.save(salesInvoiceDetail);
-    }
 
     @Transactional
-    public SalesInvoiceReturn deleteItemFromSalesInvoiceReturn(Long id) {
-//        SalesInvoicesReturnDetails salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findById(id).orElseThrow();
-//        //map from DTO to the Original Entity
-//        //calculate the total price for the supplier order itself
-//        salesInvoiceReturnDetailsRepo.deleteById(id);
-//        float totalPrice=0;
-//        for(SalesInvoicesReturnDetails details : salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnId(salesInvoicesReturnDetails.getSalesInvoiceReturn().getId())){
-//            totalPrice+=details.getTotalPrice().floatValue();
-//        }
-//        SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(salesInvoicesReturnDetails.getSalesInvoiceReturn().getId()).orElseThrow();
-//        salesInvoiceReturn.setTotalCost(BigDecimal.valueOf(totalPrice));
-//        salesInvoiceReturn.setTotalBeforeDiscount(salesInvoiceReturn.getTotalCost().add(salesInvoiceReturn.getTaxValue()==null? BigDecimal.ZERO:salesInvoiceReturn.getTaxValue()));
-//        salesInvoiceReturn.setUpdatedBy(new Admin(1));
-//        totalPrice=0;
-//        return salesInvoiceReturnRepo.save(salesInvoiceReturn);
-
+    public void deleteItem(Long id) {
         SalesInvoicesReturnDetails salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findById(id).orElseThrow();
         SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(salesInvoicesReturnDetails.getSalesInvoiceReturn().getId()).orElseThrow();
-        //SalesInvoice salesInvoiceReturn = salesInvoiceRepo.findById(request.getOrderId()).orElseThrow();
         InvItemCardBatch batchData = invItemCardBatchRepo.findById(salesInvoicesReturnDetails.getBatch().getId()).orElseThrow();
         InvItemCard invItemCard = invItemCardRepo.findById(salesInvoicesReturnDetails.getItem().getId()).orElseThrow();
         InvUom invUom = invUomRepo.findById(salesInvoicesReturnDetails.getUom().getId()).orElseThrow();
@@ -186,11 +137,13 @@ public class SalesInvoiceReturnDetailsService {
 
 
         salesInvoiceReturnDetailsRepo.deleteById(id);
+
         float totalPrice=0;
-        for(SalesInvoicesReturnDetails details : salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnId(salesInvoicesReturnDetails.getSalesInvoiceReturn().getId())){
+        for(SalesInvoicesReturnDetails details : salesInvoiceReturn.getSalesInvoicesReturnDetails()){
             totalPrice+=details.getTotalPrice().floatValue();
         }
         salesInvoiceReturn.setTotalCost(BigDecimal.valueOf(totalPrice));
+        salesInvoiceReturn.setTotalBeforeDiscount(BigDecimal.valueOf(totalPrice));
         salesInvoiceReturnRepo.save(salesInvoiceReturn);
 
         //خصم الكمية من الباتش
@@ -239,37 +192,16 @@ public class SalesInvoiceReturnDetailsService {
 
 
         invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
-
-        return  salesInvoiceReturn;
-
-
     }
+
     @Transactional
-    public SalesInvoicesReturnDetails mapSalesInvoiceReturnDetailsDtoToSalesInvoiceReturnDetails(InvoiceItemDTO parsedInvoiceItemDto, SalesInvoicesReturnDetails salesInvoicesReturnDetails) {
+    public SalesInvoiceReturn deleteItemFromSalesInvoiceReturn(Long id) {
 
-
-        salesInvoicesReturnDetails.setSalesInvoiceReturn(new SalesInvoiceReturn(parsedInvoiceItemDto.getOrderId()));
-        salesInvoicesReturnDetails.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
-        salesInvoicesReturnDetails.setUom(new InvUom(parsedInvoiceItemDto.getUom()));
-        salesInvoicesReturnDetails.setQuantity(parsedInvoiceItemDto.getDeliveredQuantity());
-        salesInvoicesReturnDetails.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-        salesInvoicesReturnDetails.setTotalPrice(parsedInvoiceItemDto.getUnitPrice().multiply(parsedInvoiceItemDto.getDeliveredQuantity()==null?BigDecimal.ONE:parsedInvoiceItemDto.getDeliveredQuantity()));
-        salesInvoicesReturnDetails.setIsparentuom(invUomRepo.findById(parsedInvoiceItemDto.getUom()).get().isMaster());
-        salesInvoicesReturnDetails.setItem(new InvItemCard(parsedInvoiceItemDto.getInvItemCard()));
-        salesInvoicesReturnDetails.setSalesItemType((byte) invItemCardRepo.findById(parsedInvoiceItemDto.getInvItemCard()).get().getItemType());
-        //saving the salesInvoicesReturnDetails in the DB.
-
-        SalesInvoicesReturnDetails savedSalesInvoiceDetails= salesInvoiceReturnDetailsRepo.save(salesInvoicesReturnDetails);
-
-        System.out.println("saved savedSalesInvoiceDetails service method");
-        //updating the Order itself with the updates.
-        SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(parsedInvoiceItemDto.getOrderId()).orElseThrow();
-        salesInvoiceReturn.setTotalCost(salesInvoiceReturnRepo.findById(parsedInvoiceItemDto.getOrderId()).get().getTotalCost().add(salesInvoicesReturnDetails.getTotalPrice()==null?BigDecimal.ZERO:salesInvoicesReturnDetails.getTotalPrice()));
-        salesInvoiceReturn.setTotalBeforeDiscount(salesInvoiceReturn.getTotalCost().add(salesInvoiceReturn.getTaxValue()==null? BigDecimal.ZERO:salesInvoiceReturn.getTaxValue()));
-        salesInvoiceReturnRepo.save(salesInvoiceReturn);
-
-        return savedSalesInvoiceDetails;
+        SalesInvoicesReturnDetails salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findById(id).orElseThrow();
+        deleteItem(id);
+        return salesInvoiceReturnRepo.findById(salesInvoicesReturnDetails.getSalesInvoiceReturn().getId()).orElseThrow();
     }
+
     @Transactional
     public boolean checkOrderDetailsItemIsApproved(Long id){
         SalesInvoicesReturnDetails salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findById(id).orElseThrow();
@@ -291,5 +223,7 @@ public class SalesInvoiceReturnDetailsService {
             return true;
         }
     }
+
+
 }
 
