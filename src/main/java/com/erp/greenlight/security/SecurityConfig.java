@@ -1,40 +1,88 @@
-//package com.erp.greenlight.security;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@EnableWebSecurity
-//@Configuration
-//public class SecurityConfig {
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-////        http
-//////                .authorizeRequests()
-//////                .requestMatchers("/login", "/h2-console/**").permitAll()
-//////                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//////                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
-//////                .anyRequest().authenticated();
-//////
-//////        return http.build();
-////        http.authorizeRequests(configurer-> configurer.anyRequest().authenticated())
-////                .formLogin(form->form.loginPage("/login").permitAll()
-////                        .loginProcessingUrl("/authenticateTheUser").permitAll());
-////        return http.build();
-//    }
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsManager() {
-//        UserDetails john = User.builder()
-//                .username("john")
-//                .password("{noop}test123")
-//                .roles("EMPLOYEE")
-//                .build();
-//        return new InMemoryUserDetailsManager(john);
-//    }
-//
-//}
+package com.erp.greenlight.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Configuration
+
+public class SecurityConfig {
+
+    String [] PUBLIC_END_POINTS = {
+            "/auth/login",
+            "/auth/refresh-token",
+            "/auth/logout",
+            "/swagger-ui/**",
+            "/api-docs/**"
+    };
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
+
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+
+    @Bean
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf-> csrf.disable())
+                .exceptionHandling((ex)-> ex.authenticationEntryPoint(unauthorizedHandler))
+
+                .sessionManagement((sm)-> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth-> auth.requestMatchers(PUBLIC_END_POINTS).permitAll())
+                 /*.authorizeHttpRequests((authorize) -> authorize
+                         .requestMatchers("/api/users").hasAnyAuthority("ADMIN")
+                 )*/
+
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                //.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedMethods(Arrays.asList("POST","GET","PUT","DELETE"));
+        configuration.setAllowedHeaders(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
+    public AuthFilter authFilter() {
+        return new AuthFilter();
+    }
+
+}
