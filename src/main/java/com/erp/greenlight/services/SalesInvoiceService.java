@@ -149,21 +149,23 @@ public class SalesInvoiceService {
             dataUpdateParent.setWhatRemain(request.getWhatRemain());
             dataUpdateParent.setDiscountType(request.getDiscountType());
             dataUpdateParent.setDiscountPercent(request.getDiscountPercent());
+
             dataUpdateParent.setDiscountValue(request.getDiscountValue());
+
             dataUpdateParent.setTaxPercent(request.getTaxPercent());
+
+            dataUpdateParent.setTaxValue(invoiceData.getTotalCost().multiply(request.getTaxPercent().divide(new BigDecimal(100))));
+
             dataUpdateParent.setTotalBeforeDiscount(invoiceData.getTotalCost());
 
-            BigDecimal discountValue = BigDecimal.ZERO;
-            BigDecimal newTotalCost = BigDecimal.ZERO;
+            BigDecimal totalCost = dataUpdateParent.getTotalCost();
+            BigDecimal totalCostAfterDiscount = calculateTotalAfterDiscountAndTax(totalCost, request.getDiscountType(), request.getDiscountValue(), request.getDiscountPercent(), request.getTaxPercent());
 
 
-            if (request.getDiscountPercent().compareTo(BigDecimal.ZERO) > 0) {
-                newTotalCost = invoiceData.getTotalCost().subtract(request.getDiscountPercent().divide(new BigDecimal(100)).multiply(invoiceData.getTotalCost()));
-            } else {
-                newTotalCost = invoiceData.getTotalCost().subtract(request.getDiscountValue());
-            }
 
-            dataUpdateParent.setTotalCost(newTotalCost.add(invoiceData.getTaxValue()));
+
+            dataUpdateParent.setTotalBeforeDiscount(dataUpdateParent.getTotalCost());
+            dataUpdateParent.setTotalCost(totalCostAfterDiscount);
 
 
             if (invoiceData.getIsHasCustomer()) {
@@ -228,6 +230,24 @@ public class SalesInvoiceService {
         }
         return data;
     }
+
+
+    private BigDecimal calculateTotalAfterDiscountAndTax(BigDecimal invoiceTotal, Byte discountType, BigDecimal discountValue, BigDecimal discountPercentage, BigDecimal taxPercentage) {
+
+        BigDecimal taxValue = invoiceTotal.multiply(taxPercentage.divide(new BigDecimal(100)));
+
+        if (discountType == 0) {
+            return invoiceTotal .add(taxValue);
+        } else if (discountType == 1) {
+            return invoiceTotal.subtract(discountPercentage.divide(new BigDecimal(100)).multiply(invoiceTotal)).add(taxValue);
+        } else if (discountType == 2) {
+            return invoiceTotal.subtract(discountValue).add(taxValue);
+        }else {
+            return null;
+        }
+    }
+
+
 
 }
 

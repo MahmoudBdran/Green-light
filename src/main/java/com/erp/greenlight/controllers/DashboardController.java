@@ -47,7 +47,7 @@ public class DashboardController {
 
         data.put("availableBalance",  treasuresTransactionService.getAvailableBalance());
         data.put("last5Transaction",  treasuresTransactionService.getLast5Transaction());
-        data.put("last5Sales",  salesInvoiceRepo.getLast5Sales());
+        data.put("last5Sales",  salesInvoiceRepo.getLast5SalesApproved());
         data.put("customerCount", customerRepo.countAllRows());
         data.put("supplierCount", supplierRepo.countAllRows());
         data.put("chartData", salesInvoiceService.getSalesInvoicesByMonth());

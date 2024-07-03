@@ -18,12 +18,12 @@ public interface SalesInvoiceRepo extends JpaRepository<SalesInvoice, Long> {
     BigDecimal netSalesInvoicesForCustomer(Account account);
 
 
-    @Query(value = "SELECT * FROM sales_invoices ORDER BY id DESC LIMIT 5", nativeQuery = true)
-    List<SalesInvoice> getLast5Sales();
+    @Query(value = "SELECT * FROM sales_invoices WHERE is_approved = 1 ORDER BY id DESC LIMIT 5", nativeQuery = true)
+    List<SalesInvoice> getLast5SalesApproved();
 
 
 
-    @Query("SELECT MONTH(invoiceDate) as month, COUNT(s) as count FROM SalesInvoice s GROUP BY MONTH(invoiceDate) ORDER BY MONTH(invoiceDate)")
+    @Query("SELECT MONTH(s.invoiceDate) as month, COUNT(s) as count FROM SalesInvoice s WHERE s.isApproved GROUP BY MONTH(s.invoiceDate) ORDER BY MONTH(s.invoiceDate)")
     List<Object[]> findSalesInvoiceCountsByMonth();
 
 

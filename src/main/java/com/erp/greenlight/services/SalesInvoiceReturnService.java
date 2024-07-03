@@ -125,7 +125,7 @@ public class SalesInvoiceReturnService {
     public ResponseEntity<Object> approveSalesInvoiceReturn(SalesInvoiceReturn request) {
         SalesInvoiceReturn invoiceData = salesInvoiceReturnRepo.findById(request.getId()).orElseThrow();
         Customer customer = invoiceData.getCustomer();
-        Account account = customer.getAccount();
+        Account account = null;
 
         if (!invoiceData.getIsApproved()) {
 
@@ -139,6 +139,7 @@ public class SalesInvoiceReturnService {
             if (invoiceData.getIsHasCustomer()) {
                 dataUpdateParent.setCustomer(customer);
                 dataUpdateParent.setAccount(account);
+                account =  customer.getAccount();
             }
 
             salesInvoiceReturnRepo.save(dataUpdateParent);

@@ -40,7 +40,7 @@ public class SalesInvoiceReturnDetailsService {
     }
 
     @Transactional
-    public SalesInvoicesReturnDetails saveItemInOrder(SalesReturnInvoiceItemDTO request) {
+    public SalesInvoiceReturn saveItemInOrder(SalesReturnInvoiceItemDTO request) {
 
         SalesInvoiceReturn salesInvoiceReturn = salesInvoiceReturnRepo.findById(request.getOrderId()).orElseThrow();
         InvItemCardBatch batchData = invItemCardBatchRepo.findById(request.getBatch()).orElseThrow();
@@ -69,13 +69,21 @@ public class SalesInvoiceReturnDetailsService {
         dataToInsertToInvoiceDetails.setIsparentuom(invUom.isMaster());
         dataToInsertToInvoiceDetails.setSalesInvoiceReturn(salesInvoiceReturn);
 
-        salesInvoiceReturn.setTotalCost(salesInvoiceReturn.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
-        salesInvoiceReturn.setTotalBeforeDiscount(salesInvoiceReturn.getTotalCost().add(dataToInsertToInvoiceDetails.getTotalPrice()));
-        //salesInvoiceReturn.setTotalCost(request.getUnitPrice().multiply(request.getItemQuantity()));
+        salesInvoiceReturnDetailsRepo.save(dataToInsertToInvoiceDetails);
+
+        List<SalesInvoicesReturnDetails> newDetails = salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnId(salesInvoiceReturn.getId());
+
+
+        float totalPrice = 0;
+        for (SalesInvoicesReturnDetails details : newDetails) {
+            totalPrice += details.getTotalPrice().floatValue();
+        }
+        salesInvoiceReturn.setTotalCost(BigDecimal.valueOf(totalPrice));
+        salesInvoiceReturn.setTotalBeforeDiscount(BigDecimal.valueOf(totalPrice));
         salesInvoiceReturnRepo.save(salesInvoiceReturn);
 
 
-       SalesInvoicesReturnDetails savedSalesInvoicesReturnDetails= salesInvoiceReturnDetailsRepo.save(dataToInsertToInvoiceDetails);
+
 
         //خصم الكمية من الباتش
         //كمية الصنف بكل المخازن قبل الحركة
@@ -126,7 +134,7 @@ public class SalesInvoiceReturnDetailsService {
 
         invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
 
-        return savedSalesInvoicesReturnDetails ;
+        return salesInvoiceReturn ;
     }
 
 
@@ -216,7 +224,7 @@ public class SalesInvoiceReturnDetailsService {
     @Transactional
     public boolean checkOrderDetailsItemIsApproved(Long id){
         SalesInvoicesReturnDetails salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findById(id).orElseThrow();
-        SalesInvoiceReturn salesInvoiceReturn= salesInvoiceReturnRepo.findById(id).orElseThrow();
+        SalesInvoiceReturn salesInvoiceReturn= salesInvoiceReturnRepo.findById(salesInvoicesReturnDetails.getSalesInvoiceReturn().getId()).orElseThrow();
         return salesInvoiceReturn.getIsApproved();
     }
     public boolean checkItemInOrderOrNot(SalesReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
