@@ -2,8 +2,10 @@ package com.erp.greenlight.services;
 
 import com.erp.greenlight.models.InvItemCard;
 import com.erp.greenlight.models.InvItemCardBatch;
+import com.erp.greenlight.models.InvItemcardCategory;
 import com.erp.greenlight.models.InvUom;
 import com.erp.greenlight.repositories.InvItemCardBatchRepo;
+import com.erp.greenlight.repositories.InvItemCardCategoryRepo;
 import com.erp.greenlight.repositories.InvItemCardRepo;
 import com.erp.greenlight.repositories.InvUomRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class InvItemCardService {
     @Autowired
     InvUomRepo invUomRepo;
 
+    @Autowired
+    InvItemCardCategoryRepo invItemCardCategoryRepo;
+
     public List<InvItemCard> getAllInvItemCards(){
         return repo.findAll();
     }
@@ -35,15 +40,52 @@ public class InvItemCardService {
     public Optional<InvItemCard> getInvItemCardById(@PathVariable Long id){
         return Optional.of(repo.findById(id).get());
     }
-    public InvItemCard saveInvItemCard(InvItemCard invItemcard){
+    public InvItemCard saveInvItemCard(InvItemCard request){
 
-        if(invItemcard.getParentInvItemCard().getId() == null){
-            invItemcard.setParentInvItemCard(null);
+        InvItemcardCategory invItemcardCategory = invItemCardCategoryRepo.findById(request.getInvItemCategory().getId()).orElseThrow();
+        InvUom uom = invUomRepo.findById(request.getUom().getId()).orElseThrow();
+
+        InvItemCard dataToInsert = new InvItemCard();
+
+        dataToInsert.setBarcode(request.getBarcode());
+        dataToInsert.setName(request.getName());
+        dataToInsert.setItemType(request.getItemType());
+        dataToInsert.setInvItemCategory(invItemcardCategory);
+        dataToInsert.setUom(uom);
+        dataToInsert.setActive(request.isActive());
+
+        dataToInsert.setPrice(request.getPrice());
+        dataToInsert.setNosGomlaPrice(request.getNosGomlaPrice());
+        dataToInsert.setGomlaPrice(request.getGomlaPrice());
+        dataToInsert.setCostPrice(request.getCostPrice());
+
+        dataToInsert.setHasFixcedPrice(request.isHasFixcedPrice());
+        dataToInsert.setAllQUENTITY(BigDecimal.ZERO);
+        dataToInsert.setAllQUENTITY(BigDecimal.ZERO);
+        dataToInsert.setQUENTITY(BigDecimal.ZERO);
+
+
+        if(request.getParentInvItemCard().getId() == null){
+            dataToInsert.setParentInvItemCard(null);
+        }
+        dataToInsert.setDoesHasRetailUnit(request.isDoesHasRetailUnit());
+
+        if(request.isDoesHasRetailUnit()){
+            InvUom retailUom = invUomRepo.findById(request.getRetailUom().getId()).orElseThrow();
+            dataToInsert.setRetailUom(retailUom);
+            dataToInsert.setRetailUomQuntToParent(request.getRetailUomQuntToParent());
+
+            dataToInsert.setPriceRetail(request.getPriceRetail());
+            dataToInsert.setNosGomlaPriceRetail(request.getNosGomlaPriceRetail());
+            dataToInsert.setGomlaPriceRetail(request.getGomlaPriceRetail());
+            dataToInsert.setCostPriceRetail(request.getCostPriceRetail());
+
+            dataToInsert.setQUENTITY(BigDecimal.ZERO);
+            dataToInsert.setQUENTITYAllRetails(BigDecimal.ZERO);
         }
 
-        //InvUom uom = invUomRepo.findById(invItemcard.getUom().getId()).orElseThrow();
-        //invItemcard.setUom(uom);
-        return repo.save(invItemcard);
+        return repo.save(dataToInsert);
+
     }
     public void deleteInvItemCard( Long id){
        // repo.deleteById(id);
@@ -74,6 +116,7 @@ public class InvItemCardService {
             invItemCard.setQUENTITYRetail(QUENTITY_all_Retails.remainder(invItemCard.getRetailUomQuntToParent()));
             invItemCard.setQUENTITYAllRetails(QUENTITY_all_Retails);
         }else{
+
             invItemCard.setQUENTITY(allQuantityINBatches);
         }
         repo.save(invItemCard);

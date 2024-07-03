@@ -13,13 +13,13 @@ import java.util.List;
 @Repository
 public interface InvItemCardBatchRepo extends JpaRepository<InvItemCardBatch,Long> {
 
-    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE item=:item")
+    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE b.item=:item")
     BigDecimal allQuantityINBatches(InvItemCard item);
 
-    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE item=:item")
+    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE b.item=:item")
     BigDecimal getQuantityBeforeMove(InvItemCard item);
 
-    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE item=:item AND store=:store")
+    @Query("SELECT SUM(b.quantity) FROM InvItemCardBatch b WHERE b.item=:item AND b.store=:store")
     BigDecimal getQuantityBeforeMoveCurrentStore(InvItemCard item, Store store);
 
 

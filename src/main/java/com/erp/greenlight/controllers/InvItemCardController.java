@@ -53,8 +53,6 @@ public class InvItemCardController {
 
     @PostMapping("/save")
     public ResponseEntity<Object> saveInvItemCard(@RequestBody InvItemCard invItemcard){
-
-        //return AppResponse.generateResponse("تم الحفظ", HttpStatus.OK,  invItemcard , true);
         return AppResponse.generateResponse("تم الحفظ", HttpStatus.OK,  service.saveInvItemCard(invItemcard) , true);
     }
 
