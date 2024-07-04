@@ -59,7 +59,7 @@ public class InvItemCardController {
     @PutMapping("/update")
     public ResponseEntity<Object> updateInvItemCard(@RequestBody InvItemCard invItemcard){
 
-        return AppResponse.generateResponse("تم التحديث", HttpStatus.OK,   service.saveInvItemCard(invItemcard) , true);
+        return AppResponse.generateResponse("تم التحديث", HttpStatus.OK,   service.updateInvItemCard(invItemcard) , true);
     }
 
     @DeleteMapping("/{id}")

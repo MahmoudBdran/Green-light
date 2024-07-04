@@ -87,6 +87,56 @@ public class InvItemCardService {
         return repo.save(dataToInsert);
 
     }
+
+    public InvItemCard updateInvItemCard(InvItemCard request){
+
+        InvItemcardCategory invItemcardCategory = invItemCardCategoryRepo.findById(request.getInvItemCategory().getId()).orElseThrow();
+        InvUom uom = invUomRepo.findById(request.getUom().getId()).orElseThrow();
+
+        InvItemCard dataToUpdate = repo.findById(request.getId()).orElseThrow();
+
+        dataToUpdate.setBarcode(request.getBarcode());
+        dataToUpdate.setName(request.getName());
+        dataToUpdate.setItemType(request.getItemType());
+        dataToUpdate.setInvItemCategory(invItemcardCategory);
+        dataToUpdate.setUom(uom);
+        dataToUpdate.setActive(request.isActive());
+
+        dataToUpdate.setPrice(request.getPrice());
+        dataToUpdate.setNosGomlaPrice(request.getNosGomlaPrice());
+        dataToUpdate.setGomlaPrice(request.getGomlaPrice());
+        dataToUpdate.setCostPrice(request.getCostPrice());
+
+        dataToUpdate.setHasFixcedPrice(request.isHasFixcedPrice());
+        dataToUpdate.setAllQUENTITY(BigDecimal.ZERO);
+        dataToUpdate.setAllQUENTITY(BigDecimal.ZERO);
+        dataToUpdate.setQUENTITY(BigDecimal.ZERO);
+
+
+        if(request.getParentInvItemCard().getId() == null){
+            dataToUpdate.setParentInvItemCard(null);
+        }
+        dataToUpdate.setDoesHasRetailUnit(request.isDoesHasRetailUnit());
+
+        if(request.isDoesHasRetailUnit()){
+            InvUom retailUom = invUomRepo.findById(request.getRetailUom().getId()).orElseThrow();
+            dataToUpdate.setRetailUom(retailUom);
+            dataToUpdate.setRetailUomQuntToParent(request.getRetailUomQuntToParent());
+
+            dataToUpdate.setPriceRetail(request.getPriceRetail());
+            dataToUpdate.setNosGomlaPriceRetail(request.getNosGomlaPriceRetail());
+            dataToUpdate.setGomlaPriceRetail(request.getGomlaPriceRetail());
+            dataToUpdate.setCostPriceRetail(request.getCostPriceRetail());
+
+            dataToUpdate.setQUENTITY(BigDecimal.ZERO);
+            dataToUpdate.setQUENTITYAllRetails(BigDecimal.ZERO);
+        }
+
+        return repo.save(dataToUpdate);
+
+    }
+
+
     public void deleteInvItemCard( Long id){
        // repo.deleteById(id);
     }
