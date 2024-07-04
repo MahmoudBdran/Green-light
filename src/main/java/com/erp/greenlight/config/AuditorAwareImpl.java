@@ -23,6 +23,6 @@ public class AuditorAwareImpl implements AuditorAware<Admin> {
     public Optional<Admin> getCurrentAuditor() {
 
 
-        return Optional.of(userService.getCurrentAuthUser());
+        return Optional.of( userService.getCurrentAuthUser());
     }
 }

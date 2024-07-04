@@ -292,7 +292,7 @@ public class SupplierOrderService {
         });
 
 
-        return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, null, true);
+        return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, supplierOrder, true);
     }
 
 

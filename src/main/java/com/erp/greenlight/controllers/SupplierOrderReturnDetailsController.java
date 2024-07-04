@@ -41,12 +41,9 @@ public class SupplierOrderReturnDetailsController {
     }
     @PostMapping("/saveItemInOrderReturn")
     public ResponseEntity<Object> saveItemInOrderReturn(@RequestBody ReturnInvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
-        System.out.println("entered saveItemInOrder");
-        if(supplierOrderReturnDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
-            System.out.println("entered if cond true checkItemInOrderOrNot ");
+        if(supplierOrderReturnDetailsService.checkItemInOrder(invoiceItemDTO)){
             return AppResponse.generateResponse("عفوا الصنف موجود بالفعل بالفاتورة!!", HttpStatus.OK,  null, true);
         }else{
-            System.out.println("entered if cond false checkItemInOrderOrNot ");
             return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  supplierOrderReturnDetailsService.saveItemInOrderReturn(invoiceItemDTO) , true);
         }
     }

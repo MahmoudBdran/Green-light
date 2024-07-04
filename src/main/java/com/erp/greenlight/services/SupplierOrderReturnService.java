@@ -178,32 +178,32 @@ public class SupplierOrderReturnService {
     @Transactional
     public ResponseEntity<Object> approve(ApproveSupplierOrderDTO request) {
 
-        SupplierOrder supplierOrder = supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
+        SupplierOrder supplierOrderReturn = supplierOrderRepo.findById(request.getOrderId()).orElseThrow();
 
-        Supplier supplier = supplierOrder.getSupplier();
-        Store store = supplierOrder.getStore();
+        Supplier supplier = supplierOrderReturn.getSupplier();
+        Store store = supplierOrderReturn.getStore();
 
-        if (supplierOrder.getIsApproved()) {
+        if (supplierOrderReturn.getIsApproved()) {
             return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null, true);
         }
 
-        BigDecimal totalCost = supplierOrder.getTotalCost();
+        BigDecimal totalCost = supplierOrderReturn.getTotalCost();
         BigDecimal totalCostAfterDiscount = calculateTotalAfterDiscount(totalCost, request.getDiscountType(), request.getDiscountValue(), request.getDiscountPercent());
 
-        supplierOrder.setTaxPercent(request.getTaxPercent());
-        supplierOrder.setTaxValue(request.getTaxValue());
+        supplierOrderReturn.setTaxPercent(request.getTaxPercent());
+        supplierOrderReturn.setTaxValue(request.getTaxValue());
 
-        supplierOrder.setTotalBeforeDiscount(supplierOrder.getTotalCost());
-        supplierOrder.setTotalCost(totalCostAfterDiscount);
+        supplierOrderReturn.setTotalBeforeDiscount(supplierOrderReturn.getTotalCost());
+        supplierOrderReturn.setTotalCost(totalCostAfterDiscount);
 
-        supplierOrder.setDiscountType(request.getDiscountType());
-        supplierOrder.setDiscountPercent(request.getDiscountPercent());
-        supplierOrder.setDiscountValue(request.getDiscountValue());
-        supplierOrder.setPillType(request.getPillType());
-        supplierOrder.setIsApproved(Boolean.TRUE);
-        supplierOrder.setWhatPaid(request.getWhatPaid());
-        supplierOrder.setWhatRemain(request.getWhatRemain());
-        supplierOrder.setMoneyForAccount(supplierOrder.getTotalCost().multiply(new BigDecimal(-1)));
+        supplierOrderReturn.setDiscountType(request.getDiscountType());
+        supplierOrderReturn.setDiscountPercent(request.getDiscountPercent());
+        supplierOrderReturn.setDiscountValue(request.getDiscountValue());
+        supplierOrderReturn.setPillType(request.getPillType());
+        supplierOrderReturn.setIsApproved(Boolean.TRUE);
+        supplierOrderReturn.setWhatPaid(request.getWhatPaid());
+        supplierOrderReturn.setWhatRemain(request.getWhatRemain());
+        supplierOrderReturn.setMoneyForAccount(supplierOrderReturn.getTotalCost().multiply(new BigDecimal(-1)));
 
         if (request.getPillType() == 1) {
             if (request.getWhatPaid().compareTo(totalCostAfterDiscount) != 0) {
@@ -228,7 +228,7 @@ public class SupplierOrderReturnService {
             }
         }
 
-        supplierOrderRepo.save(supplierOrder);
+        supplierOrderRepo.save(supplierOrderReturn);
 
         if (request.getWhatPaid().compareTo(BigDecimal.ZERO) > 0) {
             Treasure treasure = treasureRepo.findById(1L).orElseThrow();
@@ -244,7 +244,7 @@ public class SupplierOrderReturnService {
             newTreasureTransaction.setIsAccount(Boolean.TRUE);
             newTreasureTransaction.setIsApproved(Boolean.TRUE);
             newTreasureTransaction.setMoneyForAccount(request.getWhatPaid().multiply(new BigDecimal(-1)));
-            newTreasureTransaction.setByan("صرف نظير فاتورة مشتريات  رقم" + supplierOrder.getId());
+            newTreasureTransaction.setByan("صرف نظير فاتورة مشتريات  رقم" + supplierOrderReturn.getId());
             newTreasureTransaction.setIsalNumber(1L);
             newTreasureTransaction.setShiftCode(1L);
 
@@ -259,7 +259,7 @@ public class SupplierOrderReturnService {
         }
 
 
-        return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, null, true);
+        return AppResponse.generateResponse("تم اعتماد وترحيل الفاتورة بنجاح ", HttpStatus.OK, supplierOrderReturn, true);
     }
 
     private BigDecimal calculateTotalAfterDiscount(BigDecimal invoiceTotal, Byte discountType, BigDecimal discountValue, BigDecimal discountPercentage) {

@@ -37,15 +37,6 @@ public class Admin {
     @Column(nullable = false, length = 225)
     private String password;
 
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(updatable = false)
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles" ,
             joinColumns = @JoinColumn(name = "user_id"),

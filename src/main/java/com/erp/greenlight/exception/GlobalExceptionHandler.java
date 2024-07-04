@@ -5,7 +5,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
- import org.springframework.validation.FieldError;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,7 +38,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return AppResponse.generateResponse("please validate the following fields", HttpStatus.BAD_REQUEST, errors, false);
     }
 
-/*
     @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
     public ResponseEntity<Object> handleUnauthorizedException(BadCredentialsException ex) {
 
@@ -48,8 +48,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid_username_or_password");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid username or password");
     }
+
+
+    @ExceptionHandler(InvalidUserOrPass.class)
+    public ResponseEntity<Object> handleInvalidUserOrPassException(BadCredentialsException ex) {
+
+        return AppResponse.generateResponse("invalid username or password", HttpStatus.BAD_REQUEST, null, false);
+
+    }
+
+/*
+
 
 
 

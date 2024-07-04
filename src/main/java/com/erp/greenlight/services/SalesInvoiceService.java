@@ -207,7 +207,7 @@ public class SalesInvoiceService {
             return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK, invoiceData, true);
 
         } else {
-            return AppResponse.generateResponse(" الفاتوره بالفعل محفوظه", HttpStatus.OK, null, true);
+            return AppResponse.generateResponse(" الفاتوره بالفعل محفوظه", HttpStatus.OK, invoiceData, true);
         }
     }
 

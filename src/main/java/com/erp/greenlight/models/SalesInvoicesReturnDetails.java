@@ -41,7 +41,7 @@ public class SalesInvoicesReturnDetails {
     @ManyToOne()
     @JoinColumn(name = "store_id",referencedColumnName = "id")
     private Store store;  // Likely a foreign key referencing a Store
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "item_Id",referencedColumnName = "id") //inv item f k
     private InvItemCard item;  // Likely a foreign key referencing an Item table
 

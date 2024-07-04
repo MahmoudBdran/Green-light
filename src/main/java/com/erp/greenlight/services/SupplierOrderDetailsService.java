@@ -97,7 +97,7 @@ public class SupplierOrderDetailsService {
     }
     public boolean checkItemInOrderOrNot(InvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
 
-        Optional<SupplierOrderDetails> supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+        Optional<SupplierOrderDetails> supplierOrderDetails=supplierOrderDetailsRepo.findByOrderIdAndInvItemCardIdAndUomId(parsedInvoiceItemDto.getOrderId(),parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
         if (supplierOrderDetails.isEmpty()){
             return false;
         }else{

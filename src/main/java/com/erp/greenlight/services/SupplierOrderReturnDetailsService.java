@@ -47,67 +47,78 @@ public class SupplierOrderReturnDetailsService {
         Store store = invoiceData.getStore();
         Supplier supplier = invoiceData.getSupplier();
 
+        try{
+            if (!invoiceData.getIsApproved()) {
 
-        if (!invoiceData.getIsApproved()) {
-            if (batchData.getQuantity().compareTo(parsedInvoiceItemDto.getItemQuantity()) > 0) {
 
-                SupplierOrderDetails dataInsertItems = new SupplierOrderDetails();
 
-                BigDecimal totalPrice = parsedInvoiceItemDto.getItemQuantity().multiply(parsedInvoiceItemDto.getUnitPrice());
-                dataInsertItems.setInvItemCard(invItemCard);
-                dataInsertItems.setUom(invUom);
-                dataInsertItems.setBatch(batchData);
-                dataInsertItems.setDeliveredQuantity(parsedInvoiceItemDto.getItemQuantity());
-                dataInsertItems.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
-                dataInsertItems.setTotalPrice(totalPrice);
-                dataInsertItems.setIsParentUom(invUom.isMaster());
-                dataInsertItems.setOrder(invoiceData);
-                dataInsertItems.setOrderType(invoiceData.getOrderType());
+               // if ( invUom.isMaster() && batchData.getQuantity().compareTo(parsedInvoiceItemDto.getItemQuantity()) > 0) {
 
-                supplierOrderDetailsRepo.save(dataInsertItems);
+                    SupplierOrderDetails dataInsertItems = new SupplierOrderDetails();
 
-                invoiceData.setTotalCost(invoiceData.getTotalCost().add(totalPrice));
-                invoiceData.setTotalBeforeDiscount(invoiceData.getTotalCost());
+                    BigDecimal totalPrice = parsedInvoiceItemDto.getItemQuantity().multiply(parsedInvoiceItemDto.getUnitPrice());
+                    dataInsertItems.setInvItemCard(invItemCard);
+                    dataInsertItems.setUom(invUom);
+                    dataInsertItems.setBatch(batchData);
+                    dataInsertItems.setDeliveredQuantity(parsedInvoiceItemDto.getItemQuantity());
+                    dataInsertItems.setUnitPrice(parsedInvoiceItemDto.getUnitPrice());
+                    dataInsertItems.setTotalPrice(totalPrice);
+                    dataInsertItems.setIsParentUom(invUom.isMaster());
+                    dataInsertItems.setOrder(invoiceData);
+                    dataInsertItems.setOrderType(invoiceData.getOrderType());
 
-                supplierOrderRepo.save(invoiceData);
+                    supplierOrderDetailsRepo.save(dataInsertItems);
 
-                BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+                    invoiceData.setTotalCost(invoiceData.getTotalCost().add(totalPrice));
+                    invoiceData.setTotalBeforeDiscount(invoiceData.getTotalCost());
 
-                //get Quantity Before any Action  حنجيب كيمة الصنف  بالمخزن المحدد معه   الحالي قبل الحركة
-                BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
-                if (invUom.isMaster()) {
-                    //حخصم بشكل مباشر لانه بنفس وحده الباتش الاب
-                    batchData.setQuantity(batchData.getQuantity().subtract(parsedInvoiceItemDto.getItemQuantity()));
-                } else {
-                    //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
-                    batchData.setQuantity((batchData.getQuantity().subtract(parsedInvoiceItemDto.getItemQuantity().divide(invItemCard.getRetailUomQuntToParent()))));
-                }
+                    supplierOrderRepo.save(invoiceData);
 
-                batchData.setTotalCostPrice(batchData.getUnitCostPrice().multiply(batchData.getQuantity()));
+                    BigDecimal quantityBeforeMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
 
-                invItemCardBatchRepo.save(batchData);
+                    //get Quantity Before any Action  حنجيب كيمة الصنف  بالمخزن المحدد معه   الحالي قبل الحركة
+                    BigDecimal quantityBeforeMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
+                    if (invUom.isMaster()) {
+                        //حخصم بشكل مباشر لانه بنفس وحده الباتش الاب
+                        batchData.setQuantity(batchData.getQuantity().subtract(parsedInvoiceItemDto.getItemQuantity()));
+                    } else {
+                        //مرجع بالوحده الابن التجزئة فلازم تحولها الي الاب قبل الخصم انتبه !!
+                        batchData.setQuantity((batchData.getQuantity().subtract(parsedInvoiceItemDto.getItemQuantity().divide(invItemCard.getRetailUomQuntToParent()))));
+                    }
 
-                BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
-                BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
+                    batchData.setTotalCostPrice(batchData.getUnitCostPrice().multiply(batchData.getQuantity()));
 
-                InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
+                    invItemCardBatchRepo.save(batchData);
 
-                dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(1));
-                dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(3));
-                dataInsertInvItemCardMovements.setItem(invItemCard);
-                dataInsertInvItemCardMovements.setByan("نظير مرتجع مشتريات عام الي المورد" + " " + supplier.getName() + " فاتورة رقم" + " " + invoiceData.getId());
-                dataInsertInvItemCardMovements.setQuantityBeforMovement("عدد " + " " + (quantityBeforeMove) + " " + invUom.getName());
-                dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + (quantityAfterMove) + " " + invUom.getName());
-                dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " + " " + (quantityBeforeMoveCurrentStore) + " " + invUom.getName());
-                dataInsertInvItemCardMovements.setQuantityAfterMoveStore("عدد " + " " + (quantityAfterMoveCurrentStore) + " " + invUom.getName());
-                dataInsertInvItemCardMovements.setStore(store);
+                    BigDecimal quantityAfterMove = invItemCardBatchRepo.getQuantityBeforeMove(invItemCard);
+                    BigDecimal quantityAfterMoveCurrentStore = invItemCardBatchRepo.getQuantityBeforeMoveCurrentStore(invItemCard, store);
 
-                invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
-                invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
+                    InvItemcardMovement dataInsertInvItemCardMovements = new InvItemcardMovement();
+
+                    dataInsertInvItemCardMovements.setInvItemcardMovementsCategory(new InvItemcardMovementsCategory(1));
+                    dataInsertInvItemCardMovements.setInvItemcardMovementsType(new InvItemcardMovementsType(3));
+                    dataInsertInvItemCardMovements.setItem(invItemCard);
+                    dataInsertInvItemCardMovements.setByan("نظير مرتجع مشتريات عام الي المورد" + " " + supplier.getName() + " فاتورة رقم" + " " + invoiceData.getId());
+                    dataInsertInvItemCardMovements.setQuantityBeforMovement("عدد " + " " + (quantityBeforeMove) + " " + invUom.getName());
+                    dataInsertInvItemCardMovements.setQuantityAfterMove("عدد " + " " + (quantityAfterMove) + " " + invUom.getName());
+                    dataInsertInvItemCardMovements.setQuantityBeforMoveStore("عدد " + " " + (quantityBeforeMoveCurrentStore) + " " + invUom.getName());
+                    dataInsertInvItemCardMovements.setQuantityAfterMoveStore("عدد " + " " + (quantityAfterMoveCurrentStore) + " " + invUom.getName());
+                    dataInsertInvItemCardMovements.setStore(store);
+
+                    invItemcardMovementRepo.save(dataInsertInvItemCardMovements);
+                    invItemCardService.doUpdateItemCardQuantity(invItemCard, batchData);
+
+                    return invoiceData;
+
+                //}
 
             }
+        }catch (Exception ex){
+            throw  new InternalServerErrorException("error");
         }
-        return invoiceData;
+
+
+        throw  new InternalServerErrorException("error");
 
     }
 
@@ -181,12 +192,12 @@ public class SupplierOrderReturnDetailsService {
         return supplierOrderReturn.getIsApproved();
     }
 
-    public boolean checkItemInOrderOrNot(ReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+    public boolean checkItemInOrder(ReturnInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
         System.out.println("entered checkItemInORderOrNot method");
         System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getOrderId());
         System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getUom());
         System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getInvItemCard());
-        Optional<SupplierOrderDetails> supplierOrderReturnDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCard_IdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+        Optional<SupplierOrderDetails> supplierOrderReturnDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCardIdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
         if (supplierOrderReturnDetails.isEmpty()) {
             return false;
         } else {

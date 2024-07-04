@@ -81,9 +81,8 @@ public class UserService implements  UserDetailsService  {
     }
 
     public Admin getCurrentAuthUser() {
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return adminRepository.findByUsername( user.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("This User Not found with selected user name :- " + user.getUsername()));
+        AppUserDetail user = (AppUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return new Admin(user.getId());
     }
 
 /*    public AppUser save(UserDto registerRequest) {
