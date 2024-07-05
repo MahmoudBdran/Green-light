@@ -49,6 +49,7 @@ public class SarfPermissionService {
         dataToInsert.setNotes(request.getNotes());
         dataToInsert.setReceiverName(request.getReceiverName());
         dataToInsert.setPermissionDate(request.getPermissionDate());
+        dataToInsert.setIsApproved(Boolean.FALSE);
 
         return sarfPermissionRepo.save(dataToInsert);
     }
@@ -67,11 +68,31 @@ public class SarfPermissionService {
 
     @Transactional
     public boolean delete(Long id) {
-        for (SarfPermissionDetail details : sarfPermissionRepo.findById(id).get().getDetailsItems()) {
-            sarfPermissionDetailsRepo.deleteById(details.getId());
+
+        if(!sarfPermissionRepo.findById(id).get().getIsApproved()){
+            for (SarfPermissionDetail details : sarfPermissionRepo.findById(id).get().getDetailsItems()) {
+                sarfPermissionDetailsRepo.deleteById(details.getId());
+            }
+            sarfPermissionRepo.deleteById(id);
+            return true;
+        }else{
+            return false;
         }
-        sarfPermissionRepo.deleteById(id);
-        return true;
+
+
+    }
+
+    public ResponseEntity<Object> approve(SaveSarfPermissionDTO request) {
+        SarfPermission dataToUpdate = sarfPermissionRepo.findById(request.getId()).orElseThrow();
+
+        if(!dataToUpdate.getIsApproved()){
+            dataToUpdate.setIsApproved(Boolean.TRUE);
+
+            return AppResponse.generateResponse("تم اعتماد اذن الصرف بنجاح", HttpStatus.OK,sarfPermissionRepo.save(dataToUpdate) , true);
+        }else{
+            return AppResponse.generateResponse("عفوا الاذن بالفعل معتمد", HttpStatus.OK, null , true);
+
+        }
 
     }
 
@@ -101,6 +122,12 @@ public class SarfPermissionService {
         sarfPermissionDetailsRepo.deleteById(id);
 
         return sarfPermissionRepo.findById(permissionId).orElseThrow();
+    }
+
+
+    public boolean isApproved(Long id){
+
+     return sarfPermissionRepo.findById(id).orElseThrow().getIsApproved();
     }
 
 

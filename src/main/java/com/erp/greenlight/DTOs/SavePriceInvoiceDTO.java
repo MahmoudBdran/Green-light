@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Setter
 @Getter
-public class SaveSarfPermissionDTO {
+public class SavePriceInvoiceDTO {
 
     private Long id;
-    private LocalDate permissionDate;
+    private LocalDate invoiceDate;
 
     private Long customer;
     private String notes;

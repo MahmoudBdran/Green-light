@@ -19,38 +19,34 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "sarf_permissions")
+@Table(name = "price_invoices")
 @EntityListeners({AuditingEntityListener.class})
-public class SarfPermission {
+public class PriceInvoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "permission_date")
+
+    @Column(name = "invoice_date")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate permissionDate;
-
-    @ManyToOne()
-    @JoinColumn(name = "customer",referencedColumnName = "id")
-    private Customer customer;
-
-    @Column(name = "receiver_name", length = 225)
-    private String receiverName;
-
-    @Column(name = "notes", length = 225)
-    private String notes;
-
-    @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalCost;
+    private LocalDate invoiceDate;
 
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved;
 
-    @OneToMany(mappedBy = "sarfPermission")
-    private List<SarfPermissionDetail> detailsItems;
 
+    @Column(name = "notes", length = 225)
+    private String notes;
+
+
+    @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalCost;
+
+
+    @OneToMany(mappedBy = "priceInvoice")
+    private List<PriceInvoiceDetail> priceInvoiceDetails;
 
     @CreatedBy
     @ManyToOne()
@@ -69,8 +65,7 @@ public class SarfPermission {
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     private Admin updatedBy;
 
-
-    public SarfPermission(Long id) {
+    public PriceInvoice(Long id) {
         this.id = id;
     }
 }

@@ -6,6 +6,7 @@ import com.erp.greenlight.DTOs.SaveSarfPermissionDetailsDTO;
 import com.erp.greenlight.models.SalesInvoice;
 import com.erp.greenlight.repositories.InvItemCardBatchRepo;
 import com.erp.greenlight.repositories.InvUomRepo;
+import com.erp.greenlight.repositories.SarfPermissionDetailsRepo;
 import com.erp.greenlight.repositories.SarfPermissionRepo;
 import com.erp.greenlight.services.*;
 import com.erp.greenlight.utils.AppResponse;
@@ -35,6 +36,9 @@ public class SarfPermissionController {
     SarfPermissionRepo sarfPermissionRepo;
 
     @Autowired
+    SarfPermissionDetailsRepo sarfPermissionDetailsRepo;
+
+    @Autowired
     CustomerService customerService;
 
     @GetMapping("")
@@ -55,26 +59,49 @@ public class SarfPermissionController {
     public ResponseEntity<Object> save(@RequestBody SaveSarfPermissionDTO request){
         return AppResponse.generateResponse("تم حفط اذن الصرف بنجاح", HttpStatus.OK, sarfPermissionService.save(request) , true);
     }
+
     @PutMapping()
     public ResponseEntity<Object> update(@RequestBody SaveSarfPermissionDTO request){
-        return AppResponse.generateResponse("تم تحديث اذن الصرف  بنجاح", HttpStatus.OK, sarfPermissionService.update(request) , true);
+
+        if(sarfPermissionService.isApproved(request.getId())){
+            return AppResponse.generateResponse("عفوا غير قادر علي التعدبل لان الاذن معتمد", HttpStatus.OK, null , true);
+        }else{
+            return AppResponse.generateResponse("تم تحديث اذن الصرف  بنجاح", HttpStatus.OK, sarfPermissionService.update(request) , true);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id){
-        return AppResponse.generateResponse("تم حذف اذن الصرف  بمحتوياتها بنجاح", HttpStatus.OK,  sarfPermissionService.delete(id) , true);
+        if(sarfPermissionService.isApproved(id)){
+            return AppResponse.generateResponse("عفوا غير قادر علي المسح لان الاذن معتمد", HttpStatus.OK, null , true);
+        }else {
+            return AppResponse.generateResponse("تم حذف اذن الصرف  بمحتوياتها بنجاح", HttpStatus.OK, sarfPermissionService.delete(id), true);
+        }
+    }
+
+    @PostMapping("/approve")
+    public ResponseEntity<Object> approve(@RequestBody SaveSarfPermissionDTO request){
+       return sarfPermissionService.approve(request);
     }
 
     /* -------      details -------------------*/
     @PostMapping("/saveItem")
     public ResponseEntity<Object> saveItem(@RequestBody SaveSarfPermissionDetailsDTO request){
-        return AppResponse.generateResponse("تم حفط اذن الصرف بنجاح", HttpStatus.OK, sarfPermissionService.saveItem(request) , true);
+        if(sarfPermissionService.isApproved(request.getPermissionId())){
+            return AppResponse.generateResponse("عفوا غير قادر علي الاضافة لان الاذن معتمد", HttpStatus.OK, null , true);
+        }else {
+            return AppResponse.generateResponse("تم حفط اذن الصرف بنجاح", HttpStatus.OK, sarfPermissionService.saveItem(request), true);
+        }
     }
 
 
     @DeleteMapping("/deleteItem/{id}")
     public ResponseEntity<Object> deleteItem(@PathVariable Long id){
-        return AppResponse.generateResponse("تم حذف العنصر ", HttpStatus.OK,  sarfPermissionService.deleteItem(id) , true);
+        if(sarfPermissionService.isApproved(sarfPermissionDetailsRepo.findById(id).orElseThrow().getSarfPermission().getId())){
+            return AppResponse.generateResponse("عفوا غير قادر علي المسح لان الاذن معتمد", HttpStatus.OK, null , true);
+        }else {
+            return AppResponse.generateResponse("تم حذف العنصر ", HttpStatus.OK, sarfPermissionService.deleteItem(id), true);
+        }
     }
 
 }

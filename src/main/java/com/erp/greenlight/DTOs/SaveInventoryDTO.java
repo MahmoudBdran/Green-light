@@ -1,5 +1,6 @@
 package com.erp.greenlight.DTOs;
 
+import com.erp.greenlight.enums.InventoryType;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -9,12 +10,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Setter
 @Getter
-public class SaveSarfPermissionDTO {
+public class SaveInventoryDTO {
 
     private Long id;
-    private LocalDate permissionDate;
-
-    private Long customer;
+    private LocalDate date;
+    private InventoryType inventoryType;
+    private Integer store;
     private String notes;
-    private String receiverName;
+
+
 }
