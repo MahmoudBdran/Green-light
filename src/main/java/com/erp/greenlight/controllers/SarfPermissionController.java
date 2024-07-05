@@ -2,6 +2,7 @@ package com.erp.greenlight.controllers;
 
 import com.erp.greenlight.DTOs.SalesInvoiceDTO;
 import com.erp.greenlight.DTOs.SaveSarfPermissionDTO;
+import com.erp.greenlight.DTOs.SaveSarfPermissionDetailsDTO;
 import com.erp.greenlight.models.SalesInvoice;
 import com.erp.greenlight.repositories.InvItemCardBatchRepo;
 import com.erp.greenlight.repositories.InvUomRepo;
@@ -64,5 +65,16 @@ public class SarfPermissionController {
         return AppResponse.generateResponse("تم حذف اذن الصرف  بمحتوياتها بنجاح", HttpStatus.OK,  sarfPermissionService.delete(id) , true);
     }
 
+    /* -------      details -------------------*/
+    @PostMapping("/saveItem")
+    public ResponseEntity<Object> saveItem(@RequestBody SaveSarfPermissionDetailsDTO request){
+        return AppResponse.generateResponse("تم حفط اذن الصرف بنجاح", HttpStatus.OK, sarfPermissionService.saveItem(request) , true);
+    }
+
+
+    @DeleteMapping("/deleteItem/{id}")
+    public ResponseEntity<Object> deleteItem(@PathVariable Long id){
+        return AppResponse.generateResponse("تم حذف العنصر ", HttpStatus.OK,  sarfPermissionService.deleteItem(id) , true);
+    }
 
 }

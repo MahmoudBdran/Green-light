@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,10 +27,16 @@ public class SarfPermission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "permission_date")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate permissionDate;
 
     @ManyToOne()
     @JoinColumn(name = "customer",referencedColumnName = "id")
     private Customer customer;
+
+    @Column(name = "receiver_name", length = 225)
+    private String receiverName;
 
     @Column(name = "notes", length = 225)
     private String notes;
@@ -38,13 +45,9 @@ public class SarfPermission {
     private BigDecimal totalCost;
 
 
-    @OneToMany(mappedBy = "salesInvoice")
+    @OneToMany(mappedBy = "sarfPermission")
     private List<SarfPermissionDetail> detailsItems;
 
-
-    @ManyToOne()
-    @JoinColumn(name = "store_id",referencedColumnName = "id")
-    private Store store;
 
     @CreatedBy
     @ManyToOne()

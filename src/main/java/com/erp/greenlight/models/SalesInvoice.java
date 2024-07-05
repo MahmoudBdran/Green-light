@@ -32,7 +32,6 @@ public class SalesInvoice {
 
 
     @Column(name = "invoice_date")
-    @CreatedDate
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate invoiceDate;
 

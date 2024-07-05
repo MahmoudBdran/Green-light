@@ -2,6 +2,8 @@ package com.erp.greenlight.DTOs;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,12 +12,13 @@ import lombok.*;
 public class SaveSarfPermissionDTO {
 
     private Long id;
-    private String date;
+    private LocalDate permissionDate;
 
     private Long customer;
 
     private String notes;
-private Integer store;
+
+    private String receiverName;
 
 
 }
