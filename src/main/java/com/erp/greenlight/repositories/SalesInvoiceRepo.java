@@ -6,9 +6,11 @@ import com.erp.greenlight.models.SupplierOrder;
 import com.erp.greenlight.models.TreasuryTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -26,6 +28,17 @@ public interface SalesInvoiceRepo extends JpaRepository<SalesInvoice, Long> {
     @Query("SELECT MONTH(s.invoiceDate) as month, COUNT(s) as count FROM SalesInvoice s WHERE s.isApproved GROUP BY MONTH(s.invoiceDate) ORDER BY MONTH(s.invoiceDate)")
     List<Object[]> findSalesInvoiceCountsByMonth();
 
+    @Query("SELECT SUM(s.moneyForAccount) FROM SalesInvoice s WHERE  s.account=:account")
+    BigDecimal getNetForCustomerOrder(Account account);
+
+    @Query(value = "SELECT COUNT(*) FROM sales_invoices s WHERE s.customer =:customer ", nativeQuery = true)
+    int getSalesOfCustomerCount(Long customer);
+
+    @Query(value = "SELECT COUNT(*) FROM sales_invoices s WHERE  s.customer =:customer AND s.invoice_date <=:dateTo AND s.invoice_date >=:dateFrom", nativeQuery = true)
+    int getSalesOfCustomerOnPeriodCount(@Param("customer") Long customer, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query("SELECT SUM(s.moneyForAccount) FROM SalesInvoice s WHERE s.account=:account AND s.invoiceDate <=:dateTo AND s.invoiceDate >=:dateFrom")
+    BigDecimal getNetForSalesOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
 
 
