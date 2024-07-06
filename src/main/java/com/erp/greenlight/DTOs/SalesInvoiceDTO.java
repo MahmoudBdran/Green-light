@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class SalesInvoiceDTO {
 
     private Long id;
-    private String date;
+    private LocalDate date;
 
     private Long customer;
 

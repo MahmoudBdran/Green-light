@@ -82,7 +82,7 @@ public class SalesInvoiceService {
 
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
-        salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
+        salesInvoice.setInvoiceDate(salesInvoiceDTO.getDate());
         salesInvoice.setIsApproved(Boolean.FALSE);
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setDiscountPercent(BigDecimal.ZERO);
@@ -117,7 +117,7 @@ public class SalesInvoiceService {
 
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
-        salesInvoice.setInvoiceDate(salesInvoice.getInvoiceDate());
+        salesInvoice.setInvoiceDate(salesInvoiceDTO.getDate());
 
 
         return salesInvoiceRepo.save(salesInvoice);
