@@ -6,6 +6,10 @@ import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -51,8 +55,9 @@ public class SalesInvoiceService {
             Map.entry(12, "ديسمبر ")
     );
 
-    public List<SalesInvoice> getAllSalesInvoices() {
-        return salesInvoiceRepo.findAll();
+    public Page<SalesInvoice> getAllSalesInvoices(int pageIndex, int pageSize) {
+            Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return salesInvoiceRepo.findAll(page);
     }
 
     public Optional<SalesInvoice> getSalesInvoiceById(Long id) {

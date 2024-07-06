@@ -7,6 +7,10 @@ import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,8 +46,10 @@ public class SalesInvoiceReturnService {
     @Autowired
     SalesInvoiceReturnDetailsService salesInvoiceReturnDetailsService;
 
-    public List<SalesInvoiceReturn> getAllSalesInvoicesReturn() {
-        return salesInvoiceReturnRepo.findAll();
+
+    public Page<SalesInvoiceReturn> getAllSalesInvoicesReturn(int pageIndex, int pageSize) {
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return salesInvoiceReturnRepo.findAll(page);
     }
 
     public Optional<SalesInvoiceReturn> getSalesInvoiceReturnById(Long id) {

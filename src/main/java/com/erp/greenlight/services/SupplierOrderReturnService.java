@@ -10,6 +10,10 @@ import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,8 +60,9 @@ public class SupplierOrderReturnService {
     InvItemCardService invItemCardService;
     SupplierOrderMapper mapper;
 
-    public List<SupplierOrder> getAllSupplierOrdersReturns() {
-        return supplierOrderRepo.findAllByOrderType(SupplierOrderType.RETURN_ON_GENERAL);
+    public Page<SupplierOrder> getAllSupplierOrdersReturns(int pageIndex, int pageSize) {
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return supplierOrderRepo.findAllByOrderType(SupplierOrderType.RETURN_ON_GENERAL, page);
     }
 
     public Optional<SupplierOrder> getSupplierOrderReturnById(Long id) {

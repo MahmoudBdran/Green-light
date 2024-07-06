@@ -46,9 +46,11 @@ public class SalesInvoiceController {
     InvUomRepo invUomRepo;
 
     @GetMapping("")
-    public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(){
+    public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(
+            @RequestParam int pageIndex,
+            @RequestParam int pageSize){
         Map<String, Object> data = new HashMap<>();
-        data.put("sales", salesInvoiceService.getAllSalesInvoices());
+        data.put("sales", salesInvoiceService.getAllSalesInvoices(pageIndex, pageSize));
         data.put("customers",customerService.getAllCustomers());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);

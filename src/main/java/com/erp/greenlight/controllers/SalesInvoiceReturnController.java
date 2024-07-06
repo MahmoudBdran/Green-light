@@ -30,9 +30,12 @@ public class SalesInvoiceReturnController {
     CustomerService customerService;
 
     @GetMapping("")
-    public ResponseEntity<Object>  getAllCustomers_Store_InvoiceServiceReturn(){
+    public ResponseEntity<Object>  getAllCustomers_Store_InvoiceServiceReturn(
+            @RequestParam int pageIndex,
+            @RequestParam int pageSize
+    ){
         Map<String, Object> data = new HashMap<>();
-        data.put("salesReturn", salesInvoiceReturnService.getAllSalesInvoicesReturn());
+        data.put("salesReturn", salesInvoiceReturnService.getAllSalesInvoicesReturn(pageIndex, pageSize));
         data.put("customers",customerService.getAllCustomers());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);

@@ -4,6 +4,8 @@ import com.erp.greenlight.enums.SupplierOrderType;
 import com.erp.greenlight.models.Account;
 import com.erp.greenlight.models.SupplierOrder;
 import com.erp.greenlight.models.SupplierOrderDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,7 +28,7 @@ public interface SupplierOrderRepo extends JpaRepository<SupplierOrder, Long> {
     @Query("SELECT SUM(s.moneyForAccount) FROM SupplierOrder s WHERE s.orderType = 1 AND s.account=:account")
     BigDecimal getNetForSupplierOrderReturn(Account account);
 
-    List<SupplierOrder> findAllByOrderType(SupplierOrderType orderType);
+    Page<SupplierOrder> findAllByOrderType(SupplierOrderType orderType, Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 0 AND s.supplier_id =:supplierId ", nativeQuery = true)
     int getSupplierWithOrderOfSupplier(Long supplierId);

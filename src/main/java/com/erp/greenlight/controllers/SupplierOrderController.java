@@ -29,10 +29,13 @@ public class SupplierOrderController {
     @Autowired
     private SupplierService supplierService;
     @GetMapping("")
-    public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(){
+    public ResponseEntity<Object>  getAllSupplier_Store_SupplierWithOrders(
+            @RequestParam int pageIndex,
+            @RequestParam int pageSize
+    ){
         Map<String, Object> data = new HashMap<>();
         data.put("suppliers",supplierService.getAllSuppliers());
-        data.put("suppliersWithOrders",supplierOrderService.getAllSupplierOrders());
+        data.put("suppliersWithOrders",supplierOrderService.getAllSupplierOrders(pageIndex, pageSize));
         data.put("stores",storeService.findAll());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
