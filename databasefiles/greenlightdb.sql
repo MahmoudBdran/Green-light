@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 03, 2024 at 04:41 PM
+-- Generation Time: Jul 06, 2024 at 11:15 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -51,7 +51,7 @@ CREATE TABLE `accounts` (
 INSERT INTO `accounts` (`id`, `active`, `created_at`, `current_balance`, `is_parent`, `name`, `notes`, `start_balance`, `start_balance_status`, `updated_at`, `account_type`, `added_by`, `parent_account_number`, `updated_by`) VALUES
 (9, b'1', '2024-06-30 12:00:00.000000', 0.00, b'1', 'الموردين الأب', NULL, 0.00, 3, '2024-06-30 12:00:00.000000', 9, 1, NULL, 1),
 (10, b'1', '2024-06-30 12:00:24.000000', 0.00, b'1', 'العملاء الأب', 'ok', 0.00, 3, '2024-06-30 12:00:24.000000', 9, 1, NULL, 1),
-(11, b'1', '2024-06-30 12:20:48.000000', 15.00, b'0', 'محمد طلعت', NULL, 0.00, 3, '2024-07-01 19:02:09.000000', 3, 1, 10, 1),
+(11, b'1', '2024-06-30 12:20:48.000000', 25.00, b'0', 'محمد طلعت', NULL, 0.00, 3, '2024-07-04 23:16:18.000000', 3, 1, 10, 1),
 (12, b'1', '2024-06-30 12:21:16.000000', -105.00, b'0', 'احمد علي', NULL, 0.00, 3, '2024-07-02 12:49:37.000000', 2, 1, 10, 1),
 (13, b'1', '2024-06-30 19:32:35.000000', 0.00, b'0', 'السيد حسن', NULL, 0.00, 3, '2024-06-30 19:32:35.000000', 2, 1, 10, 1),
 (14, b'1', '2024-06-30 20:11:14.000000', 0.00, b'0', 'محمد هشام', 'خن', 0.00, 3, '2024-06-30 20:11:14.000000', 3, 1, 10, 1);
@@ -99,16 +99,20 @@ CREATE TABLE `admins` (
   `password` varchar(225) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `username` varchar(100) NOT NULL
+  `username` varchar(100) NOT NULL,
+  `is_account_non_expired` bit(1) NOT NULL,
+  `is_account_non_locked` bit(1) NOT NULL,
+  `is_credentials_non_expired` bit(1) NOT NULL,
+  `is_enabled` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`id`, `added_by`, `created_at`, `email`, `name`, `password`, `updated_at`, `updated_by`, `username`) VALUES
-(1, 1, '2024-06-30 12:16:45.000000', 'admin1@yourdomain.com', 'John Doe', 'password123', NULL, NULL, 'admin_john'),
-(2, 2, '2024-06-30 12:16:51.000000', 'admin2@yourdomain.com', 'Jane Smith', 'temp_password123', NULL, NULL, 'admin_jane');
+INSERT INTO `admins` (`id`, `added_by`, `created_at`, `email`, `name`, `password`, `updated_at`, `updated_by`, `username`, `is_account_non_expired`, `is_account_non_locked`, `is_credentials_non_expired`, `is_enabled`) VALUES
+(1, 1, '2024-06-30 12:16:45.000000', 'admin1@yourdomain.com', 'admin', '$2a$10$SQQnd6F.YfEgQU855y37t.k3oMWgt4pRGKlzjXRB4xyrf8du/RoUe', NULL, NULL, 'admin', b'1', b'1', b'1', b'1'),
+(2, 2, '2024-06-30 12:16:51.000000', 'admin2@yourdomain.com', 'Jane Smith', 'temp_password123', NULL, NULL, 'admin_jane', b'0', b'0', b'0', b'0');
 
 -- --------------------------------------------------------
 
@@ -217,7 +221,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `active`, `address`, `created_at`, `current_balance`, `name`, `notes`, `phones`, `start_balance`, `start_balance_status`, `updated_at`, `account_id`, `added_by`, `updated_by`) VALUES
-(3, b'1', 'طنطا', '2024-06-30 12:20:48.000000', 15.00, 'محمد طلعت', NULL, NULL, 0.00, 3, '2024-07-01 19:02:09.000000', 11, 1, 1),
+(3, b'1', 'طنطا', '2024-06-30 12:20:48.000000', 25.00, 'محمد طلعت', NULL, NULL, 0.00, 3, '2024-07-04 23:16:18.000000', 11, 1, 1),
 (4, b'1', 'الجيزة', '2024-06-30 20:11:14.000000', 0.00, 'محمد هشام', 'خن', '0231321321', 0.00, 3, '2024-06-30 20:11:14.000000', 14, 1, 1);
 
 -- --------------------------------------------------------
@@ -311,7 +315,7 @@ CREATE TABLE `inv_itemcard` (
 
 INSERT INTO `inv_itemcard` (`id`, `quentity`, `quentityall_retails`, `quentityretail`, `active`, `allquentity`, `barcode`, `cost_price`, `cost_price_retail`, `created_at`, `does_has_retailunit`, `gomla_price`, `gomla_price_retail`, `has_fixced_price`, `item_type`, `name`, `nos_gomla_price`, `nos_gomla_price_retail`, `photo`, `price`, `price_retail`, `retail_uom_qunt_to_parent`, `updated_at`, `added_by`, `inv_item_category_id`, `parent_inv_item_id`, `retail_uom_id`, `uom_id`, `updated_by`) VALUES
 (5, 21.00, 0.00, 0.00, b'1', 21.00, NULL, 50.00, NULL, NULL, b'0', 40.00, NULL, b'0', 1, 'سلك نحاس 2 مم', 45.00, NULL, NULL, 50.00, NULL, NULL, '2024-07-03 12:43:59.000000', 1, 3, NULL, NULL, 1, 1),
-(7, 0.90, 18.00, 18.00, b'1', 0.90, NULL, 1000.00, 50.00, '2024-07-03 13:50:44.000000', b'1', 900.00, 40.00, b'0', 1, 'شاسيه سبوت دائري ابيض', 950.00, 45.00, NULL, 1000.00, 50.00, 20.00, '2024-07-03 17:32:30.000000', 1, 2, NULL, 2, 1, 1);
+(7, 2.80, 56.00, 16.00, b'1', 2.80, NULL, 1000.00, 50.00, '2024-07-03 13:50:44.000000', b'1', 900.00, 40.00, b'0', 1, 'شاسيه سبوت دائري ابيض', 950.00, 45.00, NULL, 1000.00, 50.00, 20.00, '2024-07-05 01:03:33.000000', 1, 2, NULL, 2, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -420,7 +424,15 @@ INSERT INTO `inv_itemcard_movement` (`id`, `byan`, `quantity_after_move`, `quant
 (63, 'نظير مبيعات  للعميل  طياري فاتورة رقم 6', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 2, 4, 7, 1),
 (64, 'نظير مبيعات  للعميل  طياري فاتورة رقم 6', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 2, 4, 7, 1),
 (65, 'نظير مبيعات  للعميل  طياري فاتورة رقم 6', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 2, 4, 7, 1),
-(66, 'نظير مبيعات  للعميل  طياري فاتورة رقم 6', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 2, 4, 7, 1);
+(66, 'نظير مبيعات  للعميل  طياري فاتورة رقم 6', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 2, 4, 7, 1),
+(67, 'نظير مبيعات  للعميل  محمد طلعت فاتورة رقم 14', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 2, 4, 7, 1),
+(68, 'نظير مبيعات  للعميل  محمد طلعت فاتورة رقم 14', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 2, 16, 7, 1),
+(69, 'نظير مبيعات  للعميل  محمد طلعت فاتورة رقم 14', 'عدد  0.85 علبة', 'عدد  0.85 علبة', 'عدد  0.90 علبة', 'عدد  0.90 علبة', 2, 4, 7, 1),
+(70, 'نظير مشتريات من المورد  احمد علي فاتورة رقم 14', 'عدد  2.85 كرتونة', 'عدد  2.85 كرتونة', 'عدد  0.85 كرتونة', 'عدد  0.85 كرتونة', 1, 1, 7, 1),
+(71, 'نظير مبيعات  للعميل  طياري فاتورة رقم 5', 'عدد  2.90 علبة', 'عدد  2.90 علبة', 'عدد  2.85 علبة', 'عدد  2.85 علبة', 2, 4, 7, 1),
+(72, 'نظير مرتجع مشتريات عام الي المورد احمد علي فاتورة رقم 16', 'عدد  1.90 كرتونة', 'عدد  1.90 كرتونة', 'عدد  2.90 كرتونة', 'عدد  2.90 كرتونة', 1, 3, 7, 1),
+(73, ' نظير حذف سطر الصنف من فاتورة مرتجع مشتريات عام   الي المورد  احمد علي فاتورة رقم 16', 'عدد  2.90 كرتونة', 'عدد  2.90 كرتونة', 'عدد  1.90 كرتونة', 'عدد  1.90 كرتونة', 1, 3, 7, 1),
+(74, 'نظير مرتجع مشتريات عام الي المورد احمد علي فاتورة رقم 16', 'عدد  2.80 علبة', 'عدد  2.80 علبة', 'عدد  2.90 علبة', 'عدد  2.90 علبة', 1, 3, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -502,7 +514,8 @@ INSERT INTO `inv_item_card_batch` (`id`, `expired_date`, `is_send_to_archived`, 
 (3, '2024-06-30', NULL, '2024-06-30', 19.00, 950.00, 50.00, 1, 5, 1),
 (4, '2024-07-01', NULL, '2024-07-01', 0.00, 0.00, 50.00, 1, 5, 1),
 (5, '2024-07-02', NULL, '2024-07-02', 2.00, 100.00, 50.00, 1, 5, 1),
-(8, '2024-07-03', NULL, '2024-07-03', 0.90, 900.00, 1000.00, 1, 7, 1);
+(8, '2024-07-03', NULL, '2024-07-03', 0.80, 800.00, 1000.00, 1, 7, 1),
+(9, '2024-07-04', NULL, '2024-07-04', 2.00, 2000.00, 1000.00, 1, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -543,13 +556,14 @@ CREATE TABLE `inv_stores_inventory` (
   `created_at` datetime(6) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `inventory_date` date DEFAULT NULL,
-  `inventory_type` int(11) DEFAULT NULL,
+  `inventory_type` tinyint(4) DEFAULT NULL,
   `is_closed` bit(1) DEFAULT NULL,
   `notes` varchar(255) DEFAULT NULL,
   `store_id` int(11) DEFAULT NULL,
   `total_cost_batches` decimal(38,2) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL,
+  `does_add_all_items` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -679,6 +693,78 @@ CREATE TABLE `personal_access_token` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `price_invoices`
+--
+
+CREATE TABLE `price_invoices` (
+  `id` bigint(20) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `invoice_date` date DEFAULT NULL,
+  `is_approved` bit(1) NOT NULL,
+  `notes` varchar(225) DEFAULT NULL,
+  `total_cost` decimal(10,2) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `price_invoices`
+--
+
+INSERT INTO `price_invoices` (`id`, `created_at`, `invoice_date`, `is_approved`, `notes`, `total_cost`, `updated_at`, `added_by`, `updated_by`) VALUES
+(1, '2024-07-05 22:31:24.000000', '2024-07-04', b'0', 'okkkkkk', 160.00, '2024-07-05 22:54:57.000000', 1, 1),
+(2, '2024-07-05 22:34:26.000000', '2024-07-04', b'0', 'ok', 0.00, '2024-07-05 22:36:06.000000', 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `price_invoices_details`
+--
+
+CREATE TABLE `price_invoices_details` (
+  `id` bigint(20) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `quantity` decimal(10,4) NOT NULL,
+  `total_price` decimal(10,2) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
+  `item_code` bigint(20) DEFAULT NULL,
+  `price_invoice` bigint(20) DEFAULT NULL,
+  `uom_id` bigint(20) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `price_invoices_details`
+--
+
+INSERT INTO `price_invoices_details` (`id`, `created_at`, `quantity`, `total_price`, `unit_price`, `updated_at`, `added_by`, `item_code`, `price_invoice`, `uom_id`, `updated_by`) VALUES
+(1, '2024-07-05 22:52:16.000000', 2.0000, 100.00, 50.00, '2024-07-05 22:52:16.000000', 1, 7, 1, 2, 1),
+(2, '2024-07-05 22:54:57.000000', 2.0000, 60.00, 30.00, '2024-07-05 22:54:57.000000', 1, 5, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`) VALUES
+(1, 'ADMIN');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `sales_invoices`
 --
 
@@ -724,7 +810,9 @@ INSERT INTO `sales_invoices` (`id`, `created_at`, `customer_balance_after`, `cus
 (10, '2024-07-03 15:31:50.000000', NULL, NULL, 1.00, 1, 10.00, '2024-07-03', b'1', b'0', 1000.00, NULL, 1, 1, 0.00, 0.00, 1000.00, 990.00, 0.00, 1, '2024-07-03 15:35:28.000000', 990.00, 0.00, NULL, 1, 1, NULL, NULL, NULL, 1),
 (11, '2024-07-03 15:44:34.000000', NULL, NULL, 2.00, 1, 0.00, '2024-07-03', b'1', b'0', 50.00, NULL, 1, 1, 0.00, 0.00, 50.00, 49.00, 0.00, 1, '2024-07-03 15:54:26.000000', 49.00, 0.00, NULL, 1, 1, NULL, NULL, NULL, 1),
 (12, '2024-07-03 15:56:07.000000', NULL, NULL, 2.00, 1, 0.00, '2024-07-03', b'1', b'0', 50.00, NULL, 1, 1, 0.00, 0.00, 50.00, 49.00, 0.00, 1, '2024-07-03 15:58:27.000000', 49.00, 0.00, NULL, 1, 1, NULL, NULL, NULL, 1),
-(13, '2024-07-03 16:00:41.000000', NULL, NULL, 2.00, 1, 1.00, '2024-07-03', b'1', b'0', 50.00, NULL, 1, 1, 0.00, 0.00, 50.00, 49.00, 0.00, 1, '2024-07-03 16:01:11.000000', 49.00, 0.00, NULL, 1, 1, NULL, NULL, NULL, 1);
+(13, '2024-07-03 16:00:41.000000', NULL, NULL, 2.00, 1, 1.00, '2024-07-03', b'1', b'0', 50.00, NULL, 1, 1, 0.00, 0.00, 50.00, 49.00, 0.00, 1, '2024-07-03 16:01:11.000000', 49.00, 0.00, NULL, 1, 1, NULL, NULL, NULL, 1),
+(14, '2024-07-04 23:00:20.000000', NULL, NULL, 0.00, 2, 5.00, '2024-07-04', b'1', b'1', 50.00, NULL, 1, 1, 0.00, 0.00, 50.00, 45.00, 0.00, 1, '2024-07-04 23:16:18.000000', 40.00, 5.00, 11, 1, 1, 3, NULL, NULL, 1),
+(15, '2024-07-05 22:20:35.000000', NULL, NULL, 0.00, NULL, 0.00, NULL, b'0', b'0', 0.00, NULL, 1, 1, 0.00, 0.00, 0.00, 0.00, 0.00, 1, '2024-07-05 22:20:35.000000', 0.00, 0.00, NULL, 1, 1, NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -750,19 +838,21 @@ CREATE TABLE `sales_invoices_details` (
   `sales_invoice` bigint(20) DEFAULT NULL,
   `store_id` int(11) DEFAULT NULL,
   `uom_id` bigint(20) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL,
+  `price_invoice` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `sales_invoices_details`
 --
 
-INSERT INTO `sales_invoices_details` (`id`, `created_at`, `expire_date`, `is_normal_or_other`, `isparentuom`, `production_date`, `quantity`, `sales_item_type`, `total_price`, `unit_price`, `updated_at`, `added_by`, `batch_id`, `item_code`, `sales_invoice`, `store_id`, `uom_id`, `updated_by`) VALUES
-(1, '2024-06-30 13:52:59.000000', '2024-06-30', 1, b'1', '2024-06-30', 1.0000, 1, 50.00, 50.00, '2024-06-30 13:52:59.000000', 1, 3, 5, 1, 1, 1, 1),
-(10, '2024-07-03 15:35:03.000000', '2024-07-03', 1, b'1', '2024-07-03', 1.0000, 1, 1000.00, 1000.00, '2024-07-03 15:35:03.000000', 1, 8, 7, 10, 1, 1, 1),
-(11, '2024-07-03 15:45:32.000000', '2024-07-03', 1, b'0', '2024-07-03', 1.0000, 1, 50.00, 50.00, '2024-07-03 15:45:32.000000', 1, 8, 7, 11, 1, 2, 1),
-(12, '2024-07-03 15:56:25.000000', '2024-07-03', 1, b'0', '2024-07-03', 1.0000, 1, 50.00, 50.00, '2024-07-03 15:56:25.000000', 1, 8, 7, 12, 1, 2, 1),
-(13, '2024-07-03 16:00:55.000000', '2024-07-03', 1, b'0', '2024-07-03', 1.0000, 1, 50.00, 50.00, '2024-07-03 16:00:55.000000', 1, 8, 7, 13, 1, 2, 1);
+INSERT INTO `sales_invoices_details` (`id`, `created_at`, `expire_date`, `is_normal_or_other`, `isparentuom`, `production_date`, `quantity`, `sales_item_type`, `total_price`, `unit_price`, `updated_at`, `added_by`, `batch_id`, `item_code`, `sales_invoice`, `store_id`, `uom_id`, `updated_by`, `price_invoice`) VALUES
+(1, '2024-06-30 13:52:59.000000', '2024-06-30', 1, b'1', '2024-06-30', 1.0000, 1, 50.00, 50.00, '2024-06-30 13:52:59.000000', 1, 3, 5, 1, 1, 1, 1, NULL),
+(10, '2024-07-03 15:35:03.000000', '2024-07-03', 1, b'1', '2024-07-03', 1.0000, 1, 1000.00, 1000.00, '2024-07-03 15:35:03.000000', 1, 8, 7, 10, 1, 1, 1, NULL),
+(11, '2024-07-03 15:45:32.000000', '2024-07-03', 1, b'0', '2024-07-03', 1.0000, 1, 50.00, 50.00, '2024-07-03 15:45:32.000000', 1, 8, 7, 11, 1, 2, 1, NULL),
+(12, '2024-07-03 15:56:25.000000', '2024-07-03', 1, b'0', '2024-07-03', 1.0000, 1, 50.00, 50.00, '2024-07-03 15:56:25.000000', 1, 8, 7, 12, 1, 2, 1, NULL),
+(13, '2024-07-03 16:00:55.000000', '2024-07-03', 1, b'0', '2024-07-03', 1.0000, 1, 50.00, 50.00, '2024-07-03 16:00:55.000000', 1, 8, 7, 13, 1, 2, 1, NULL),
+(15, '2024-07-04 23:13:24.000000', '2024-07-04', 1, b'0', '2024-07-04', 1.0000, 1, 50.00, 50.00, '2024-07-04 23:13:24.000000', 1, 8, 7, 14, 1, 2, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -806,7 +896,7 @@ CREATE TABLE `sales_invoices_return` (
 --
 
 INSERT INTO `sales_invoices_return` (`id`, `created_at`, `customer_balance_after`, `customer_balance_befor`, `discount_percent`, `discount_type`, `discount_value`, `invoice_date`, `is_approved`, `is_has_customer`, `money_for_account`, `notes`, `pill_type`, `return_type`, `tax_percent`, `tax_value`, `total_befor_discount`, `total_cost`, `total_cost_items`, `treasuries_transactions_id`, `updated_at`, `what_paid`, `what_remain`, `account_number`, `added_by`, `approved_by`, `customer`, `updated_by`) VALUES
-(5, '2024-07-03 12:39:19.000000', NULL, NULL, 0.00, NULL, 0.00, '2024-07-03', b'0', b'0', 0.00, NULL, 1, 1, 0.00, 0.00, 0.00, 0.00, 0.00, 1, '2024-07-03 12:39:19.000000', 0.00, 0.00, NULL, 1, NULL, NULL, 1),
+(5, '2024-07-03 12:39:19.000000', NULL, NULL, 0.00, NULL, 0.00, '2024-07-03', b'0', b'0', 0.00, NULL, 1, 1, 0.00, 0.00, 50.00, 50.00, 0.00, 1, '2024-07-05 00:08:14.000000', 0.00, 0.00, NULL, 1, NULL, NULL, 1),
 (6, '2024-07-03 12:39:28.000000', NULL, NULL, 0.00, NULL, 0.00, '2024-07-03', b'1', b'0', -50.00, NULL, 1, 1, 0.00, 0.00, 50.00, 50.00, 0.00, 1, '2024-07-03 17:37:45.000000', 49.00, 0.00, NULL, 1, NULL, NULL, 1);
 
 -- --------------------------------------------------------
@@ -841,7 +931,7 @@ CREATE TABLE `sales_invoices_return_details` (
 --
 
 INSERT INTO `sales_invoices_return_details` (`id`, `created_at`, `expire_date`, `isparentuom`, `production_date`, `quantity`, `sales_item_type`, `total_price`, `unit_cost_price`, `unit_price`, `updated_at`, `added_by`, `batch_id`, `item_id`, `sales_invoice_return`, `store_id`, `uom_id`, `updated_by`) VALUES
-(12, '2024-07-03 17:32:30.000000', NULL, b'0', NULL, 1.0000, 1, 50.00, 50.00, 50.00, '2024-07-03 17:32:30.000000', 1, 8, 7, 6, 1, 2, 1);
+(1, '2024-07-05 00:08:14.000000', NULL, b'0', NULL, 1.0000, 1, 50.00, 40.00, 50.00, '2024-07-05 00:08:14.000000', 1, 8, 7, 5, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -860,6 +950,60 @@ CREATE TABLE `sales_matrial_types` (
   `updated_at` datetime(6) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sarf_permissions`
+--
+
+CREATE TABLE `sarf_permissions` (
+  `id` bigint(20) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `notes` varchar(225) DEFAULT NULL,
+  `total_cost` decimal(10,2) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
+  `customer` bigint(20) DEFAULT NULL,
+  `store_id` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `receiver_name` varchar(225) DEFAULT NULL,
+  `permission_date` date DEFAULT NULL,
+  `is_approved` bit(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sarf_permissions`
+--
+
+INSERT INTO `sarf_permissions` (`id`, `created_at`, `notes`, `total_cost`, `updated_at`, `added_by`, `customer`, `store_id`, `updated_by`, `receiver_name`, `permission_date`, `is_approved`) VALUES
+(5, '2024-07-05 15:11:04.000000', 'تمام', 0.00, '2024-07-05 19:21:25.000000', 1, 3, NULL, 1, 'محمد السيد', '2024-07-04', b'1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sarf_permission_details`
+--
+
+CREATE TABLE `sarf_permission_details` (
+  `id` bigint(20) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `quantity` decimal(10,4) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
+  `item_code` bigint(20) DEFAULT NULL,
+  `sarf_permission_id` bigint(20) DEFAULT NULL,
+  `store_id` int(11) DEFAULT NULL,
+  `uom_id` bigint(20) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sarf_permission_details`
+--
+
+INSERT INTO `sarf_permission_details` (`id`, `created_at`, `quantity`, `updated_at`, `added_by`, `item_code`, `sarf_permission_id`, `store_id`, `uom_id`, `updated_by`) VALUES
+(5, '2024-07-05 19:21:08.000000', 1.0000, '2024-07-05 19:21:08.000000', 1, 7, 5, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1024,7 +1168,6 @@ INSERT INTO `suppliers_categories` (`id`, `active`, `created_at`, `name`, `updat
 
 CREATE TABLE `suppliers_with_orders` (
   `id` bigint(20) NOT NULL,
-  `auto_serial` bigint(20) DEFAULT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `discount_percent` decimal(10,2) DEFAULT NULL,
   `discount_type` tinyint(4) DEFAULT NULL,
@@ -1059,13 +1202,14 @@ CREATE TABLE `suppliers_with_orders` (
 -- Dumping data for table `suppliers_with_orders`
 --
 
-INSERT INTO `suppliers_with_orders` (`id`, `auto_serial`, `created_at`, `discount_percent`, `discount_type`, `discount_value`, `doc_no`, `is_approved`, `money_for_account`, `notes`, `order_date`, `order_type`, `pill_type`, `supplier_balance_after`, `supplier_balance_befor`, `tax_percent`, `tax_value`, `total_befor_discount`, `total_cost`, `total_cost_items`, `treasuries_transactions_id`, `updated_at`, `what_paid`, `what_remain`, `account_number`, `added_by`, `approved_by`, `store_id`, `supplier_id`, `updated_by`) VALUES
-(1, NULL, '2024-06-30 13:01:58.000000', NULL, NULL, 0.00, '2323', b'1', -1000.00, 'ok', '2024-06-30', 0, 1, NULL, NULL, NULL, NULL, 1000.00, 1000.00, 0.00, NULL, '2024-06-30 13:40:36.000000', 1000.00, NULL, 12, 1, NULL, 1, 1, 1),
-(2, NULL, '2024-06-30 19:09:39.000000', NULL, 0, 0.00, '234', b'1', -50.00, '0', '2024-06-30', 0, 2, NULL, NULL, NULL, NULL, 50.00, 50.00, 0.00, NULL, '2024-07-01 19:16:42.000000', 40.00, 10.00, 12, 1, NULL, 1, 1, 1),
-(7, NULL, '2024-07-02 10:09:47.000000', 0.00, 2, 5.00, '1', b'1', -145.00, 'sdf', '2024-07-02', 0, 1, NULL, NULL, NULL, NULL, 150.00, 145.00, 0.00, NULL, '2024-07-02 10:10:31.000000', 145.00, 5.00, 12, 1, NULL, 1, 1, 1),
-(8, NULL, '2024-07-02 10:18:01.000000', 0.00, 2, 5.00, '1', b'1', -45.00, '1', '2024-07-02', 0, 1, NULL, NULL, NULL, NULL, 50.00, 45.00, 0.00, NULL, '2024-07-02 10:32:10.000000', 45.00, 0.00, 12, 1, NULL, 1, 1, 1),
-(10, NULL, '2024-07-02 12:39:55.000000', 0.00, 0, 0.00, NULL, b'1', -50.00, 'ok', '2024-07-02', 1, 1, NULL, NULL, NULL, NULL, 50.00, 50.00, 0.00, NULL, '2024-07-02 12:49:37.000000', 50.00, 0.00, 12, 1, NULL, 1, 1, 1),
-(13, NULL, '2024-07-03 13:51:45.000000', 0.00, 0, 0.00, '234', b'1', -2000.00, NULL, '2024-07-03', 0, 1, NULL, NULL, NULL, NULL, 2000.00, 2000.00, 0.00, NULL, '2024-07-03 13:52:07.000000', 2000.00, 0.00, 12, 1, NULL, 1, 1, 1);
+INSERT INTO `suppliers_with_orders` (`id`, `created_at`, `discount_percent`, `discount_type`, `discount_value`, `doc_no`, `is_approved`, `money_for_account`, `notes`, `order_date`, `order_type`, `pill_type`, `supplier_balance_after`, `supplier_balance_befor`, `tax_percent`, `tax_value`, `total_befor_discount`, `total_cost`, `total_cost_items`, `treasuries_transactions_id`, `updated_at`, `what_paid`, `what_remain`, `account_number`, `added_by`, `approved_by`, `store_id`, `supplier_id`, `updated_by`) VALUES
+(16, '2024-07-05 00:26:57.000000', NULL, NULL, 0.00, NULL, b'0', NULL, NULL, '2024-07-05', 1, 1, NULL, NULL, 0.00, NULL, 100.00, 100.00, 0.00, NULL, '2024-07-05 01:03:23.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1),
+(17, '2024-07-05 00:29:55.000000', 0.00, 0, 0.00, '234', b'0', NULL, NULL, '2024-07-05', 0, 1, NULL, NULL, 0.00, NULL, 1000.00, 1000.00, 0.00, NULL, '2024-07-05 00:30:06.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1),
+(18, '2024-07-06 23:56:09.000000', 0.00, 0, 0.00, '1234', b'0', NULL, NULL, '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:09.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1),
+(19, '2024-07-06 23:56:22.000000', 0.00, 0, 0.00, '2234', b'0', NULL, NULL, '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:22.000000', NULL, NULL, 13, 1, NULL, 1, 2, 1),
+(20, '2024-07-06 23:56:33.000000', 0.00, 0, 0.00, '234234', b'0', NULL, NULL, '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:33.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1),
+(21, '2024-07-06 23:56:46.000000', 0.00, 0, 0.00, '435345', b'0', NULL, NULL, '2024-07-06', 0, 2, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:46.000000', NULL, NULL, 13, 1, NULL, 1, 2, 1),
+(22, '2024-07-06 23:57:00.000000', 0.00, 0, 0.00, '345345', b'0', NULL, '234', '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:57:00.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1075,7 +1219,6 @@ INSERT INTO `suppliers_with_orders` (`id`, `auto_serial`, `created_at`, `discoun
 
 CREATE TABLE `suppliers_with_orders_details` (
   `id` bigint(20) NOT NULL,
-  `batch_auto_serial` bigint(20) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
   `deliverd_quantity` decimal(10,2) NOT NULL,
   `expire_date` date DEFAULT NULL,
@@ -1087,25 +1230,44 @@ CREATE TABLE `suppliers_with_orders_details` (
   `unit_price` decimal(10,2) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
+  `batch_id` bigint(20) DEFAULT NULL,
   `inv_item_id` bigint(20) DEFAULT NULL,
+  `item_code` bigint(20) DEFAULT NULL,
   `order_id` bigint(20) DEFAULT NULL,
   `uom_id` bigint(20) NOT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `batch_id` bigint(20) DEFAULT NULL,
-  `item_code` bigint(20) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `suppliers_with_orders_details`
 --
 
-INSERT INTO `suppliers_with_orders_details` (`id`, `batch_auto_serial`, `created_at`, `deliverd_quantity`, `expire_date`, `isparentuom`, `item_card_type`, `order_type`, `production_date`, `total_price`, `unit_price`, `updated_at`, `added_by`, `inv_item_id`, `order_id`, `uom_id`, `updated_by`, `batch_id`, `item_code`) VALUES
-(2, 1, '2024-06-30 13:23:06.000000', 20.00, NULL, b'1', 1, 0, NULL, 1000.00, 50.00, '2024-06-30 13:23:06.000000', 1, 5, 1, 1, 1, NULL, NULL),
-(3, 1, '2024-06-30 19:26:51.000000', 1.00, NULL, b'1', 1, 0, NULL, 50.00, 50.00, '2024-06-30 19:26:51.000000', 1, 5, 2, 1, 1, NULL, NULL),
-(14, NULL, '2024-07-02 10:10:14.000000', 3.00, NULL, b'1', 1, 0, NULL, 150.00, 50.00, '2024-07-02 10:10:14.000000', 1, 5, 7, 1, 1, NULL, NULL),
-(15, NULL, '2024-07-02 10:18:09.000000', 1.00, NULL, b'1', 1, 0, NULL, 50.00, 50.00, '2024-07-02 10:18:09.000000', 1, 5, 8, 1, 1, NULL, NULL),
-(21, NULL, '2024-07-02 12:40:04.000000', 1.00, NULL, b'1', NULL, 1, NULL, 50.00, 50.00, '2024-07-02 12:40:04.000000', 1, 5, 10, 1, 1, 5, NULL),
-(22, NULL, '2024-07-03 13:51:57.000000', 2.00, NULL, b'1', 1, 0, NULL, 2000.00, 1000.00, '2024-07-03 13:51:57.000000', 1, 7, 13, 1, 1, NULL, NULL);
+INSERT INTO `suppliers_with_orders_details` (`id`, `created_at`, `deliverd_quantity`, `expire_date`, `isparentuom`, `item_card_type`, `order_type`, `production_date`, `total_price`, `unit_price`, `updated_at`, `added_by`, `batch_id`, `inv_item_id`, `item_code`, `order_id`, `uom_id`, `updated_by`) VALUES
+(1, '2024-07-05 00:30:06.000000', 1.00, NULL, b'1', 1, 0, NULL, 1000.00, 1000.00, '2024-07-05 00:30:06.000000', 1, NULL, 7, NULL, 17, 1, 1),
+(3, '2024-07-05 01:02:28.000000', 2.00, NULL, b'0', NULL, 1, NULL, 100.00, 50.00, '2024-07-05 01:02:28.000000', 1, 8, 7, NULL, 16, 2, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `token_info`
+--
+
+CREATE TABLE `token_info` (
+  `id` bigint(20) NOT NULL,
+  `access_token` varchar(800) DEFAULT NULL,
+  `local_ip_address` varchar(255) DEFAULT NULL,
+  `refresh_token` varchar(800) DEFAULT NULL,
+  `remote_ip_address` varchar(255) DEFAULT NULL,
+  `user_agent_text` varchar(255) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `token_info`
+--
+
+INSERT INTO `token_info` (`id`, `access_token`, `local_ip_address`, `refresh_token`, `remote_ip_address`, `user_agent_text`, `user_id`) VALUES
+(5, 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiI5Zjk4ODJmOC0zNjk1LTQ5OTctYWZiYi1hN2FhNzYxNmRhZmIiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDI5OTczNywiZXhwIjoxOTAwMjk5NzM3fQ.xHlmrAAwZQ_35ZEC4gBM5vSzxOvKyZCFFoDT8reAAAli9qBp71lUn3_x0YB_pCD9g7CgkrOHn7gfcYgslWqXQA', '192.168.0.104', 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiI1NmJiM2U4ZC1jMmY2LTQyMTUtOTllOS02ZTE4NGVkOGY0ZjciLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDI5OTczNywiZXhwIjoxNzM4Mjk5NzM3fQ.QqKaZ6C4xsUuBus1JjV8pfxnSpFrmflq8SDJTyTYSK3MAwjRmnUoCgn0HU300aIhf02AOaVmS8Vz4ytBLYF8HQ', '0:0:0:0:0:0:0:1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 1);
 
 -- --------------------------------------------------------
 
@@ -1131,7 +1293,7 @@ CREATE TABLE `treasuries` (
 --
 
 INSERT INTO `treasuries` (`id`, `created_at`, `active`, `is_master`, `last_isal_collect`, `last_isal_exhcange`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
-(1, '2024-06-22 15:35:03.000000', b'1', b'1', 1, 38, 'الرئيسية', '2024-07-03 17:37:45.000000', 1, 1);
+(1, '2024-06-22 15:35:03.000000', b'1', b'1', 1, 40, 'الرئيسية', '2024-07-04 23:21:54.000000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1195,7 +1357,9 @@ INSERT INTO `treasuries_transactions` (`id`, `byan`, `created_at`, `is_account`,
 (35, 'تحصيل نظير فاتورة مبيعات  رقم11', '2024-07-03 15:54:26.000000', NULL, b'1', 1, 49.00, -49.00, 5, '2024-07-03', 1, NULL, '2024-07-03 15:54:26.000000', NULL, 1, 1, 1),
 (36, 'تحصيل نظير فاتورة مبيعات  رقم12', '2024-07-03 15:58:27.000000', NULL, b'1', 1, 49.00, -49.00, 5, '2024-07-03', 1, NULL, '2024-07-03 15:58:27.000000', NULL, 1, 1, 1),
 (37, 'تحصيل نظير فاتورة مبيعات  رقم13', '2024-07-03 16:01:11.000000', NULL, b'1', 1, 49.00, -49.00, 5, '2024-07-03', 1, NULL, '2024-07-03 16:01:11.000000', NULL, 1, 1, 1),
-(38, 'تحصيل نظير فاتورة مرتجع مبيعات  رقم6', '2024-07-03 17:37:45.000000', NULL, b'1', 38, -49.00, 49.00, 5, '2024-07-03', 1, NULL, '2024-07-03 17:37:45.000000', NULL, 1, 1, 1);
+(38, 'تحصيل نظير فاتورة مرتجع مبيعات  رقم6', '2024-07-03 17:37:45.000000', NULL, b'1', 38, -49.00, 49.00, 5, '2024-07-03', 1, NULL, '2024-07-03 17:37:45.000000', NULL, 1, 1, 1),
+(39, 'تحصيل نظير فاتورة مبيعات  رقم14', '2024-07-04 23:16:18.000000', b'1', b'1', 1, 40.00, -40.00, 5, '2024-07-04', 1, NULL, '2024-07-04 23:16:18.000000', 11, 1, 1, 1),
+(40, 'صرف نظير فاتورة مشتريات  رقم14', '2024-07-04 23:21:54.000000', b'1', b'1', 1, -2000.00, 2000.00, 9, '2024-07-04', 1, NULL, '2024-07-04 23:21:54.000000', 12, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1213,6 +1377,24 @@ CREATE TABLE `user` (
   `remember_token` varchar(255) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_roles`
+--
+
+CREATE TABLE `users_roles` (
+  `user_id` int(11) NOT NULL,
+  `role_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users_roles`
+--
+
+INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES
+(1, 1);
 
 --
 -- Indexes for dumped tables
@@ -1341,7 +1523,10 @@ ALTER TABLE `inv_production_order`
 -- Indexes for table `inv_stores_inventory`
 --
 ALTER TABLE `inv_stores_inventory`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKn8oabsdtsbobbuas7mmxpgrsp` (`added_by`),
+  ADD KEY `FKexf4lrxpmfldb3il3opmo3c6m` (`store_id`),
+  ADD KEY `FKa7777qtsm6ydgolwhq9e2b5f1` (`updated_by`);
 
 --
 -- Indexes for table `inv_stores_inventory_details`
@@ -1376,6 +1561,32 @@ ALTER TABLE `personal_access_token`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `price_invoices`
+--
+ALTER TABLE `price_invoices`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKto13xre20nb5i2dkoau73iow9` (`added_by`),
+  ADD KEY `FK4d2vakenou1j2liuqdbjs960l` (`updated_by`);
+
+--
+-- Indexes for table `price_invoices_details`
+--
+ALTER TABLE `price_invoices_details`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKlo1vd4mbbwgxyj4ublkeuq234` (`added_by`),
+  ADD KEY `FKlpbmii98juewur4fde9dwwjei` (`item_code`),
+  ADD KEY `FKmj3g6j3ccf59awmc7cptkla0p` (`price_invoice`),
+  ADD KEY `FKca1iblftux47mmxb5vn7pj7rl` (`uom_id`),
+  ADD KEY `FKtinx3bmuw57j3kxjeetyvcnx1` (`updated_by`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_nb4h0p6txrmfc0xbrd1kglp9t` (`name`);
+
+--
 -- Indexes for table `sales_invoices`
 --
 ALTER TABLE `sales_invoices`
@@ -1399,7 +1610,8 @@ ALTER TABLE `sales_invoices_details`
   ADD KEY `FK44edolp01tr8vme7x9yggr3h8` (`sales_invoice`),
   ADD KEY `FKhjormn4kpqchufuy4757wtfik` (`store_id`),
   ADD KEY `FKis64kjb9j0ai9e40rfeul7yy2` (`uom_id`),
-  ADD KEY `FKfr9xanxdxaro4u95nveqi923o` (`updated_by`);
+  ADD KEY `FKfr9xanxdxaro4u95nveqi923o` (`updated_by`),
+  ADD KEY `FK23jcndqsyta25fj2uouwvx7ky` (`price_invoice`);
 
 --
 -- Indexes for table `sales_invoices_return`
@@ -1417,9 +1629,9 @@ ALTER TABLE `sales_invoices_return`
 --
 ALTER TABLE `sales_invoices_return_details`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `UK_hljro00jldgmxvhd5kfrwfjsw` (`item_id`),
   ADD KEY `FKnu7rrls20ddgm8cwyw0sdve2b` (`added_by`),
   ADD KEY `FKjs15yn6p3ry8n9v0n8rfxlube` (`batch_id`),
+  ADD KEY `FK5wat4q3ub98ygusx9vbg7u8ee` (`item_id`),
   ADD KEY `FKbago77dg1ep3soe61plmhp7vb` (`sales_invoice_return`),
   ADD KEY `FK2tm8oo3ky4tyoxv17mgodseed` (`store_id`),
   ADD KEY `FKbrw4c8s5xwqcmr7itb1iwb5l3` (`uom_id`),
@@ -1430,6 +1642,27 @@ ALTER TABLE `sales_invoices_return_details`
 --
 ALTER TABLE `sales_matrial_types`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `sarf_permissions`
+--
+ALTER TABLE `sarf_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKgggctg22a0t7rwf5875kf76od` (`added_by`),
+  ADD KEY `FK30eum13cls4lm0ekeh2e57wvp` (`customer`),
+  ADD KEY `FKaehoj2kmpap0o7uv2d7ar6j6c` (`updated_by`);
+
+--
+-- Indexes for table `sarf_permission_details`
+--
+ALTER TABLE `sarf_permission_details`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKp3ckoxj0u0ref9y8qkk37529u` (`added_by`),
+  ADD KEY `FKn514he5ua1r99vfu5roogktwm` (`item_code`),
+  ADD KEY `FKgbayrbbtb5ly20r7iywsqek3` (`sarf_permission_id`),
+  ADD KEY `FKjyagm2tbv5yy4wk61datecq4b` (`store_id`),
+  ADD KEY `FKf5u121ucgkaxh516pclpii89q` (`uom_id`),
+  ADD KEY `FKfcffi9y0jbv9qqixthxtgg2r6` (`updated_by`);
 
 --
 -- Indexes for table `service`
@@ -1493,12 +1726,19 @@ ALTER TABLE `suppliers_with_orders`
 ALTER TABLE `suppliers_with_orders_details`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FKj8q246xxhi6hqxbk3i6pc3uep` (`added_by`),
+  ADD KEY `FK1abyeis4hj540172ua1jj6b12` (`batch_id`),
   ADD KEY `FK5udjhv8jd8rbx0wtm1kyn8kir` (`inv_item_id`),
+  ADD KEY `FK6u1mqei3e8nrrx75163f4bxqr` (`item_code`),
   ADD KEY `FKsavkx70bnrd4hi3p5ptrqahb7` (`order_id`),
   ADD KEY `FKc9ouf1y9in0xro35cjeto9ehy` (`uom_id`),
-  ADD KEY `FK3c359f6l3hqbjn4g27v6tdfma` (`updated_by`),
-  ADD KEY `FK1abyeis4hj540172ua1jj6b12` (`batch_id`),
-  ADD KEY `FK6u1mqei3e8nrrx75163f4bxqr` (`item_code`);
+  ADD KEY `FK3c359f6l3hqbjn4g27v6tdfma` (`updated_by`);
+
+--
+-- Indexes for table `token_info`
+--
+ALTER TABLE `token_info`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK1cgkyxrrp65u31q209f6vmhoa` (`user_id`);
 
 --
 -- Indexes for table `treasuries`
@@ -1530,6 +1770,13 @@ ALTER TABLE `treasuries_transactions`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_roles`
+--
+ALTER TABLE `users_roles`
+  ADD PRIMARY KEY (`user_id`,`role_id`),
+  ADD KEY `FKj6m8fwv7oqv74fcehir1a9ffy` (`role_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1605,7 +1852,7 @@ ALTER TABLE `inv_itemcard_categories`
 -- AUTO_INCREMENT for table `inv_itemcard_movement`
 --
 ALTER TABLE `inv_itemcard_movement`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `inv_itemcard_movements_category`
@@ -1623,7 +1870,7 @@ ALTER TABLE `inv_itemcard_movements_type`
 -- AUTO_INCREMENT for table `inv_item_card_batch`
 --
 ALTER TABLE `inv_item_card_batch`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `inv_uoms`
@@ -1644,16 +1891,34 @@ ALTER TABLE `personal_access_token`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `price_invoices`
+--
+ALTER TABLE `price_invoices`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `price_invoices_details`
+--
+ALTER TABLE `price_invoices_details`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `sales_invoices`
 --
 ALTER TABLE `sales_invoices`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `sales_invoices_details`
 --
 ALTER TABLE `sales_invoices_details`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `sales_invoices_return`
@@ -1665,13 +1930,25 @@ ALTER TABLE `sales_invoices_return`
 -- AUTO_INCREMENT for table `sales_invoices_return_details`
 --
 ALTER TABLE `sales_invoices_return_details`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `sales_matrial_types`
 --
 ALTER TABLE `sales_matrial_types`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `sarf_permissions`
+--
+ALTER TABLE `sarf_permissions`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `sarf_permission_details`
+--
+ALTER TABLE `sarf_permission_details`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `service`
@@ -1713,13 +1990,19 @@ ALTER TABLE `suppliers_categories`
 -- AUTO_INCREMENT for table `suppliers_with_orders`
 --
 ALTER TABLE `suppliers_with_orders`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `suppliers_with_orders_details`
 --
 ALTER TABLE `suppliers_with_orders_details`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `token_info`
+--
+ALTER TABLE `token_info`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `treasuries`
@@ -1737,7 +2020,7 @@ ALTER TABLE `treasuries_delivery`
 -- AUTO_INCREMENT for table `treasuries_transactions`
 --
 ALTER TABLE `treasuries_transactions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -1808,11 +2091,36 @@ ALTER TABLE `inv_item_card_batch`
   ADD CONSTRAINT `FKncd1678wr13kbyuxdmhoynktc` FOREIGN KEY (`inv_uom_id`) REFERENCES `inv_uoms` (`id`);
 
 --
+-- Constraints for table `inv_stores_inventory`
+--
+ALTER TABLE `inv_stores_inventory`
+  ADD CONSTRAINT `FKa7777qtsm6ydgolwhq9e2b5f1` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKexf4lrxpmfldb3il3opmo3c6m` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`),
+  ADD CONSTRAINT `FKn8oabsdtsbobbuas7mmxpgrsp` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
+
+--
 -- Constraints for table `inv_uoms`
 --
 ALTER TABLE `inv_uoms`
   ADD CONSTRAINT `FK40a85k1pyvvjktcwcsejf7pwd` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKexbqunjsgcyi7rsrj4w99qwfl` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `price_invoices`
+--
+ALTER TABLE `price_invoices`
+  ADD CONSTRAINT `FK4d2vakenou1j2liuqdbjs960l` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKto13xre20nb5i2dkoau73iow9` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `price_invoices_details`
+--
+ALTER TABLE `price_invoices_details`
+  ADD CONSTRAINT `FKca1iblftux47mmxb5vn7pj7rl` FOREIGN KEY (`uom_id`) REFERENCES `inv_uoms` (`id`),
+  ADD CONSTRAINT `FKlo1vd4mbbwgxyj4ublkeuq234` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKlpbmii98juewur4fde9dwwjei` FOREIGN KEY (`item_code`) REFERENCES `inv_itemcard` (`id`),
+  ADD CONSTRAINT `FKmj3g6j3ccf59awmc7cptkla0p` FOREIGN KEY (`price_invoice`) REFERENCES `price_invoices` (`id`),
+  ADD CONSTRAINT `FKtinx3bmuw57j3kxjeetyvcnx1` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
 
 --
 -- Constraints for table `sales_invoices`
@@ -1830,6 +2138,7 @@ ALTER TABLE `sales_invoices`
 -- Constraints for table `sales_invoices_details`
 --
 ALTER TABLE `sales_invoices_details`
+  ADD CONSTRAINT `FK23jcndqsyta25fj2uouwvx7ky` FOREIGN KEY (`price_invoice`) REFERENCES `price_invoices` (`id`),
   ADD CONSTRAINT `FK44edolp01tr8vme7x9yggr3h8` FOREIGN KEY (`sales_invoice`) REFERENCES `sales_invoices` (`id`),
   ADD CONSTRAINT `FKag6b0jaodfoknhf54fvqgsadq` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKd1epnralhttoosm42laid0x07` FOREIGN KEY (`batch_id`) REFERENCES `inv_item_card_batch` (`id`),
@@ -1859,6 +2168,26 @@ ALTER TABLE `sales_invoices_return_details`
   ADD CONSTRAINT `FKgdl0nwdyhsdvlu6hpsn9qis74` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKjs15yn6p3ry8n9v0n8rfxlube` FOREIGN KEY (`batch_id`) REFERENCES `inv_item_card_batch` (`id`),
   ADD CONSTRAINT `FKnu7rrls20ddgm8cwyw0sdve2b` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `sarf_permissions`
+--
+ALTER TABLE `sarf_permissions`
+  ADD CONSTRAINT `FK1jdqh7msk5xcksm2v2crbfuwm` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`),
+  ADD CONSTRAINT `FK30eum13cls4lm0ekeh2e57wvp` FOREIGN KEY (`customer`) REFERENCES `customers` (`id`),
+  ADD CONSTRAINT `FKaehoj2kmpap0o7uv2d7ar6j6c` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKgggctg22a0t7rwf5875kf76od` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `sarf_permission_details`
+--
+ALTER TABLE `sarf_permission_details`
+  ADD CONSTRAINT `FKf5u121ucgkaxh516pclpii89q` FOREIGN KEY (`uom_id`) REFERENCES `inv_uoms` (`id`),
+  ADD CONSTRAINT `FKfcffi9y0jbv9qqixthxtgg2r6` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKgbayrbbtb5ly20r7iywsqek3` FOREIGN KEY (`sarf_permission_id`) REFERENCES `sarf_permissions` (`id`),
+  ADD CONSTRAINT `FKjyagm2tbv5yy4wk61datecq4b` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`),
+  ADD CONSTRAINT `FKn514he5ua1r99vfu5roogktwm` FOREIGN KEY (`item_code`) REFERENCES `inv_itemcard` (`id`),
+  ADD CONSTRAINT `FKp3ckoxj0u0ref9y8qkk37529u` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`);
 
 --
 -- Constraints for table `stores`
@@ -1907,6 +2236,12 @@ ALTER TABLE `suppliers_with_orders_details`
   ADD CONSTRAINT `FKsavkx70bnrd4hi3p5ptrqahb7` FOREIGN KEY (`order_id`) REFERENCES `suppliers_with_orders` (`id`);
 
 --
+-- Constraints for table `token_info`
+--
+ALTER TABLE `token_info`
+  ADD CONSTRAINT `FK1cgkyxrrp65u31q209f6vmhoa` FOREIGN KEY (`user_id`) REFERENCES `admins` (`id`);
+
+--
 -- Constraints for table `treasuries`
 --
 ALTER TABLE `treasuries`
@@ -1922,6 +2257,13 @@ ALTER TABLE `treasuries_transactions`
   ADD CONSTRAINT `FKgafgth7ob7cm0gtrks3fexhbr` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKik9i18ev61fpclusoakmd7bs7` FOREIGN KEY (`account_number`) REFERENCES `accounts` (`id`),
   ADD CONSTRAINT `FKomqidbcj80fr2obyyajwcljpu` FOREIGN KEY (`mov_type`) REFERENCES `mov_type` (`id`);
+
+--
+-- Constraints for table `users_roles`
+--
+ALTER TABLE `users_roles`
+  ADD CONSTRAINT `FK8sns6t0fr1thabomy9r5dhd96` FOREIGN KEY (`user_id`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKj6m8fwv7oqv74fcehir1a9ffy` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
