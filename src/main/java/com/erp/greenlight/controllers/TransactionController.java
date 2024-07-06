@@ -35,22 +35,24 @@ public class TransactionController {
     TreasuresTransactionService treasuresTransactionService;
 
     @GetMapping("/collectFindAll")
-    public ResponseEntity<Object> collectFindAll() {
+    public ResponseEntity<Object> collectFindAll( @RequestParam int pageIndex,
+                                                  @RequestParam int pageSize) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accounts", accountService.getAllAccounts());
-        data.put("treasuresTransactions", treasuresTransactionService.collectFindAll());
+        data.put("treasuresTransactions", treasuresTransactionService.collectFindAll(pageIndex, pageSize));
         data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
     }
 
     @GetMapping("/exchangeFindAll")
-    public ResponseEntity<Object> exchangeFindAll() {
+    public ResponseEntity<Object> exchangeFindAll( @RequestParam int pageIndex,
+                                                   @RequestParam int pageSize) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accounts", accountService.getAllAccounts());
-        data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll());
+        data.put("treasuresTransactions", treasuresTransactionService.exChangeFindAll(pageIndex, pageSize));
         data.put("availableBalance", treasuresTransactionService.getAvailableBalance());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);

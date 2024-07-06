@@ -42,7 +42,7 @@ public class AuthService  {
     private final TokenInfoService tokenInfoService;
     private final JwtTokenUtils jwtTokenUtils;
     private final RoleRepository roleRepository;
-
+    private final AdminPanelSettingsService adminPanelSettingsService;
     public AppResponse login(String username, String password) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
@@ -55,10 +55,13 @@ public class AuthService  {
             Map<String, Object> userData = new HashMap<>();
             Optional<Admin> appUser = userRepository.findById(userDetails.getId());
 
+
+
             if(appUser.isPresent()){
                 userData.put("authUser", appUser.get());
                 userData.put("token", tokenInfo.getAccessToken());
                 userData.put("refreshToken", tokenInfo.getRefreshToken());
+                userData.put("systemData", adminPanelSettingsService.getAllAdminPanelSettings());
 
                 return AppResponse.builder()
                         .ok(true)

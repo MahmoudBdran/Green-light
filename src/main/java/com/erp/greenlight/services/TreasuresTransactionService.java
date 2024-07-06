@@ -5,6 +5,10 @@ import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,12 +34,14 @@ public class TreasuresTransactionService {
     @Autowired
     MovTypeRepo movTypeRepo;
 
-    public List<TreasuryTransaction> collectFindAll(){
-        return treasuriesTransactionsRepo.findByMoneyGreaterThan(BigDecimal.ZERO);
+    public Page<TreasuryTransaction> collectFindAll(int pageIndex, int pageSize){
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return treasuriesTransactionsRepo.findByMoneyGreaterThan(BigDecimal.ZERO, page);
     }
 
-    public List<TreasuryTransaction> exChangeFindAll(){
-        return treasuriesTransactionsRepo.findByMoneyLessThan(BigDecimal.ZERO);
+    public Page<TreasuryTransaction> exChangeFindAll(int pageIndex, int pageSize){
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return treasuriesTransactionsRepo.findByMoneyLessThan(BigDecimal.ZERO, page);
     }
 
     public BigDecimal getAvailableBalance(){
