@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,6 +83,21 @@ public class TransactionController {
     }
 
 
+    @GetMapping("/search")
+    public ResponseEntity<Object>  search(
+            @RequestParam(name = "id" ,required = false) Long id,
+            @RequestParam(name = "accountId" ,required = false) Long accountId,
+            @RequestParam(name = "movType" ,required = false) Integer movType,
+            @RequestParam(name = "type" ,required = false) int type,
+            @RequestParam(name = "fromDate" ,required = false) LocalDate fromDate,
+            @RequestParam(name = "toDate" ,required = false) LocalDate toDate
+    ){
+
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, treasuresTransactionService.search(
+                id, accountId,movType,  type, fromDate, toDate
+        ) , true);
+    }
 
 
 }

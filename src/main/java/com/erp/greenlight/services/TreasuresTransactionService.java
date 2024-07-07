@@ -1,8 +1,15 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.SaveTreasuryTransactionDto;
+import com.erp.greenlight.enums.SupplierOrderType;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +42,9 @@ public class TreasuresTransactionService {
 
     @Autowired
     MovTypeRepo movTypeRepo;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Page<TreasuryTransaction> collectFindAll(int pageIndex, int pageSize){
         Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
@@ -124,7 +136,6 @@ public class TreasuresTransactionService {
         return dataInsert;
     }
 
-
     private void refreshAccountBalanceGeneral(Account accountData){
 
         if (accountData.getAccountType().getId() != 2 // supplier
@@ -144,9 +155,58 @@ public class TreasuresTransactionService {
         }
     }
 
-
     public List<TreasuryTransaction> getLast5Transaction(){
-
         return treasuriesTransactionsRepo.getLast5Transaction();
     }
+
+    public List<TreasuryTransaction> search(
+            Long id,
+            Long accountId,
+            Integer movType,
+            int type,
+            LocalDate fromDate,
+            LocalDate toDate
+    ){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TreasuryTransaction> cq = cb.createQuery(TreasuryTransaction.class);
+
+        Root<TreasuryTransaction> invoice = cq.from(TreasuryTransaction.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (id != null && id != 0) {
+
+            List<TreasuryTransaction> result = new ArrayList<>();
+            result.add(treasuriesTransactionsRepo.findById(id).orElseThrow());
+            return result;
+        }
+        if(type==1){
+            predicates.add(cb.greaterThan(invoice.get("money"), BigDecimal.ZERO));
+        }else{
+            predicates.add(cb.lessThan(invoice.get("money"), BigDecimal.ZERO));
+        }
+
+
+        if (movType != null  && movType != 0) {
+            predicates.add(cb.equal(invoice.get("movType").get("id"), movType));
+        }
+
+        if (accountId != null  && accountId != 0) {
+            predicates.add(cb.equal(invoice.get("account").get("id"), accountId));
+        }
+
+        if(fromDate != null){
+            predicates.add(cb.greaterThanOrEqualTo(invoice.get("moveDate"), fromDate));
+        }
+        if(toDate != null){
+            predicates.add(cb.lessThanOrEqualTo(invoice.get("moveDate"), toDate));
+        }
+
+
+
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cq).getResultList();
+
+    }
+
 }
