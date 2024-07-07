@@ -13,11 +13,13 @@ import com.erp.greenlight.services.InvItemCardService;
 import com.erp.greenlight.services.SalesInvoiceService;
 import com.erp.greenlight.services.StoreService;
 import com.erp.greenlight.utils.AppResponse;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +99,21 @@ public class SalesInvoiceController {
         return AppResponse.generateResponse("all_data", HttpStatus.OK, data , true);
     }
 
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Object>  search(
+            @RequestParam(name = "id" ,required = false) Long id,
+            @RequestParam(name = "customerId" ,required = false) Long customerId,
+            @RequestParam(name = "fromDate" ,required = false) LocalDate fromDate,
+            @RequestParam(name = "toDate" ,required = false) LocalDate toDate
+    ){
+
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, salesInvoiceService.search(
+                id, customerId, fromDate, toDate
+        ) , true);
+    }
 
 
 }

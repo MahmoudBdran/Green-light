@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,21 @@ public class SupplierOrderController {
     @PostMapping("/approve")
     public ResponseEntity<Object> approve(@RequestBody ApproveSupplierOrderDTO request){
         return supplierOrderService.approve(request);
+    }
 
+    @GetMapping("/search")
+    public ResponseEntity<Object>  search(
+            @RequestParam(name = "id" ,required = false) Long id,
+            @RequestParam(name = "supplierId" ,required = false) Long supplierId,
+            @RequestParam(name = "storeId" ,required = false) Integer storeId,
+            @RequestParam(name = "fromDate" ,required = false) LocalDate fromDate,
+            @RequestParam(name = "toDate" ,required = false) LocalDate toDate
+    ){
+
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, supplierOrderService.search(
+                id, storeId,  supplierId, fromDate, toDate
+        ) , true);
     }
 
 

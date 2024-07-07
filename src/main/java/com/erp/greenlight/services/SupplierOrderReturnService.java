@@ -8,6 +8,12 @@ import com.erp.greenlight.mappers.SupplierOrderMapper;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +28,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,6 +66,9 @@ public class SupplierOrderReturnService {
     @Autowired
     InvItemCardService invItemCardService;
     SupplierOrderMapper mapper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Page<SupplierOrder> getAllSupplierOrdersReturns(int pageIndex, int pageSize) {
         Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
@@ -277,6 +287,49 @@ public class SupplierOrderReturnService {
         }else {
             return null;
         }
+    }
+
+    public List<SupplierOrder> search(
+            Long id,
+            Integer storeId,
+            Long supplierId,
+            LocalDate fromDate,
+            LocalDate toDate
+    ){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SupplierOrder> cq = cb.createQuery(SupplierOrder.class);
+
+        Root<SupplierOrder> invoice = cq.from(SupplierOrder.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (id != null && id != 0) {
+
+            List<SupplierOrder> result = new ArrayList<>();
+            result.add(supplierOrderRepo.findById(id).orElseThrow());
+            return result;
+        }
+
+        predicates.add(cb.equal(invoice.get("orderType"), SupplierOrderType.RETURN_ON_GENERAL));
+
+        if (supplierId != null  && supplierId != 0) {
+            predicates.add(cb.equal(invoice.get("supplier").get("id"), supplierId));
+        }
+
+        if(fromDate != null){
+            predicates.add(cb.greaterThanOrEqualTo(invoice.get("orderDate"), fromDate));
+        }
+        if(toDate != null){
+            predicates.add(cb.lessThanOrEqualTo(invoice.get("orderDate"), toDate));
+        }
+
+        if(storeId != null && storeId != 0){
+            predicates.add(cb.equal(invoice.get("store").get("id"), storeId));
+        }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cq).getResultList();
+
     }
 
 }

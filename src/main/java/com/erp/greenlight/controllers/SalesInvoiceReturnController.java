@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -73,6 +74,20 @@ public class SalesInvoiceReturnController {
 
             return AppResponse.generateResponse("تم حفظ الفاتورة بنجاح", HttpStatus.OK,  salesInvoiceReturnService.approveSalesInvoiceReturn(salesInvoiceReturn) , true);
         }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object>  search(
+            @RequestParam(name = "id" ,required = false) Long id,
+            @RequestParam(name = "customerId" ,required = false) Long customerId,
+            @RequestParam(name = "fromDate" ,required = false) LocalDate fromDate,
+            @RequestParam(name = "toDate" ,required = false) LocalDate toDate
+    ){
+
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, salesInvoiceReturnService.search(
+                id, customerId, fromDate, toDate
+        ) , true);
     }
 
 

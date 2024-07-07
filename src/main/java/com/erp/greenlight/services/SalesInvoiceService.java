@@ -4,6 +4,14 @@ import com.erp.greenlight.DTOs.SalesInvoiceDTO;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
 import com.erp.greenlight.utils.AppResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -38,6 +47,9 @@ public class SalesInvoiceService {
 
     @Autowired
     CustomerService customerService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
 
     private Map<Integer, String> MONTHS = Map.ofEntries(
@@ -252,7 +264,40 @@ public class SalesInvoiceService {
         }
     }
 
+    public List<SalesInvoice> search(
+            Long id,
+             Long customerId,
+             LocalDate fromDate,
+             LocalDate toDate
+    ){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SalesInvoice> cq = cb.createQuery(SalesInvoice.class);
 
+        Root<SalesInvoice> invoice = cq.from(SalesInvoice.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (id != null && id != 0) {
+
+            List<SalesInvoice> result = new ArrayList<>();
+            result.add(salesInvoiceRepo.findById(id).orElseThrow());
+            return result;
+        }
+        if (customerId != null  && customerId != 0) {
+            predicates.add(cb.equal(invoice.get("customer").get("id"), customerId));
+        }
+
+        if(fromDate != null){
+            predicates.add(cb.greaterThanOrEqualTo(invoice.get("invoiceDate"), fromDate));
+        }
+        if(toDate != null){
+            predicates.add(cb.lessThanOrEqualTo(invoice.get("invoiceDate"), toDate));
+        }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cq).getResultList();
+
+    }
 
 }
 
