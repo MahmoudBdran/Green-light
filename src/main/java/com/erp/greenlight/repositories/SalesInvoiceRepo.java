@@ -29,16 +29,16 @@ public interface SalesInvoiceRepo extends JpaRepository<SalesInvoice, Long> {
     List<Object[]> findSalesInvoiceCountsByMonth();
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SalesInvoice s WHERE  s.account=:account")
-    BigDecimal getNetForCustomerOrder(Account account);
+    BigDecimal getSumOfMoneyByAccount(Account account);
 
     @Query(value = "SELECT COUNT(*) FROM sales_invoices s WHERE s.customer =:customer ", nativeQuery = true)
-    int getSalesOfCustomerCount(Long customer);
+    int getSalesCountByCustomerId(Long customer);
 
     @Query(value = "SELECT COUNT(*) FROM sales_invoices s WHERE  s.customer =:customer AND s.invoice_date <=:dateTo AND s.invoice_date >=:dateFrom", nativeQuery = true)
-    int getSalesOfCustomerOnPeriodCount(@Param("customer") Long customer, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+    int getSalesCountByCustomerIdOnPeriod(@Param("customer") Long customer, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SalesInvoice s WHERE s.account=:account AND s.invoiceDate <=:dateTo AND s.invoiceDate >=:dateFrom")
-    BigDecimal getNetForSalesOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+    BigDecimal getSumOfMoneyByAccountOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
 
 

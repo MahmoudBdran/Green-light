@@ -31,22 +31,22 @@ public interface SupplierOrderRepo extends JpaRepository<SupplierOrder, Long> {
     Page<SupplierOrder> findAllByOrderType(SupplierOrderType orderType, Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 0 AND s.supplier_id =:supplierId ", nativeQuery = true)
-    int getSupplierWithOrderOfSupplier(Long supplierId);
+    int getSupplierWithOrderCountBySupplierId(Long supplierId);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 1 AND s.supplier_id =:supplierId ", nativeQuery = true)
-    int getSupplierWithOrderReturnOfSupplier(Long supplierId);
+    int getSupplierWithOrderReturnCountBySupplierId(Long supplierId);
 
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 0 AND s.supplier_id =:supplierId AND s.order_date <=:dateTo AND s.order_date >=:dateFrom", nativeQuery = true)
-    int getSupplierWithOrderOfSupplierOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    int getSupplierWithOrderCountBySupplierIdOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 1 AND s.supplier_id =:supplierId AND s.order_date <=:dateTo AND s.order_date >=:dateFrom", nativeQuery = true)
-    int getSupplierWithOrderReturnOfSupplierOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    int getSupplierWithOrderReturnCountBySupplierIdOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SupplierOrder s WHERE s.orderType = 0 AND s.account=:account AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
-    BigDecimal getNetForSupplierOrderOnPeriod( @Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    BigDecimal getSumOfMoneyByAccountOnPeriod( @Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SupplierOrder s WHERE s.orderType = 1 AND s.account=:account AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
-    BigDecimal getNetForSupplierOrderReturnOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    BigDecimal getReturnsSumOfMoneyByAccountOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 }
