@@ -71,6 +71,9 @@ public class ReportController {
             data.put("purchaseReturnTotalMoney", supplierOrderRepo.getNetForSupplierOrderReturn(supplier.getAccount()));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccount(supplier.getAccount()));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccount(supplier.getAccount()));
+
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccount(supplier.getAccount()));
+
             return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
             //تفصيلي
         } else {
@@ -91,6 +94,7 @@ public class ReportController {
             data.put("purchaseReturnTotalMoney", supplierOrderRepo.getReturnsSumOfMoneyByAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
 
         }
 
@@ -123,6 +127,8 @@ public class ReportController {
             data.put("salesReturnInvoices", salesInvoiceReturnRepo.findAllByCustomer(customer));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccount(customer.getAccount()));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccount(customer.getAccount()));
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccount(customer.getAccount()));
+
             return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
             //تفصيلي
         } else {
@@ -144,6 +150,7 @@ public class ReportController {
 
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccountOnPeriod(customer.getAccount(), fromDate, toDate));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccountOnPeriod(customer.getAccount(), fromDate, toDate));
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccountOnPeriod(customer.getAccount(), fromDate, toDate));
 
         }
 
