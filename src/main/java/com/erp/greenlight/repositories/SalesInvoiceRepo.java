@@ -1,9 +1,6 @@
 package com.erp.greenlight.repositories;
 
-import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.SalesInvoice;
-import com.erp.greenlight.models.SupplierOrder;
-import com.erp.greenlight.models.TreasuryTransaction;
+import com.erp.greenlight.models.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,6 +37,12 @@ public interface SalesInvoiceRepo extends JpaRepository<SalesInvoice, Long> {
     @Query("SELECT SUM(s.moneyForAccount) FROM SalesInvoice s WHERE s.account=:account AND s.invoiceDate <=:dateTo AND s.invoiceDate >=:dateFrom")
     BigDecimal getSumOfMoneyByAccountOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
+
+    @Query("SELECT s FROM SalesInvoice s WHERE s.customer=:customer")
+    List<SalesInvoice> findAllByCustomer(Customer customer);
+
+    @Query("SELECT s FROM SalesInvoice s WHERE s.customer=:customer AND s.invoiceDate <=:dateTo AND s.invoiceDate >=:dateFrom")
+    List<SalesInvoice> findAllByCustomerOnPeriod(Customer customer, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
 
 }

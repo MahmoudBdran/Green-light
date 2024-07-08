@@ -64,8 +64,10 @@ public class ReportController {
                 data.put("purchaseTotalMoney", supplierOrderRepo.getNetForSupplierOrder(supplier.getAccount()).multiply(new BigDecimal(-1)));
             }else{
                 data.put("purchaseTotalMoney", 0);
-
             }
+
+            data.put("supplierOrders", supplierOrderRepo.findAllSupplierOrderBySupplier(supplier));
+            data.put("supplierOrdersReturn", supplierOrderRepo.findAllSupplierOrderReturnBySupplier(supplier));
             data.put("purchaseReturnTotalMoney", supplierOrderRepo.getNetForSupplierOrderReturn(supplier.getAccount()));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccount(supplier.getAccount()));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccount(supplier.getAccount()));
@@ -84,7 +86,8 @@ public class ReportController {
                 data.put("purchaseTotalMoney", 0);
 
             }
-
+            data.put("supplierOrders", supplierOrderRepo.findAllSupplierOrderBySupplierOnPeriod(supplier, fromDate, toDate));
+            data.put("supplierOrdersReturn", supplierOrderRepo.findAllSupplierOrderReturnBySupplierOnPeriod(supplier, fromDate, toDate));
             data.put("purchaseReturnTotalMoney", supplierOrderRepo.getReturnsSumOfMoneyByAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
@@ -116,6 +119,8 @@ public class ReportController {
             }
             data.put("salesReturnTotalMoney", salesInvoiceReturnRepo.getSumOfMoneyByAccount(customer.getAccount()));
 
+            data.put("salesInvoices", salesInvoiceRepo.findAllByCustomer(customer));
+            data.put("salesReturnInvoices", salesInvoiceReturnRepo.findAllByCustomer(customer));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccount(customer.getAccount()));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccount(customer.getAccount()));
             return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
@@ -133,6 +138,9 @@ public class ReportController {
                 data.put("salesTotalMoney", 0);
             }
             data.put("salesReturnTotalMoney", salesInvoiceReturnRepo.getSumOfMoneyByAccountOnPeriod(customer.getAccount(), fromDate, toDate));
+
+            data.put("salesInvoices", salesInvoiceRepo.findAllByCustomerOnPeriod(customer, fromDate, toDate));
+            data.put("salesReturnInvoices", salesInvoiceReturnRepo.findAllByCustomerOnPeriod(customer, fromDate, toDate));
 
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccountOnPeriod(customer.getAccount(), fromDate, toDate));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccountOnPeriod(customer.getAccount(), fromDate, toDate));

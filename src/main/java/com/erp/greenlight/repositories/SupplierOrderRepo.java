@@ -1,9 +1,7 @@
 package com.erp.greenlight.repositories;
 
 import com.erp.greenlight.enums.SupplierOrderType;
-import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.SupplierOrder;
-import com.erp.greenlight.models.SupplierOrderDetails;
+import com.erp.greenlight.models.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,4 +47,18 @@ public interface SupplierOrderRepo extends JpaRepository<SupplierOrder, Long> {
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SupplierOrder s WHERE s.orderType = 1 AND s.account=:account AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
     BigDecimal getReturnsSumOfMoneyByAccountOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+
+
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 0 AND s.supplier=:supplier")
+    List<SupplierOrder> findAllSupplierOrderBySupplier(Supplier supplier);
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 0 AND s.supplier=:supplier AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
+    List<SupplierOrder> findAllSupplierOrderBySupplierOnPeriod(Supplier supplier, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 1 AND s.supplier=:supplier")
+    List<SupplierOrder> findAllSupplierOrderReturnBySupplier(Supplier supplier);
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 1 AND s.supplier=:supplier AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
+    List<SupplierOrder> findAllSupplierOrderReturnBySupplierOnPeriod(Supplier supplier, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }
