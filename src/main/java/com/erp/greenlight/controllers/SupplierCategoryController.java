@@ -25,7 +25,7 @@ public class SupplierCategoryController {
 
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getSupplierCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Object> getSupplierCategoryById(@PathVariable Integer id) {
         return AppResponse.generateResponse("all_data", HttpStatus.OK,supplierCategoryService.findById(id) , true);
 
     }
@@ -40,7 +40,7 @@ public class SupplierCategoryController {
 
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteSupplierCategory(@RequestBody Long id) {
+    public ResponseEntity<Object> deleteSupplierCategory(@RequestBody Integer id) {
         return AppResponse.generateResponse("تم حذف نوع المورد بنجاح", HttpStatus.OK, supplierCategoryService.deleteById(id) , true);
 
 

@@ -32,6 +32,7 @@ public class SupplierService {
     @Autowired
     TreasuriesTransactionsRepo treasuriesTransactionsRepo;
 
+
     public List<Supplier> getAllSuppliers(){
         return  supplierRepo.findAll();
     }
@@ -53,6 +54,7 @@ public class SupplierService {
     @Transactional
     public Supplier saveSupplier(Supplier supplier){
         Supplier savedSupplier =new Supplier();
+
         if(validateSupplierInDB(supplier)){
             if(supplier.getStartBalanceStatus()== StartBalanceStatusEnum.CREDIT.getValue()){
                 //credit
@@ -70,6 +72,8 @@ public class SupplierService {
             }
             supplier.setCurrentBalance(supplier.getStartBalance());
 
+            SupplierCategory category = supplierCategoryRepo.findById(supplier.getSupplierCategory().getId()).orElseThrow();
+            supplier.setSupplierCategory(category);
 
             supplier.setAccount( new Account(initiateAccountForSupplier(supplier).getId() ));
 

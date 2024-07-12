@@ -156,6 +156,10 @@ public class SalesInvoiceService {
 
         SalesInvoice invoiceData = salesInvoiceRepo.findById(request.getId()).orElseThrow();
         Customer customerData = invoiceData.getCustomer();
+
+        if(invoiceData.getSalesInvoiceDetails().isEmpty()){
+            return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة فارغة من الاصناف !!", HttpStatus.OK, null, true);
+        }
         if (!invoiceData.getIsApproved()) {
 
             SalesInvoice dataUpdateParent = salesInvoiceRepo.findById(request.getId()).orElseThrow();

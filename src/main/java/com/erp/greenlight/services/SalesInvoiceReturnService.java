@@ -142,6 +142,10 @@ public class SalesInvoiceReturnService {
         Customer customer = invoiceData.getCustomer();
         Account account = null;
 
+        if(invoiceData.getSalesInvoicesReturnDetails().isEmpty()){
+            return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة فارغة من الاصناف !!", HttpStatus.OK, null, true);
+        }
+
         if (!invoiceData.getIsApproved()) {
 
             SalesInvoiceReturn dataUpdateParent = salesInvoiceReturnRepo.findById(request.getId()).orElseThrow();

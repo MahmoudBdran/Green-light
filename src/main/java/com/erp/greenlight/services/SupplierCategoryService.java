@@ -14,13 +14,13 @@ public class SupplierCategoryService {
     public List<SupplierCategory> findAll() {
         return supplierCategoryRepo.findAll();
     }
-    public SupplierCategory findById(Long id) {
+    public SupplierCategory findById(Integer id) {
         return supplierCategoryRepo.findById(id).get();
     }
     public SupplierCategory save(SupplierCategory supplierCategory) {
         return supplierCategoryRepo.save(supplierCategory);
     }
-    public Long deleteById(Long id) {
+    public Integer deleteById(Integer id) {
         supplierCategoryRepo.deleteById(id);
         return id;
     }

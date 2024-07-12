@@ -146,6 +146,11 @@ public class SupplierOrderService {
         Supplier supplier = supplierOrder.getSupplier();
         Store store = supplierOrder.getStore();
 
+        if (supplierOrder.getSupplierOrderDetailsItems().isEmpty()) {
+            return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة فارغة من الاصناف !!", HttpStatus.OK, null, true);
+        }
+
+
         if (supplierOrder.getIsApproved()) {
             return AppResponse.generateResponse("عفوا لايمكن اعتماد فاتورة معتمده من قبل !!", HttpStatus.OK, null, true);
         }

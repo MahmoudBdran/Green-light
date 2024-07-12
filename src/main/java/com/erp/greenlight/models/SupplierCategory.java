@@ -26,7 +26,7 @@ public class SupplierCategory {
     @Column(name = "name", nullable = false, length = 250)
     private String name;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
 

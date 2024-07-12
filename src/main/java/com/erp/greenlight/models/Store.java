@@ -32,7 +32,7 @@ public class Store {
     @Column(name = "address", length = 250)
     private String address;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
 
