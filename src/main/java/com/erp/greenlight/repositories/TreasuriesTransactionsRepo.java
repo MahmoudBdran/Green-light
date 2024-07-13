@@ -46,4 +46,11 @@ public interface TreasuriesTransactionsRepo extends JpaRepository<TreasuryTransa
 
     @Query("SELECT SUM(t.moneyForAccount) FROM TreasuryTransaction t WHERE t.moneyForAccount < 0 AND t.account=:account AND t.moveDate <=:dateTo AND t.moveDate >=:dateFrom")
     BigDecimal getCollectForAccountOnPeriod(@Param("account") Account account, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+
+    @Query(value = "SELECT t FROM TreasuryTransaction t WHERE t.account=:account")
+    List<TreasuryTransaction> gatTransactionsByAccount(Account account);
+
+    @Query(value = "SELECT t FROM TreasuryTransaction t WHERE t.account=:account AND t.account=:account AND t.moveDate <=:dateTo AND t.moveDate >=:dateFrom")
+    List<TreasuryTransaction> gatTransactionsByAccountOnPeriod(@Param("account") Account account, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }

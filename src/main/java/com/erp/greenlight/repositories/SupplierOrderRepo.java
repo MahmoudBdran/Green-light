@@ -1,9 +1,7 @@
 package com.erp.greenlight.repositories;
 
 import com.erp.greenlight.enums.SupplierOrderType;
-import com.erp.greenlight.models.Account;
-import com.erp.greenlight.models.SupplierOrder;
-import com.erp.greenlight.models.SupplierOrderDetails;
+import com.erp.greenlight.models.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,22 +29,36 @@ public interface SupplierOrderRepo extends JpaRepository<SupplierOrder, Long> {
     Page<SupplierOrder> findAllByOrderType(SupplierOrderType orderType, Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 0 AND s.supplier_id =:supplierId ", nativeQuery = true)
-    int getSupplierWithOrderOfSupplier(Long supplierId);
+    int getSupplierWithOrderCountBySupplierId(Long supplierId);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 1 AND s.supplier_id =:supplierId ", nativeQuery = true)
-    int getSupplierWithOrderReturnOfSupplier(Long supplierId);
+    int getSupplierWithOrderReturnCountBySupplierId(Long supplierId);
 
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 0 AND s.supplier_id =:supplierId AND s.order_date <=:dateTo AND s.order_date >=:dateFrom", nativeQuery = true)
-    int getSupplierWithOrderOfSupplierOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    int getSupplierWithOrderCountBySupplierIdOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 
     @Query(value = "SELECT COUNT(*) FROM suppliers_with_orders s WHERE s.order_type = 1 AND s.supplier_id =:supplierId AND s.order_date <=:dateTo AND s.order_date >=:dateFrom", nativeQuery = true)
-    int getSupplierWithOrderReturnOfSupplierOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    int getSupplierWithOrderReturnCountBySupplierIdOnPeriod(@Param("supplierId") Long supplierId, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SupplierOrder s WHERE s.orderType = 0 AND s.account=:account AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
-    BigDecimal getNetForSupplierOrderOnPeriod( @Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    BigDecimal getSumOfMoneyByAccountOnPeriod( @Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
 
     @Query("SELECT SUM(s.moneyForAccount) FROM SupplierOrder s WHERE s.orderType = 1 AND s.account=:account AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
-    BigDecimal getNetForSupplierOrderReturnOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+    BigDecimal getReturnsSumOfMoneyByAccountOnPeriod(@Param("account") Account account, @Param("dateFrom")LocalDate dateFrom,@Param("dateTo") LocalDate dateTo);
+
+
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 0 AND s.supplier=:supplier")
+    List<SupplierOrder> findAllSupplierOrderBySupplier(Supplier supplier);
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 0 AND s.supplier=:supplier AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
+    List<SupplierOrder> findAllSupplierOrderBySupplierOnPeriod(Supplier supplier, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 1 AND s.supplier=:supplier")
+    List<SupplierOrder> findAllSupplierOrderReturnBySupplier(Supplier supplier);
+
+    @Query("SELECT s FROM SupplierOrder s WHERE s.orderType = 1 AND s.supplier=:supplier AND s.orderDate <=:dateTo AND s.orderDate >=:dateFrom")
+    List<SupplierOrder> findAllSupplierOrderReturnBySupplierOnPeriod(Supplier supplier, @Param("dateFrom")LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }

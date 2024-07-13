@@ -57,37 +57,44 @@ public class ReportController {
         if( fromDate !=null && toDate != null){
 
             data.put("finalBalance", supplier.getAccount().getCurrentBalance());
-            data.put("purchaseCounter",  supplierOrderRepo.getSupplierWithOrderOfSupplier(supplierId));
-            data.put("purchaseReturnCounter",  supplierOrderRepo.getSupplierWithOrderReturnOfSupplier(supplierId));
+            data.put("purchaseCounter",  supplierOrderRepo.getSupplierWithOrderCountBySupplierId(supplierId));
+            data.put("purchaseReturnCounter",  supplierOrderRepo.getSupplierWithOrderReturnCountBySupplierId(supplierId));
 
             if(supplierOrderRepo.getNetForSupplierOrder(supplier.getAccount()) != null){
                 data.put("purchaseTotalMoney", supplierOrderRepo.getNetForSupplierOrder(supplier.getAccount()).multiply(new BigDecimal(-1)));
             }else{
                 data.put("purchaseTotalMoney", 0);
-
             }
+
+            data.put("supplierOrders", supplierOrderRepo.findAllSupplierOrderBySupplier(supplier));
+            data.put("supplierOrdersReturn", supplierOrderRepo.findAllSupplierOrderReturnBySupplier(supplier));
             data.put("purchaseReturnTotalMoney", supplierOrderRepo.getNetForSupplierOrderReturn(supplier.getAccount()));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccount(supplier.getAccount()));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccount(supplier.getAccount()));
+
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccount(supplier.getAccount()));
+
             return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
             //تفصيلي
         } else {
             data.put("fromDate", fromDate);
             data.put("toDate", toDate);
             data.put("finalBalance", supplier.getAccount().getCurrentBalance());
-            data.put("purchaseCounter",  supplierOrderRepo.getSupplierWithOrderOfSupplierOnPeriod(supplierId, fromDate, toDate));
-            data.put("purchaseReturnCounter",  supplierOrderRepo.getSupplierWithOrderReturnOfSupplierOnPeriod(supplierId, fromDate, toDate));
+            data.put("purchaseCounter",  supplierOrderRepo.getSupplierWithOrderCountBySupplierIdOnPeriod(supplierId, fromDate, toDate));
+            data.put("purchaseReturnCounter",  supplierOrderRepo.getSupplierWithOrderReturnCountBySupplierIdOnPeriod(supplierId, fromDate, toDate));
 
-            if(supplierOrderRepo.getNetForSupplierOrderOnPeriod(supplier.getAccount(), fromDate, toDate) != null){
-                data.put("purchaseTotalMoney", supplierOrderRepo.getNetForSupplierOrderOnPeriod(supplier.getAccount(), fromDate, toDate).multiply(new BigDecimal(-1)));
+            if(supplierOrderRepo.getSumOfMoneyByAccountOnPeriod(supplier.getAccount(), fromDate, toDate) != null){
+                data.put("purchaseTotalMoney", supplierOrderRepo.getSumOfMoneyByAccountOnPeriod(supplier.getAccount(), fromDate, toDate).multiply(new BigDecimal(-1)));
             }else{
                 data.put("purchaseTotalMoney", 0);
 
             }
-
-            data.put("purchaseReturnTotalMoney", supplierOrderRepo.getNetForSupplierOrderReturnOnPeriod(supplier.getAccount(), fromDate, toDate));
+            data.put("supplierOrders", supplierOrderRepo.findAllSupplierOrderBySupplierOnPeriod(supplier, fromDate, toDate));
+            data.put("supplierOrdersReturn", supplierOrderRepo.findAllSupplierOrderReturnBySupplierOnPeriod(supplier, fromDate, toDate));
+            data.put("purchaseReturnTotalMoney", supplierOrderRepo.getReturnsSumOfMoneyByAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccountOnPeriod(supplier.getAccount(), fromDate, toDate));
 
         }
 
@@ -105,37 +112,45 @@ public class ReportController {
         if( fromDate !=null && toDate != null){
 
             data.put("finalBalance", customer.getAccount().getCurrentBalance());
-            data.put("salesCounter",  salesInvoiceRepo.getSalesOfCustomerCount(customerId));
-            data.put("salesReturnCounter",  salesInvoiceReturnRepo.getSalesReturnOfCustomerCount(customerId));
+            data.put("salesCounter",  salesInvoiceRepo.getSalesCountByCustomerId(customerId));
+            data.put("salesReturnCounter",  salesInvoiceReturnRepo.getSalesReturnCountByCustomerId(customerId));
 
-            if(salesInvoiceRepo.getNetForCustomerOrder(customer.getAccount()) != null){
-                data.put("salesTotalMoney", salesInvoiceRepo.getNetForCustomerOrder(customer.getAccount()).multiply(new BigDecimal(-1)));
+            if(salesInvoiceRepo.getSumOfMoneyByAccount(customer.getAccount()) != null){
+                data.put("salesTotalMoney", salesInvoiceRepo.getSumOfMoneyByAccount(customer.getAccount()).multiply(new BigDecimal(-1)));
             }else{
                 data.put("salesTotalMoney", 0);
 
             }
-            data.put("salesReturnTotalMoney", salesInvoiceReturnRepo.getNetForSalesReturnForCustomer(customer.getAccount()));
+            data.put("salesReturnTotalMoney", salesInvoiceReturnRepo.getSumOfMoneyByAccount(customer.getAccount()));
 
+            data.put("salesInvoices", salesInvoiceRepo.findAllByCustomer(customer));
+            data.put("salesReturnInvoices", salesInvoiceReturnRepo.findAllByCustomer(customer));
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccount(customer.getAccount()));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccount(customer.getAccount()));
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccount(customer.getAccount()));
+
             return AppResponse.generateResponse("all_data", HttpStatus.OK, data, true);
             //تفصيلي
         } else {
             data.put("fromDate", fromDate);
             data.put("toDate", toDate);
             data.put("finalBalance", customer.getAccount().getCurrentBalance());
-            data.put("salesCounter",  salesInvoiceRepo.getSalesOfCustomerOnPeriodCount(customerId, fromDate, toDate));
-            data.put("salesReturnCounter",  salesInvoiceReturnRepo.getSalesReturnOfCustomerOnPeriodCount(customerId, fromDate, toDate));
+            data.put("salesCounter",  salesInvoiceRepo.getSalesCountByCustomerIdOnPeriod(customerId, fromDate, toDate));
+            data.put("salesReturnCounter",  salesInvoiceReturnRepo.getSalesReturnCountByCustomerIdOnPeriod(customerId, fromDate, toDate));
 
-            if(salesInvoiceRepo.getNetForSalesOnPeriod(customer.getAccount(), fromDate, toDate) != null){
-                data.put("salesTotalMoney", salesInvoiceRepo.getNetForSalesOnPeriod(customer.getAccount(), fromDate, toDate).multiply(new BigDecimal(-1)));
+            if(salesInvoiceRepo.getSumOfMoneyByAccountOnPeriod(customer.getAccount(), fromDate, toDate) != null){
+                data.put("salesTotalMoney", salesInvoiceRepo.getSumOfMoneyByAccountOnPeriod(customer.getAccount(), fromDate, toDate).multiply(new BigDecimal(-1)));
             }else{
                 data.put("salesTotalMoney", 0);
             }
-            data.put("salesReturnTotalMoney", salesInvoiceReturnRepo.getNetForSalesReturnOnPeriod(customer.getAccount(), fromDate, toDate));
+            data.put("salesReturnTotalMoney", salesInvoiceReturnRepo.getSumOfMoneyByAccountOnPeriod(customer.getAccount(), fromDate, toDate));
+
+            data.put("salesInvoices", salesInvoiceRepo.findAllByCustomerOnPeriod(customer, fromDate, toDate));
+            data.put("salesReturnInvoices", salesInvoiceReturnRepo.findAllByCustomerOnPeriod(customer, fromDate, toDate));
 
             data.put("transactionsExchange", treasuriesTransactionsRepo.getExchangeForAccountOnPeriod(customer.getAccount(), fromDate, toDate));
             data.put("transactionsCollect", treasuriesTransactionsRepo.getCollectForAccountOnPeriod(customer.getAccount(), fromDate, toDate));
+            data.put("transactions", treasuriesTransactionsRepo.gatTransactionsByAccountOnPeriod(customer.getAccount(), fromDate, toDate));
 
         }
 
