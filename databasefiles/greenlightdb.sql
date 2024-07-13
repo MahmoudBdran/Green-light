@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 07, 2024 at 09:40 PM
+-- Generation Time: Jul 13, 2024 at 06:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -51,10 +51,12 @@ CREATE TABLE `accounts` (
 INSERT INTO `accounts` (`id`, `active`, `created_at`, `current_balance`, `is_parent`, `name`, `notes`, `start_balance`, `start_balance_status`, `updated_at`, `account_type`, `added_by`, `parent_account_number`, `updated_by`) VALUES
 (9, b'1', '2024-06-30 12:00:00.000000', 0.00, b'1', 'الموردين الأب', NULL, 0.00, 3, '2024-06-30 12:00:00.000000', 9, 1, NULL, 1),
 (10, b'1', '2024-06-30 12:00:24.000000', 0.00, b'1', 'العملاء الأب', 'ok', 0.00, 3, '2024-06-30 12:00:24.000000', 9, 1, NULL, 1),
-(11, b'1', '2024-06-30 12:20:48.000000', 25.00, b'0', 'محمد طلعت', NULL, 0.00, 3, '2024-07-04 23:16:18.000000', 3, 1, 10, 1),
-(12, b'1', '2024-06-30 12:21:16.000000', -105.00, b'0', 'احمد علي', NULL, 0.00, 3, '2024-07-02 12:49:37.000000', 2, 1, 10, 1),
+(11, b'1', '2024-06-30 12:20:48.000000', 5.00, b'0', 'محمد طلعت', NULL, 0.00, 3, '2024-07-12 20:35:37.000000', 3, 1, 10, 1),
+(12, b'1', '2024-06-30 12:21:16.000000', 5185.00, b'0', 'احمد علي', NULL, 0.00, 3, '2024-07-12 20:38:46.000000', 2, 1, 10, 1),
 (13, b'1', '2024-06-30 19:32:35.000000', 0.00, b'0', 'السيد حسن', NULL, 0.00, 3, '2024-06-30 19:32:35.000000', 2, 1, 10, 1),
-(14, b'1', '2024-06-30 20:11:14.000000', 0.00, b'0', 'محمد هشام', 'خن', 0.00, 3, '2024-06-30 20:11:14.000000', 3, 1, 10, 1);
+(14, b'1', '2024-06-30 20:11:14.000000', 0.00, b'0', 'محمد هشام', 'خن', 0.00, 3, '2024-06-30 20:11:14.000000', 3, 1, 10, 1),
+(15, b'1', '2024-07-12 20:16:42.000000', 0.00, b'0', 'ابراهيم السيد', NULL, 0.00, 3, '2024-07-12 20:16:42.000000', 2, 1, 10, 1),
+(16, b'1', '2024-07-12 20:20:41.000000', 0.00, b'0', 'محسن', NULL, 0.00, 3, '2024-07-12 20:20:41.000000', 2, 1, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -191,7 +193,7 @@ CREATE TABLE `admin_panel_settings` (
 --
 
 INSERT INTO `admin_panel_settings` (`id`, `active`, `address`, `customer_parent_account_number`, `general_alert`, `notes`, `phone`, `photo`, `suppliers_parent_account_number`, `system_name`, `added_by`) VALUES
-(1, b'1', 'asd', 10, NULL, NULL, '012131321321', 'sdf', 9, 'Green Light', 1);
+(1, b'1', 'asd', 10, NULL, NULL, '1111111111111111111111111111', 'sdf', 9, 'Green Light', 1);
 
 -- --------------------------------------------------------
 
@@ -221,7 +223,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `active`, `address`, `created_at`, `current_balance`, `name`, `notes`, `phones`, `start_balance`, `start_balance_status`, `updated_at`, `account_id`, `added_by`, `updated_by`) VALUES
-(3, b'1', 'طنطا', '2024-06-30 12:20:48.000000', 25.00, 'محمد طلعت', NULL, NULL, 0.00, 3, '2024-07-04 23:16:18.000000', 11, 1, 1),
+(3, b'1', 'طنطا', '2024-06-30 12:20:48.000000', 5.00, 'محمد طلعت', NULL, NULL, 0.00, 3, '2024-07-12 20:35:37.000000', 11, 1, 1),
 (4, b'1', 'الجيزة', '2024-06-30 20:11:14.000000', 0.00, 'محمد هشام', 'خن', '0231321321', 0.00, 3, '2024-06-30 20:11:14.000000', 14, 1, 1);
 
 -- --------------------------------------------------------
@@ -315,7 +317,7 @@ CREATE TABLE `inv_itemcard` (
 
 INSERT INTO `inv_itemcard` (`id`, `quentity`, `quentityall_retails`, `quentityretail`, `active`, `allquentity`, `barcode`, `cost_price`, `cost_price_retail`, `created_at`, `does_has_retailunit`, `gomla_price`, `gomla_price_retail`, `has_fixced_price`, `item_type`, `name`, `nos_gomla_price`, `nos_gomla_price_retail`, `photo`, `price`, `price_retail`, `retail_uom_qunt_to_parent`, `updated_at`, `added_by`, `inv_item_category_id`, `parent_inv_item_id`, `retail_uom_id`, `uom_id`, `updated_by`) VALUES
 (5, 21.00, 0.00, 0.00, b'1', 21.00, NULL, 50.00, NULL, NULL, b'0', 40.00, NULL, b'0', 1, 'سلك نحاس 2 مم', 45.00, NULL, NULL, 50.00, NULL, NULL, '2024-07-03 12:43:59.000000', 1, 3, NULL, NULL, 1, 1),
-(7, 2.75, 55.00, 15.00, b'1', 2.75, NULL, 1000.00, 50.00, '2024-07-03 13:50:44.000000', b'1', 900.00, 40.00, b'0', 1, 'شاسيه سبوت دائري ابيض', 950.00, 45.00, NULL, 1000.00, 50.00, 20.00, '2024-07-07 01:16:27.000000', 1, 2, NULL, 2, 1, 1);
+(7, 3.75, 75.00, 15.00, b'1', 3.75, NULL, 1000.00, 50.00, '2024-07-03 13:50:44.000000', b'1', 900.00, 40.00, b'0', 1, 'شاسيه سبوت دائري ابيض', 950.00, 45.00, NULL, 1000.00, 50.00, 20.00, '2024-07-12 20:38:46.000000', 1, 2, NULL, 2, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -433,7 +435,8 @@ INSERT INTO `inv_itemcard_movement` (`id`, `byan`, `quantity_after_move`, `quant
 (72, 'نظير مرتجع مشتريات عام الي المورد احمد علي فاتورة رقم 16', 'عدد  1.90 كرتونة', 'عدد  1.90 كرتونة', 'عدد  2.90 كرتونة', 'عدد  2.90 كرتونة', 1, 3, 7, 1),
 (73, ' نظير حذف سطر الصنف من فاتورة مرتجع مشتريات عام   الي المورد  احمد علي فاتورة رقم 16', 'عدد  2.90 كرتونة', 'عدد  2.90 كرتونة', 'عدد  1.90 كرتونة', 'عدد  1.90 كرتونة', 1, 3, 7, 1),
 (74, 'نظير مرتجع مشتريات عام الي المورد احمد علي فاتورة رقم 16', 'عدد  2.80 علبة', 'عدد  2.80 علبة', 'عدد  2.90 علبة', 'عدد  2.90 علبة', 1, 3, 7, 1),
-(75, 'نظير مبيعات  للعميل  طياري فاتورة رقم 15', 'عدد  2.75 علبة', 'عدد  2.75 علبة', 'عدد  2.80 علبة', 'عدد  2.80 علبة', 2, 4, 7, 1);
+(75, 'نظير مبيعات  للعميل  طياري فاتورة رقم 15', 'عدد  2.75 علبة', 'عدد  2.75 علبة', 'عدد  2.80 علبة', 'عدد  2.80 علبة', 2, 4, 7, 1),
+(76, 'نظير مشتريات من المورد  احمد علي فاتورة رقم 22', 'عدد  3.75 كرتونة', 'عدد  3.75 كرتونة', 'عدد  2.75 كرتونة', 'عدد  2.75 كرتونة', 1, 1, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -516,7 +519,8 @@ INSERT INTO `inv_item_card_batch` (`id`, `expired_date`, `is_send_to_archived`, 
 (4, '2024-07-01', NULL, '2024-07-01', 0.00, 0.00, 50.00, 1, 5, 1),
 (5, '2024-07-02', NULL, '2024-07-02', 2.00, 100.00, 50.00, 1, 5, 1),
 (8, '2024-07-03', NULL, '2024-07-03', 0.75, 750.00, 1000.00, 1, 7, 1),
-(9, '2024-07-04', NULL, '2024-07-04', 2.00, 2000.00, 1000.00, 1, 7, 1);
+(9, '2024-07-04', NULL, '2024-07-04', 2.00, 2000.00, 1000.00, 1, 7, 1),
+(10, '2024-07-12', NULL, '2024-07-12', 1.00, 1000.00, 1000.00, 1, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -1092,7 +1096,7 @@ CREATE TABLE `service_order_detail` (
 CREATE TABLE `stores` (
   `id` int(11) NOT NULL,
   `address` varchar(250) DEFAULT NULL,
-  `created_at` datetime(6) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
   `active` bit(1) NOT NULL,
   `name` varchar(250) NOT NULL,
   `phones` varchar(100) DEFAULT NULL,
@@ -1107,7 +1111,7 @@ CREATE TABLE `stores` (
 
 INSERT INTO `stores` (`id`, `address`, `created_at`, `active`, `name`, `phones`, `updated_at`, `added_by`, `updated_by`) VALUES
 (1, 'القاهرة', '2024-06-27 21:18:05.000000', b'1', 'الرئيسي', '321321321', '2024-06-27 21:18:05.000000', 1, 1),
-(2, 'حلوان', '2024-06-27 21:19:31.000000', b'1', 'حلوان', '654654654', '2024-06-27 21:19:31.000000', 1, 1);
+(2, 'حلوان', NULL, b'1', 'ssssss', '654654654', '2024-07-12 20:34:04.000000', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -1138,8 +1142,10 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `active`, `address`, `created_at`, `current_balance`, `name`, `notes`, `phones`, `start_balance`, `start_balance_status`, `updated_at`, `account_number`, `added_by`, `suppliers_categories_id`, `updated_by`) VALUES
-(1, b'1', 'القاهرة', '2024-06-30 12:21:16.000000', -105.00, 'احمد علي', 'تمام', '01555555555', 0.00, 3, '2024-07-02 12:49:37.000000', 12, 1, 1, 1),
-(2, b'1', 'القاهرة', '2024-06-30 19:32:35.000000', 0.00, 'السيد حسن', NULL, '01232132132', 0.00, 3, '2024-06-30 19:32:35.000000', 13, 1, 1, 1);
+(1, b'1', 'القاهرة', '2024-06-30 12:21:16.000000', 5185.00, 'احمد علي', 'تمام', '01555555555', 0.00, 3, '2024-07-12 20:38:46.000000', 12, 1, 1, 1),
+(2, b'1', 'القاهرة', '2024-06-30 19:32:35.000000', 0.00, 'السيد حسن', NULL, '01232132132', 0.00, 3, '2024-06-30 19:32:35.000000', 13, 1, 1, 1),
+(3, b'1', NULL, '2024-07-12 20:16:42.000000', 0.00, 'ابراهيم السيد', NULL, NULL, 0.00, 3, '2024-07-12 20:16:42.000000', 15, 1, 2, 1),
+(4, b'1', NULL, '2024-07-12 20:20:41.000000', 0.00, 'محسن', NULL, NULL, 0.00, 3, '2024-07-12 20:20:41.000000', 16, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -1150,7 +1156,7 @@ INSERT INTO `suppliers` (`id`, `active`, `address`, `created_at`, `current_balan
 CREATE TABLE `suppliers_categories` (
   `id` int(11) NOT NULL,
   `active` bit(1) NOT NULL,
-  `created_at` datetime(6) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
   `name` varchar(250) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
@@ -1162,7 +1168,8 @@ CREATE TABLE `suppliers_categories` (
 --
 
 INSERT INTO `suppliers_categories` (`id`, `active`, `created_at`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
-(1, b'1', '2024-06-30 12:00:43.000000', 'ادوات كهربية', '2024-06-30 12:00:43.000000', 1, 1);
+(1, b'1', '2024-06-30 12:00:43.000000', 'ادوات كهربية', '2024-06-30 12:00:43.000000', 1, 1),
+(2, b'0', NULL, 'اكسسوارات', '2024-07-12 20:25:05.000000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1213,7 +1220,7 @@ INSERT INTO `suppliers_with_orders` (`id`, `created_at`, `discount_percent`, `di
 (19, '2024-07-06 23:56:22.000000', 0.00, 0, 0.00, '2234', b'0', NULL, NULL, '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:22.000000', NULL, NULL, 13, 1, NULL, 1, 2, 1),
 (20, '2024-07-06 23:56:33.000000', 0.00, 0, 0.00, '234234', b'0', NULL, NULL, '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:33.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1),
 (21, '2024-07-06 23:56:46.000000', 0.00, 0, 0.00, '435345', b'0', NULL, NULL, '2024-07-06', 0, 2, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:56:46.000000', NULL, NULL, 13, 1, NULL, 1, 2, 1),
-(22, '2024-07-06 23:57:00.000000', 0.00, 0, 0.00, '345345', b'0', NULL, '234', '2024-07-06', 0, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-06 23:57:00.000000', NULL, NULL, 12, 1, NULL, 1, 1, 1),
+(22, '2024-07-06 23:57:00.000000', 0.00, 0, 0.00, '345345', b'1', -1000.00, '234', '2024-07-06', 0, 1, NULL, NULL, NULL, NULL, 1000.00, 1000.00, 0.00, NULL, '2024-07-12 20:38:46.000000', 1000.00, 0.00, 12, 1, NULL, 1, 1, 1),
 (23, '2024-07-07 20:58:01.000000', NULL, NULL, 0.00, NULL, b'0', NULL, NULL, '2024-07-07', 1, 1, NULL, NULL, 0.00, NULL, 0.00, 0.00, 0.00, NULL, '2024-07-07 20:58:01.000000', NULL, NULL, 13, 1, NULL, 2, 2, 1);
 
 -- --------------------------------------------------------
@@ -1249,7 +1256,8 @@ CREATE TABLE `suppliers_with_orders_details` (
 
 INSERT INTO `suppliers_with_orders_details` (`id`, `created_at`, `deliverd_quantity`, `expire_date`, `isparentuom`, `item_card_type`, `order_type`, `production_date`, `total_price`, `unit_price`, `updated_at`, `added_by`, `batch_id`, `inv_item_id`, `item_code`, `order_id`, `uom_id`, `updated_by`) VALUES
 (1, '2024-07-05 00:30:06.000000', 1.00, NULL, b'1', 1, 0, NULL, 1000.00, 1000.00, '2024-07-05 00:30:06.000000', 1, NULL, 7, NULL, 17, 1, 1),
-(3, '2024-07-05 01:02:28.000000', 2.00, NULL, b'0', NULL, 1, NULL, 100.00, 50.00, '2024-07-05 01:02:28.000000', 1, 8, 7, NULL, 16, 2, 1);
+(3, '2024-07-05 01:02:28.000000', 2.00, NULL, b'0', NULL, 1, NULL, 100.00, 50.00, '2024-07-05 01:02:28.000000', 1, 8, 7, NULL, 16, 2, 1),
+(4, '2024-07-12 20:38:28.000000', 1.00, NULL, b'1', 1, 0, NULL, 1000.00, 1000.00, '2024-07-12 20:38:28.000000', 1, NULL, 7, NULL, 22, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1298,7 +1306,7 @@ CREATE TABLE `treasuries` (
 --
 
 INSERT INTO `treasuries` (`id`, `created_at`, `active`, `is_master`, `last_isal_collect`, `last_isal_exhcange`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
-(1, '2024-06-22 15:35:03.000000', b'1', b'1', 1, 41, 'الرئيسية', '2024-07-07 01:17:07.000000', 1, 1);
+(1, '2024-06-22 15:35:03.000000', b'1', b'1', 1, 43, 'الرئيسية', '2024-07-12 20:38:46.000000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1365,7 +1373,9 @@ INSERT INTO `treasuries_transactions` (`id`, `byan`, `created_at`, `is_account`,
 (38, 'تحصيل نظير فاتورة مرتجع مبيعات  رقم6', '2024-07-03 17:37:45.000000', NULL, b'1', 38, -49.00, 49.00, 5, '2024-07-03', 1, NULL, '2024-07-03 17:37:45.000000', NULL, 1, 1, 1),
 (39, 'تحصيل نظير فاتورة مبيعات  رقم14', '2024-07-04 23:16:18.000000', b'1', b'1', 1, 40.00, -40.00, 5, '2024-07-04', 1, NULL, '2024-07-04 23:16:18.000000', 11, 1, 1, 1),
 (40, 'صرف نظير فاتورة مشتريات  رقم14', '2024-07-04 23:21:54.000000', b'1', b'1', 1, -2000.00, 2000.00, 9, '2024-07-04', 1, NULL, '2024-07-04 23:21:54.000000', 12, 1, 1, 1),
-(41, 'تحصيل نظير فاتورة مبيعات  رقم15', '2024-07-07 01:17:07.000000', NULL, b'1', 1, 40.00, -40.00, 5, '2024-07-07', 1, NULL, '2024-07-07 01:17:07.000000', NULL, 1, 1, 1);
+(41, 'تحصيل نظير فاتورة مبيعات  رقم15', '2024-07-07 01:17:07.000000', NULL, b'1', 1, 40.00, -40.00, 5, '2024-07-07', 1, NULL, '2024-07-07 01:17:07.000000', NULL, 1, 1, 1),
+(42, 'ok', '2024-07-12 20:35:37.000000', b'1', b'1', 1, 20.00, -20.00, 5, '2024-07-11', 1, NULL, '2024-07-12 20:35:37.000000', 11, 1, 1, 1),
+(43, 'صرف نظير فاتورة مشتريات  رقم22', '2024-07-12 20:38:46.000000', b'1', b'1', 1, -1000.00, 1000.00, 9, '2024-07-12', 1, NULL, '2024-07-12 20:38:46.000000', 12, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1792,7 +1802,7 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `account_types`
@@ -1858,7 +1868,7 @@ ALTER TABLE `inv_itemcard_categories`
 -- AUTO_INCREMENT for table `inv_itemcard_movement`
 --
 ALTER TABLE `inv_itemcard_movement`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `inv_itemcard_movements_category`
@@ -1876,7 +1886,7 @@ ALTER TABLE `inv_itemcard_movements_type`
 -- AUTO_INCREMENT for table `inv_item_card_batch`
 --
 ALTER TABLE `inv_item_card_batch`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `inv_uoms`
@@ -1984,13 +1994,13 @@ ALTER TABLE `stores`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `suppliers_categories`
 --
 ALTER TABLE `suppliers_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `suppliers_with_orders`
@@ -2002,7 +2012,7 @@ ALTER TABLE `suppliers_with_orders`
 -- AUTO_INCREMENT for table `suppliers_with_orders_details`
 --
 ALTER TABLE `suppliers_with_orders_details`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `token_info`
@@ -2026,7 +2036,7 @@ ALTER TABLE `treasuries_delivery`
 -- AUTO_INCREMENT for table `treasuries_transactions`
 --
 ALTER TABLE `treasuries_transactions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `user`
