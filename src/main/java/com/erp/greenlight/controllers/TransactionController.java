@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/transactions")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost")
 
 public class TransactionController {
 
