@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/reports")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost")
 
 public class ReportController {
 
