@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost", "https://animated-sprinkles-d16b69.netlify.app"})
+
 public class Base {
     @GetMapping("/base")
     public String test(){

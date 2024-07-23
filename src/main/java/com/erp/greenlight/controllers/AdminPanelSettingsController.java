@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost", "https://animated-sprinkles-d16b69.netlify.app"})
+
 @RequestMapping("/adminPanelSettings")
  
 public class AdminPanelSettingsController {

@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost", "https://animated-sprinkles-d16b69.netlify.app"})
+
 @RequestMapping("/salesInvoiceDetails")
  
 public class SalesInvoiceDetailsController {
