@@ -17,7 +17,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts")
-@CrossOrigin(origins = "http://localhost")
 
 public class AccountController {
 

@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/batches")
-@CrossOrigin(origins = "http://localhost")
+ 
 
 public class BatchesController {
 

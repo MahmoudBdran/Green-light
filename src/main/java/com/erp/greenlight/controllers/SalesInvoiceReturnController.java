@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/salesInvoiceReturn")
-@CrossOrigin(origins = "http://localhost")
+ 
 public class SalesInvoiceReturnController {
 
     @Autowired

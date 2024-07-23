@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/inventory")
-@CrossOrigin(origins = "http://localhost")
+ 
 public class InventoryController {
 
     @Autowired

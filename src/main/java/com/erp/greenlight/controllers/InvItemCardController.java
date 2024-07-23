@@ -18,7 +18,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/itemcards")
 
-@CrossOrigin(origins = "http://localhost")
+ 
 
 public class InvItemCardController {
 
