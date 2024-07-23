@@ -34,7 +34,8 @@ public class WebConfig {
                 registry.addMapping("/**")
 //                        .allowedOrigins("http://localhost:4200", "http://localhost", "https://animated-sprinkles-d16b69.netlify.app")
 //                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-
+                        .allowedOrigins("*")
+                        .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true)
                         .maxAge(3600);
