@@ -50,7 +50,7 @@ public class SecurityConfig {
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(Customizer.withDefaults())
+                .cors(cors-> cors.disable())
                 .csrf(csrf-> csrf.disable())
                 .exceptionHandling((ex)-> ex.authenticationEntryPoint(unauthorizedHandler))
 
