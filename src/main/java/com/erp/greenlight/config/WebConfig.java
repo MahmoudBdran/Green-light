@@ -26,15 +26,30 @@ public class WebConfig {
     public AuditorAware<Admin> auditorAware(){
         return new AuditorAwareImpl();
     }
-    @Bean
+/*    @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-//                        .allowedOrigins("http://localhost", "https://animated-sprinkles-d16b69.netlify.app")
-                        .allowedOrigins("http://localhost", "https://animated-sprinkles-d16b69.netlify.app")
+                        .allowedOrigins("https://animated-sprinkles-d16b69.netlify.app")
+//                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
+            }
+        };
+    }*/
+
+@Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(true)
                         .maxAge(3600);
