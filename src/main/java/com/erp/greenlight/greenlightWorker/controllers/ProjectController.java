@@ -1,5 +1,6 @@
 package com.erp.greenlight.greenlightWorker.controllers;
 
+import com.erp.greenlight.greenlightWorker.dto.ProjectFinancialReportDTO;
 import com.erp.greenlight.greenlightWorker.models.Expenses;
 import com.erp.greenlight.greenlightWorker.models.Project;
 import com.erp.greenlight.greenlightWorker.service.ProjectService;
@@ -51,6 +52,10 @@ public class ProjectController {
     public ResponseEntity<List<Expenses>> getProjectExpenses(@PathVariable Long id) {
         List<Expenses> expenses = projectService.getProjectExpenses(id);
         return ResponseEntity.ok(expenses);
+    }
+    @GetMapping("/{projectId}/financial-status")
+    public ProjectFinancialReportDTO getProjectFinancialStatus(@PathVariable Long projectId) {
+        return projectService.getProjectFinancialReport(projectId);
     }
 
 

@@ -44,7 +44,7 @@ public class WorkerService {
     public Worker updateWorker(Worker worker) {
         return workerRepository.save(worker);
     }
-    public WorkerTransactionHistoryDTO  getWorkerTransactionHistory(Long workerId) {
+    public WorkerTransactionHistoryDTO getWorkerTransactionHistory(Long workerId) {
 //        List<Salary> salaries = salaryRepository.findByWorkerId(workerId);
 //        List<Payment> payments = paymentRepository.findByWorkerId(workerId);
 //
@@ -80,7 +80,8 @@ public class WorkerService {
         return history;
     }
 
-    public List<Map<String, Object>> getWorkersFinancialStatus() {
+
+    public List<Map<String, Object>> getAllWorkersFinancialStatus() {
         List<Map<String, Object>> financialStatus = new ArrayList<>();
 
         // Retrieve all workers
@@ -92,13 +93,19 @@ public class WorkerService {
             workerStatus.put("name", worker.getName());
 
             // Calculate total earned, total paid, and total remaining
-            BigDecimal totalEarned = salaryRepository.sumByWorkerId(worker.getId());
-            //BigDecimal totalEarned = salaryRepository.sumAmountByWorkerId(worker.getId());
+            BigDecimal totalSalaries = salaryRepository.sumByWorkerId(worker.getId());
+            if (totalSalaries == null) {
+                totalSalaries = BigDecimal.ZERO;
+            }
 
             BigDecimal totalPaid = paymentRepository.sumByWorkerId(worker.getId());
-            BigDecimal totalRemaining = totalEarned.subtract(totalPaid);
+            if (totalPaid == null) {
+                totalPaid = BigDecimal.ZERO;
+            }
 
-            workerStatus.put("totalEarned", totalEarned);
+            BigDecimal totalRemaining = totalSalaries.subtract(totalPaid);
+
+            workerStatus.put("totalSalaries", totalSalaries);
             workerStatus.put("totalPaid", totalPaid);
             workerStatus.put("totalRemaining", totalRemaining);
 

@@ -1,11 +1,10 @@
 package com.erp.greenlight.greenlightWorker.controllers;
 
+
 import com.erp.greenlight.greenlightWorker.dto.WorkerTransactionHistoryDTO;
 import com.erp.greenlight.greenlightWorker.models.Worker;
 import com.erp.greenlight.greenlightWorker.service.WorkerService;
-import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,16 +52,15 @@ public class WorkerController {
     @GetMapping("/{id}/history")
     public WorkerTransactionHistoryDTO getWorkerTransactionHistory(@PathVariable Long id) {
         return workerService.getWorkerTransactionHistory(id);
- }
+//        Map<String, Object> history = workerService.getWorkerTransactionHistory(id);
+//        return AppResponse.generateResponse("Worker transaction history fetched successfully", HttpStatus.OK, history, true);
+    }
+
     @GetMapping("/financial-status")
     public ResponseEntity<List<Map<String, Object>>> getWorkersFinancialStatus() {
-        List<Map<String, Object>> financialStatus = workerService.getWorkersFinancialStatus();
+        List<Map<String, Object>> financialStatus = workerService.getAllWorkersFinancialStatus();
         return ResponseEntity.ok(financialStatus);
     }
-//    @GetMapping("/search")
-//    public ResponseEntity<List<Worker>> searchWorkers(@RequestParam String name, @RequestParam Long projectId) {
-//        List<Worker> workers = workerService.findWorkersByNameAndProject(name, projectId);
-//        return ResponseEntity.ok(workers);
-//    }
+
 }
 
