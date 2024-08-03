@@ -33,7 +33,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
 //                        .allowedOrigins("http://localhost", "https://animated-sprinkles-d16b69.netlify.app")
-                        .allowedOrigins("http://localhost", "https://animated-sprinkles-d16b69.netlify.app")
+                        .allowedOrigins("http://localhost", "https://animated-sprinkles-d16b69.netlify.app","http://localhost:8082")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
