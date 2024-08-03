@@ -83,7 +83,7 @@ public class ProjectService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Calculate final result
-        BigDecimal totalProjectEarnings = totalOwnerPayments.subtract(totalDue.add(totalExpenses));
+        BigDecimal totalProjectEarnings = totalOwnerPayments.subtract(totalSalaries.add(totalExpenses));
 
         ProjectFinancialReportDTO report = new ProjectFinancialReportDTO();
         report.setProjectName(project.getProjectName());

@@ -72,7 +72,7 @@ public class FinancialReportService {
         }
 
         BigDecimal totalDue = totalSalaries.subtract(totalPayments);
-        BigDecimal totalEarnings = totalOwnerPayments.subtract(totalDue.add(totalExpenses));
+        BigDecimal totalEarnings = totalOwnerPayments.subtract(totalSalaries.add(totalExpenses));
 
         financialStatus.put("totalSalaries", totalSalaries);
         financialStatus.put("totalPayments", totalPayments);
