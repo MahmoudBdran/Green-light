@@ -50,10 +50,9 @@ public class SecurityConfig {
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(cors-> cors.disable())
+                .cors(Customizer.withDefaults())
                 .csrf(csrf-> csrf.disable())
                 .exceptionHandling((ex)-> ex.authenticationEntryPoint(unauthorizedHandler))
-
                 .sessionManagement((sm)-> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth.requestMatchers(PUBLIC_END_POINTS).permitAll())
                  /*.authorizeHttpRequests((authorize) -> authorize
@@ -72,7 +71,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "https://animated-sprinkles-d16b69.netlify.app"));
         configuration.setAllowedMethods(Arrays.asList("POST","GET","PUT","DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

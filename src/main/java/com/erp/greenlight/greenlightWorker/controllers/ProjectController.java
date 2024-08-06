@@ -4,7 +4,9 @@ import com.erp.greenlight.greenlightWorker.dto.ProjectFinancialReportDTO;
 import com.erp.greenlight.greenlightWorker.models.Expenses;
 import com.erp.greenlight.greenlightWorker.models.Project;
 import com.erp.greenlight.greenlightWorker.service.ProjectService;
+import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,40 +20,38 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Project> createWorker(@RequestBody Project project) {
-        Project savedProject = projectService.saveProject(project);
-        return ResponseEntity.ok(savedProject);
+    @PostMapping()
+    public ResponseEntity<Object> createWorker(@RequestBody Project project) {
+        return AppResponse.generateResponse("تم حفظ المشروع بنجاح", HttpStatus.OK,projectService.saveProject(project) , true);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Project>> getAllProjects() {
-        List<Project> projects = projectService.findAllProjects();
-        return ResponseEntity.ok(projects);
+    public ResponseEntity<Object> getAllProjects() {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  projectService.findAllProjects() , true);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Project>> getProjectById(@PathVariable Long id) {
-        Optional<Project> project = projectService.findProjectById(id);
-        return ResponseEntity.ok(project);
+    public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, projectService.findProjectById(id) , true);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         projectService.deleteProjectById(id);
-        return ResponseEntity.noContent().build();
+        return AppResponse.generateResponse("تم حذف العامل بنجاح", HttpStatus.OK, null , true);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project project) {
+    public ResponseEntity<Object> updateProject(@PathVariable Long id, @RequestBody Project project) {
         project.setId(id);
         Project updatedProject = projectService.updateProject(project);
-        return ResponseEntity.ok(updatedProject);
+        return AppResponse.generateResponse("تم تحديث العامل بنجاح", HttpStatus.OK,   updatedProject, true);
     }
     @GetMapping("/{id}/expenses")
     public ResponseEntity<List<Expenses>> getProjectExpenses(@PathVariable Long id) {
         List<Expenses> expenses = projectService.getProjectExpenses(id);
         return ResponseEntity.ok(expenses);
+
     }
     @GetMapping("/{projectId}/financial-status")
     public ProjectFinancialReportDTO getProjectFinancialStatus(@PathVariable Long projectId) {

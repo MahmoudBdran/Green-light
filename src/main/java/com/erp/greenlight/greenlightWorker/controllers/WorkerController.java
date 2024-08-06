@@ -4,7 +4,9 @@ package com.erp.greenlight.greenlightWorker.controllers;
 import com.erp.greenlight.greenlightWorker.dto.WorkerTransactionHistoryDTO;
 import com.erp.greenlight.greenlightWorker.models.Worker;
 import com.erp.greenlight.greenlightWorker.service.WorkerService;
+import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,34 +22,33 @@ public class WorkerController {
     private WorkerService workerService;
 
     @PostMapping("/create")
-    public ResponseEntity<Worker> createWorker(@RequestBody Worker worker) {
+    public ResponseEntity<Object> createWorker(@RequestBody Worker worker) {
         Worker savedWorker = workerService.saveWorker(worker);
-        return ResponseEntity.ok(savedWorker);
+        return AppResponse.generateResponse("تم حفظ العامل بنجاح", HttpStatus.OK,savedWorker , true);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Worker>> getAllWorkers() {
-        List<Worker> workers = workerService.findAllWorkers();
-        return ResponseEntity.ok(workers);
+    public ResponseEntity<Object> getAllWorkers() {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  workerService.findAllWorkers() , true);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Worker>> getWorkerById(@PathVariable Long id) {
-        Optional<Worker> worker = workerService.findWorkerById(id);
-        return ResponseEntity.ok(worker);
+    public ResponseEntity<Object> getWorkerById(@PathVariable Long id) {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  workerService.findWorkerById(id) , true);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWorker(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteWorker(@PathVariable Long id) {
         workerService.deleteWorkerById(id);
-        return ResponseEntity.noContent().build();
+        return AppResponse.generateResponse("تم حذف العامل بنجاح", HttpStatus.OK,   null, true);
+
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Worker> updateWorker(@PathVariable Long id, @RequestBody Worker worker) {
+    public ResponseEntity<Object> updateWorker(@PathVariable Long id, @RequestBody Worker worker) {
         worker.setId(id);
         Worker updatedWorker = workerService.updateWorker(worker);
-        return ResponseEntity.ok(updatedWorker);
+        return AppResponse.generateResponse("تم تحديث العامل بنجاح", HttpStatus.OK,   updatedWorker, true);
     }
     @GetMapping("/{id}/history")
     public WorkerTransactionHistoryDTO getWorkerTransactionHistory(@PathVariable Long id) {
@@ -57,7 +58,7 @@ public class WorkerController {
     }
 
     @GetMapping("/financial-status")
-    public ResponseEntity<List<Map<String, Object>>> getWorkersFinancialStatus() {
+    public ResponseEntity<Object> getWorkersFinancialStatus() {
         List<Map<String, Object>> financialStatus = workerService.getAllWorkersFinancialStatus();
         return ResponseEntity.ok(financialStatus);
     }
