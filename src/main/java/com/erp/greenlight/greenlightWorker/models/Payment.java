@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners({AuditingEntityListener.class})
-public class Payment {
+public class    Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

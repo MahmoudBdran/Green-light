@@ -43,6 +43,11 @@ public class PaymentController {
         return AppResponse.generateResponse("تم حفظ اليومية بنجاح", HttpStatus.OK, paymentService.savePayment(payment) , true);
     }
 
+    @PutMapping
+    public ResponseEntity<Object> updatePayment(@RequestBody Payment payment) {
+        return AppResponse.generateResponse("تم حفظ اليومية بنجاح", HttpStatus.OK, paymentService.savePayment(payment) , true);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Payment>> getPaymentById(@PathVariable Long id) {
         Optional<Payment> payment = paymentService.findPaymentById(id);
@@ -50,15 +55,15 @@ public class PaymentController {
     }
 
     @GetMapping("/worker/{workerId}")
-    public ResponseEntity<List<Payment>> getPaymentsByWorkerId(@PathVariable Long workerId) {
-        List<Payment> payments = paymentService.findPaymentsByWorkerId(workerId);
-        return ResponseEntity.ok(payments);
+    public ResponseEntity<Object> getPaymentsByWorkerId(@PathVariable Long workerId) {
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  paymentService.findPaymentsByWorkerId(workerId) , true);
     }
 
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<List<Payment>> getPaymentsByProjectId(@PathVariable Long projectId) {
-        List<Payment> payments = paymentService.findPaymentsByProjectId(projectId);
-        return ResponseEntity.ok(payments);
+    public ResponseEntity<Object> getPaymentsByProjectId(@PathVariable Long projectId) {
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,   paymentService.findPaymentsByProjectId(projectId) , true);
     }
 }
 

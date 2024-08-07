@@ -45,7 +45,7 @@ public class Salary {
     private BigDecimal amount;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal deduction;
+        private BigDecimal deduction;
 
     @Column(nullable = false, precision = 10, scale = 2, updatable = false)
     private BigDecimal totalDue;

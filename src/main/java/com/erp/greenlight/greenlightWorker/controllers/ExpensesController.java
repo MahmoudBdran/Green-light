@@ -2,7 +2,9 @@ package com.erp.greenlight.greenlightWorker.controllers;
 
 import com.erp.greenlight.greenlightWorker.models.Expenses;
 import com.erp.greenlight.greenlightWorker.service.ExpensesService;
+import com.erp.greenlight.utils.AppResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +19,8 @@ public class ExpensesController {
     private ExpensesService ExpensesService;
 
     @PostMapping("")
-    public ResponseEntity<Expenses> createExpenses(@RequestBody Expenses Expenses) {
-        Expenses savedExpenses = ExpensesService.saveExpenses(Expenses);
-        return ResponseEntity.ok(savedExpenses);
+    public ResponseEntity<Object> createExpenses(@RequestBody Expenses Expenses) {
+        return AppResponse.generateResponse("تم حفظ المصروفات بنجاح", HttpStatus.OK, ExpensesService.saveExpenses(Expenses) , true);
     }
 
     @GetMapping("/{id}")
@@ -29,9 +30,8 @@ public class ExpensesController {
     }
 
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<List<Expenses>> getExpensessByProjectId(@PathVariable Long projectId) {
-        List<Expenses> Expensess = ExpensesService.findExpensessByProjectId(projectId);
-        return ResponseEntity.ok(Expensess);
+    public ResponseEntity<Object> getExpensesByProjectId(@PathVariable Long projectId) {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, ExpensesService.findExpensessByProjectId(projectId), true);
     }
 
     @DeleteMapping("/{id}")
@@ -41,10 +41,10 @@ public class ExpensesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Expenses> updateExpenses(@PathVariable Long id, @RequestBody Expenses Expenses) {
+    public ResponseEntity<Object> updateExpenses(@PathVariable Long id, @RequestBody Expenses Expenses) {
         Expenses.setId(id);
-        Expenses updatedExpenses = ExpensesService.updateExpenses(Expenses);
-        return ResponseEntity.ok(updatedExpenses);
+        Expenses  updatedExpenses = ExpensesService.updateExpenses(Expenses);
+        return AppResponse.generateResponse("تم حفظ المصروفات بنجاح", HttpStatus.OK, updatedExpenses, true);
     }
 }
 
