@@ -8,8 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost", "https://animated-sprinkles-d16b69.netlify.app"})
+
 @RequestMapping("/account_types")
-@CrossOrigin(origins = "http://localhost")
 public class AccountTypeController {
 
     @Autowired

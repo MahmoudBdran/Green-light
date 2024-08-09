@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost", "https://animated-sprinkles-d16b69.netlify.app"})
+
 @RequestMapping("/supplierCategory")
-@CrossOrigin(origins = "http://localhost")
+ 
 public class SupplierCategoryController {
     @Autowired
     private SupplierCategoryService supplierCategoryService;
