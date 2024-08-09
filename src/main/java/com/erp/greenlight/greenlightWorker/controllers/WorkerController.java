@@ -28,8 +28,10 @@ public class WorkerController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getAllWorkers() {
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,  workerService.findAllWorkers() , true);
+    public ResponseEntity<Object> getAllWorkers(@RequestParam int pageIndex,
+                                                @RequestParam int pageSize) {
+
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  workerService.findAllWorkers(pageIndex, pageSize) , true);
     }
 
     @GetMapping("/{id}")

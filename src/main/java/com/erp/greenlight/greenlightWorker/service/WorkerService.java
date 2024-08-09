@@ -9,6 +9,10 @@ import com.erp.greenlight.greenlightWorker.respository.PaymentRepository;
 import com.erp.greenlight.greenlightWorker.respository.SalaryRepository;
 import com.erp.greenlight.greenlightWorker.respository.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,8 +33,9 @@ public class WorkerService {
         return workerRepository.save(worker);
     }
 
-    public List<Worker> findAllWorkers() {
-        return workerRepository.findAll();
+    public Page<Worker> findAllWorkers(int pageIndex, int pageSize) {
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return workerRepository.findAll(page);
     }
 
     public Optional<Worker> findWorkerById(Long id) {

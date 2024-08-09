@@ -5,6 +5,10 @@ import com.erp.greenlight.greenlightWorker.dto.ProjectFinancialReportDTO;
 import com.erp.greenlight.greenlightWorker.models.*;
 import com.erp.greenlight.greenlightWorker.respository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,8 +34,9 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public List<Project> findAllProjects() {
-        return projectRepository.findAll();
+    public Page<Project> findAllProjects(int pageIndex, int pageSize) {
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return projectRepository.findAll(page);
     }
 
     public Optional<Project> findProjectById(Long id) {

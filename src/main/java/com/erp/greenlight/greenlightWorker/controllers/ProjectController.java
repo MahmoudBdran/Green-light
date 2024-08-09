@@ -26,8 +26,9 @@ public class ProjectController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getAllProjects() {
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,  projectService.findAllProjects() , true);
+    public ResponseEntity<Object> getAllProjects(@RequestParam int pageIndex,
+                                                 @RequestParam int pageSize) {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  projectService.findAllProjects(pageIndex, pageSize) , true);
     }
 
     @GetMapping("/{id}")
