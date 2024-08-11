@@ -38,7 +38,9 @@ public class ProjectService {
         Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         return projectRepository.findAll(page);
     }
-
+    public List<Project> findAllProjects() {
+        return projectRepository.findAll();
+    }
     public Optional<Project> findProjectById(Long id) {
         return projectRepository.findById(id);
     }

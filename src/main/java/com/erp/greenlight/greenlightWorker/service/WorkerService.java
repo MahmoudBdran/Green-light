@@ -38,6 +38,10 @@ public class WorkerService {
         return workerRepository.findAll(page);
     }
 
+    public List<Worker> findAllWorkers() {
+        return workerRepository.findAll();
+    }
+
     public Optional<Worker> findWorkerById(Long id) {
         return workerRepository.findById(id);
     }
