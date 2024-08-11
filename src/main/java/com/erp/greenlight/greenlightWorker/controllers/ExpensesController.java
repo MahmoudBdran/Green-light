@@ -35,9 +35,9 @@ public class ExpensesController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpenses(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteExpenses(@PathVariable Long id) {
         ExpensesService.deleteExpensesById(id);
-        return ResponseEntity.noContent().build();
+        return AppResponse.generateResponse("تم حذف المصروفات بنجاح", HttpStatus.OK,null, true);
     }
 
     @PutMapping("/{id}")

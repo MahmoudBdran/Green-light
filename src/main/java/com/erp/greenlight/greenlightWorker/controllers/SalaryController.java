@@ -23,6 +23,12 @@ public class SalaryController {
         return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,   salaryService.saveSalary(salary) , true);
     }
 
+    @PutMapping
+    public ResponseEntity<Object> updateSalary(@RequestBody Salary salary) {
+        return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,   salaryService.saveSalary(salary) , true);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSalaryById(@PathVariable Long id) {
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  salaryService.findSalaryById(id), true);

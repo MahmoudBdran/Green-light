@@ -62,7 +62,6 @@ public class PaymentController {
 
     @GetMapping("/project/{projectId}")
     public ResponseEntity<Object> getPaymentsByProjectId(@PathVariable Long projectId) {
-
         return AppResponse.generateResponse("all_data", HttpStatus.OK,   paymentService.findPaymentsByProjectId(projectId) , true);
     }
 }
