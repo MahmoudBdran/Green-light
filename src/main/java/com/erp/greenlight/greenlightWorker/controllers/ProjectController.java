@@ -55,8 +55,8 @@ public class ProjectController {
 
     }
     @GetMapping("/{projectId}/financial-status")
-    public ProjectFinancialReportDTO getProjectFinancialStatus(@PathVariable Long projectId) {
-        return projectService.getProjectFinancialReport(projectId);
+    public ResponseEntity<Object> getProjectFinancialStatus(@PathVariable Long projectId) {
+        return AppResponse.generateResponse("financial-status", HttpStatus.OK, projectService.getProjectFinancialReport(projectId) , true);
     }
 
 

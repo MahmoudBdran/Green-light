@@ -53,16 +53,17 @@ public class WorkerController {
         return AppResponse.generateResponse("تم تحديث العامل بنجاح", HttpStatus.OK,   updatedWorker, true);
     }
     @GetMapping("/{id}/history")
-    public WorkerTransactionHistoryDTO getWorkerTransactionHistory(@PathVariable Long id) {
-        return workerService.getWorkerTransactionHistory(id);
+    public ResponseEntity<Object> getWorkerTransactionHistory(@PathVariable Long id) {
 //        Map<String, Object> history = workerService.getWorkerTransactionHistory(id);
 //        return AppResponse.generateResponse("Worker transaction history fetched successfully", HttpStatus.OK, history, true);
+
+        return AppResponse.generateResponse("history", HttpStatus.OK,   workerService.getWorkerTransactionHistory(id) , true);
     }
 
     @GetMapping("/financial-status")
     public ResponseEntity<Object> getWorkersFinancialStatus() {
-        List<Map<String, Object>> financialStatus = workerService.getAllWorkersFinancialStatus();
-        return ResponseEntity.ok(financialStatus);
+
+        return AppResponse.generateResponse("financial status", HttpStatus.OK,   workerService.getAllWorkersFinancialStatus() , true);
     }
 
 }
