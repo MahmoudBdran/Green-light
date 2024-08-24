@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2024 at 06:49 PM
+-- Generation Time: Aug 24, 2024 at 02:37 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -51,12 +51,13 @@ CREATE TABLE `accounts` (
 INSERT INTO `accounts` (`id`, `active`, `created_at`, `current_balance`, `is_parent`, `name`, `notes`, `start_balance`, `start_balance_status`, `updated_at`, `account_type`, `added_by`, `parent_account_number`, `updated_by`) VALUES
 (9, b'1', '2024-06-30 12:00:00.000000', 0.00, b'1', 'الموردين الأب', NULL, 0.00, 3, '2024-06-30 12:00:00.000000', 9, 1, NULL, 1),
 (10, b'1', '2024-06-30 12:00:24.000000', 0.00, b'1', 'العملاء الأب', 'ok', 0.00, 3, '2024-06-30 12:00:24.000000', 9, 1, NULL, 1),
-(11, b'1', '2024-06-30 12:20:48.000000', 5.00, b'0', 'محمد طلعت', NULL, 0.00, 3, '2024-07-12 20:35:37.000000', 3, 1, 10, 1),
-(12, b'1', '2024-06-30 12:21:16.000000', 5185.00, b'0', 'احمد علي', NULL, 0.00, 3, '2024-07-12 20:38:46.000000', 2, 1, 10, 1),
+(11, b'1', '2024-06-30 12:20:48.000000', 125.00, b'0', 'محمد طلعت', NULL, 0.00, 3, '2024-07-13 20:31:01.000000', 3, 1, 10, 1),
+(12, b'1', '2024-06-30 12:21:16.000000', 4885.00, b'0', 'احمد علي', NULL, 0.00, 3, '2024-07-13 20:06:22.000000', 2, 1, 10, 1),
 (13, b'1', '2024-06-30 19:32:35.000000', 0.00, b'0', 'السيد حسن', NULL, 0.00, 3, '2024-06-30 19:32:35.000000', 2, 1, 10, 1),
 (14, b'1', '2024-06-30 20:11:14.000000', 0.00, b'0', 'محمد هشام', 'خن', 0.00, 3, '2024-06-30 20:11:14.000000', 3, 1, 10, 1),
 (15, b'1', '2024-07-12 20:16:42.000000', 0.00, b'0', 'ابراهيم السيد', NULL, 0.00, 3, '2024-07-12 20:16:42.000000', 2, 1, 10, 1),
-(16, b'1', '2024-07-12 20:20:41.000000', 0.00, b'0', 'محسن', NULL, 0.00, 3, '2024-07-12 20:20:41.000000', 2, 1, 10, 1);
+(16, b'1', '2024-07-12 20:20:41.000000', 0.00, b'0', 'محسن', NULL, 0.00, 3, '2024-07-12 20:20:41.000000', 2, 1, 10, 1),
+(17, b'1', '2024-07-13 20:02:56.000000', 0.00, b'0', 'test', 'my note', 0.00, 3, '2024-07-13 20:02:56.000000', 2, 1, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -223,7 +224,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `active`, `address`, `created_at`, `current_balance`, `name`, `notes`, `phones`, `start_balance`, `start_balance_status`, `updated_at`, `account_id`, `added_by`, `updated_by`) VALUES
-(3, b'1', 'طنطا', '2024-06-30 12:20:48.000000', 5.00, 'محمد طلعت', NULL, NULL, 0.00, 3, '2024-07-12 20:35:37.000000', 11, 1, 1),
+(3, b'1', 'طنطا', '2024-06-30 12:20:48.000000', 125.00, 'محمد طلعت', NULL, NULL, 0.00, 3, '2024-07-13 20:31:01.000000', 11, 1, 1),
 (4, b'1', 'الجيزة', '2024-06-30 20:11:14.000000', 0.00, 'محمد هشام', 'خن', '0231321321', 0.00, 3, '2024-06-30 20:11:14.000000', 14, 1, 1);
 
 -- --------------------------------------------------------
@@ -256,6 +257,32 @@ CREATE TABLE `delegate` (
   `updated_at` datetime(6) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expenses`
+--
+
+CREATE TABLE `expenses` (
+  `id` bigint(20) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `expense_date` date NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `project_id` bigint(20) NOT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expenses`
+--
+
+INSERT INTO `expenses` (`id`, `amount`, `category`, `created_at`, `description`, `expense_date`, `updated_at`, `created_by`, `project_id`, `updated_by`) VALUES
+(1, 1500.00, 'Food', '2024-07-30 22:19:30.000000', 'Food for workers', '2024-07-30', '2024-07-30 22:19:30.000000', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -317,7 +344,8 @@ CREATE TABLE `inv_itemcard` (
 
 INSERT INTO `inv_itemcard` (`id`, `quentity`, `quentityall_retails`, `quentityretail`, `active`, `allquentity`, `barcode`, `cost_price`, `cost_price_retail`, `created_at`, `does_has_retailunit`, `gomla_price`, `gomla_price_retail`, `has_fixced_price`, `item_type`, `name`, `nos_gomla_price`, `nos_gomla_price_retail`, `photo`, `price`, `price_retail`, `retail_uom_qunt_to_parent`, `updated_at`, `added_by`, `inv_item_category_id`, `parent_inv_item_id`, `retail_uom_id`, `uom_id`, `updated_by`) VALUES
 (5, 21.00, 0.00, 0.00, b'1', 21.00, NULL, 50.00, NULL, NULL, b'0', 40.00, NULL, b'0', 1, 'سلك نحاس 2 مم', 45.00, NULL, NULL, 50.00, NULL, NULL, '2024-07-03 12:43:59.000000', 1, 3, NULL, NULL, 1, 1),
-(7, 3.75, 75.00, 15.00, b'1', 3.75, NULL, 1000.00, 50.00, '2024-07-03 13:50:44.000000', b'1', 900.00, 40.00, b'0', 1, 'شاسيه سبوت دائري ابيض', 950.00, 45.00, NULL, 1000.00, 50.00, 20.00, '2024-07-12 20:38:46.000000', 1, 2, NULL, 2, 1, 1);
+(7, 3.75, 75.00, 15.00, b'1', 3.75, NULL, 1000.00, 50.00, '2024-07-03 13:50:44.000000', b'1', 900.00, 40.00, b'0', 1, 'شاسيه سبوت دائري ابيض', 950.00, 45.00, NULL, 1000.00, 50.00, 20.00, '2024-07-12 20:38:46.000000', 1, 2, NULL, 2, 1, 1),
+(8, 0.00, NULL, NULL, b'1', 0.00, NULL, 3.00, NULL, '2024-07-13 20:14:57.000000', b'0', 9.00, NULL, b'0', 1, 'بواط', 5.00, NULL, NULL, 10.00, NULL, NULL, '2024-07-13 20:14:57.000000', 1, 4, NULL, NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -342,7 +370,8 @@ CREATE TABLE `inv_itemcard_categories` (
 INSERT INTO `inv_itemcard_categories` (`id`, `active`, `created_at`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
 (1, b'1', NULL, 'مسامير', NULL, NULL, NULL),
 (2, b'1', NULL, 'معدات', NULL, NULL, NULL),
-(3, b'1', NULL, 'مصابيح ليد', NULL, NULL, NULL);
+(3, b'1', NULL, 'مصابيح ليد', NULL, NULL, NULL),
+(4, b'0', NULL, 'كهربا', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -667,6 +696,31 @@ INSERT INTO `mov_type` (`id`, `active`, `in_screen`, `is_private_internal`, `nam
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `owner_payment`
+--
+
+CREATE TABLE `owner_payment` (
+  `id` bigint(20) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `payment_date` datetime(6) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `project_id` bigint(20) NOT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `owner_payment`
+--
+
+INSERT INTO `owner_payment` (`id`, `amount`, `created_at`, `description`, `payment_date`, `updated_at`, `created_by`, `project_id`, `updated_by`) VALUES
+(1, 300.00, '2024-08-23 23:33:54.000000', 'تم الدفع من الاستاذ محمد في الادارة', '2024-08-23 21:00:00.000000', '2024-08-23 23:33:54.000000', 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `password_reset`
 --
 
@@ -675,6 +729,33 @@ CREATE TABLE `password_reset` (
   `created_at` datetime(6) DEFAULT NULL,
   `token` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payments`
+--
+
+CREATE TABLE `payments` (
+  `id` bigint(20) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `payment_date` date NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `project_id` bigint(20) NOT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `worker_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `amount`, `created_at`, `description`, `payment_date`, `updated_at`, `created_by`, `project_id`, `updated_by`, `worker_id`) VALUES
+(1, 200.00, '2024-07-30 22:17:42.000000', 'Part payment', '2024-07-30', '2024-07-30 22:17:42.000000', 1, 1, 1, 1),
+(2, 600.00, '2024-08-09 21:58:08.000000', 'شغل اليوم', '2024-08-08', '2024-08-09 21:58:08.000000', 1, 2, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -752,6 +833,31 @@ INSERT INTO `price_invoices_details` (`id`, `created_at`, `quantity`, `total_pri
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `projects`
+--
+
+CREATE TABLE `projects` (
+  `id` bigint(20) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `project_name` varchar(100) NOT NULL,
+  `start_date` date NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `projects`
+--
+
+INSERT INTO `projects` (`id`, `created_at`, `end_date`, `project_name`, `start_date`, `updated_at`, `created_by`, `updated_by`) VALUES
+(1, '2024-07-30 22:06:40.000000', '2024-12-31', 'aqua view', '2024-07-01', '2024-07-30 22:06:40.000000', 1, 1),
+(2, '2024-08-09 21:55:26.000000', '2033-10-25', 'سجن 15 مايو', '2024-08-08', '2024-08-09 21:55:26.000000', 1, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `roles`
 --
 
@@ -766,6 +872,35 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`id`, `name`) VALUES
 (1, 'ADMIN');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `salaries`
+--
+
+CREATE TABLE `salaries` (
+  `id` bigint(20) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `deduction` decimal(10,2) NOT NULL,
+  `is_paid` bit(1) NOT NULL,
+  `salary_date` date NOT NULL,
+  `total_due` decimal(10,2) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `project_id` bigint(20) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `worker_id` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `salaries`
+--
+
+INSERT INTO `salaries` (`id`, `amount`, `created_at`, `deduction`, `is_paid`, `salary_date`, `total_due`, `updated_at`, `created_by`, `project_id`, `updated_by`, `worker_id`) VALUES
+(1, 600.00, '2024-07-30 22:12:47.000000', 0.00, b'0', '2024-07-30', 600.00, '2024-07-30 22:12:47.000000', 1, 1, 1, 1),
+(2, 600.00, '2024-07-30 22:15:07.000000', 100.00, b'0', '2024-07-30', 500.00, '2024-07-30 22:15:07.000000', 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1111,7 +1246,7 @@ CREATE TABLE `stores` (
 
 INSERT INTO `stores` (`id`, `address`, `created_at`, `active`, `name`, `phones`, `updated_at`, `added_by`, `updated_by`) VALUES
 (1, 'القاهرة', '2024-06-27 21:18:05.000000', b'1', 'الرئيسي', '321321321', '2024-06-27 21:18:05.000000', 1, 1),
-(2, 'حلوان', NULL, b'1', 'ssssss', '654654654', '2024-07-12 20:34:04.000000', NULL, 1);
+(2, 'حلوان', NULL, b'1', 'ssssssس', '654654654', '2024-07-13 20:15:58.000000', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -1142,10 +1277,11 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `active`, `address`, `created_at`, `current_balance`, `name`, `notes`, `phones`, `start_balance`, `start_balance_status`, `updated_at`, `account_number`, `added_by`, `suppliers_categories_id`, `updated_by`) VALUES
-(1, b'1', 'القاهرة', '2024-06-30 12:21:16.000000', 5185.00, 'احمد علي', 'تمام', '01555555555', 0.00, 3, '2024-07-12 20:38:46.000000', 12, 1, 1, 1),
+(1, b'1', 'القاهرة', '2024-06-30 12:21:16.000000', 4885.00, 'احمد علي', 'تمام', '01555555555', 0.00, 3, '2024-07-13 20:06:22.000000', 12, 1, 1, 1),
 (2, b'1', 'القاهرة', '2024-06-30 19:32:35.000000', 0.00, 'السيد حسن', NULL, '01232132132', 0.00, 3, '2024-06-30 19:32:35.000000', 13, 1, 1, 1),
 (3, b'1', NULL, '2024-07-12 20:16:42.000000', 0.00, 'ابراهيم السيد', NULL, NULL, 0.00, 3, '2024-07-12 20:16:42.000000', 15, 1, 2, 1),
-(4, b'1', NULL, '2024-07-12 20:20:41.000000', 0.00, 'محسن', NULL, NULL, 0.00, 3, '2024-07-12 20:20:41.000000', 16, 1, 2, 1);
+(4, b'1', NULL, '2024-07-12 20:20:41.000000', 0.00, 'محسن', NULL, NULL, 0.00, 3, '2024-07-12 20:20:41.000000', 16, 1, 2, 1),
+(5, b'1', 'test address', '2024-07-13 20:02:56.000000', 0.00, 'test', 'my note', '01223654789', 0.00, 3, '2024-07-13 20:02:56.000000', 17, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -1169,7 +1305,7 @@ CREATE TABLE `suppliers_categories` (
 
 INSERT INTO `suppliers_categories` (`id`, `active`, `created_at`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
 (1, b'1', '2024-06-30 12:00:43.000000', 'ادوات كهربية', '2024-06-30 12:00:43.000000', 1, 1),
-(2, b'0', NULL, 'اكسسوارات', '2024-07-12 20:25:05.000000', 1, 1);
+(2, b'0', NULL, 'اكسسوارات', '2024-07-13 20:04:10.000000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1280,7 +1416,8 @@ CREATE TABLE `token_info` (
 --
 
 INSERT INTO `token_info` (`id`, `access_token`, `local_ip_address`, `refresh_token`, `remote_ip_address`, `user_agent_text`, `user_id`) VALUES
-(6, 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiIxZTQwMWNhNC1hZDNjLTQ0N2UtYjE4ZS1kOTMwYzgxMzI3YWYiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDMwMDU5MywiZXhwIjoxOTAwMzAwNTkzfQ.wM_3HkD959N9qU_4iRIq5Qk9S5pyoI0otJPTyF2gnu101VJDlyDqvJ_zFBT4JMDR2-wqHhpK01Gbm2KGcvYA8Q', '192.168.0.104', 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZDM1ZGI2ZC0wNTk1LTQyODUtYjc1MC0yYTFjZTExNjMyZWEiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDMwMDU5MywiZXhwIjoxNzM4MzAwNTkzfQ.xHhV8k7q2K7FEIjJRa0Zb-zMoOvogyWDzgs4B6xxfcBIllwQd0EfldLUI6jdosQTKmtK6HyrBVtqVXYfDrAyUg', '0:0:0:0:0:0:0:1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 1);
+(6, 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiIxZTQwMWNhNC1hZDNjLTQ0N2UtYjE4ZS1kOTMwYzgxMzI3YWYiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDMwMDU5MywiZXhwIjoxOTAwMzAwNTkzfQ.wM_3HkD959N9qU_4iRIq5Qk9S5pyoI0otJPTyF2gnu101VJDlyDqvJ_zFBT4JMDR2-wqHhpK01Gbm2KGcvYA8Q', '192.168.0.104', 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZDM1ZGI2ZC0wNTk1LTQyODUtYjc1MC0yYTFjZTExNjMyZWEiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMDMwMDU5MywiZXhwIjoxNzM4MzAwNTkzfQ.xHhV8k7q2K7FEIjJRa0Zb-zMoOvogyWDzgs4B6xxfcBIllwQd0EfldLUI6jdosQTKmtK6HyrBVtqVXYfDrAyUg', '0:0:0:0:0:0:0:1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 1),
+(7, 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJmOTU3YmZhZC01MjA0LTQ2ZTYtYTliMi1mYzNkNWRhZjdhZDIiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMzIzMjY4NCwiZXhwIjoxOTAzMjMyNjg0fQ.CJoUk1QDMoqVlQ2RPL2V6zxUVHMtEDhYoUzVCnsobwcKd4EXLBLuPJwAtLezIo5AwpLeZz1bwEDXNlXZ06FmFQ', '192.168.137.1', 'eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiI4YTBjY2Y5NC0wNzE4LTQ0MzMtYjFmMC1jMzM5NDA5NjJhZjEiLCJzdWIiOiJhZG1pbiIsImlhdCI6MTcyMzIzMjY4NCwiZXhwIjoxNzQxMjMyNjg0fQ.Xc9WG3GG0VyCWO0UjBiwZhkUxYLpD4-jglyAxYvfzYe3YqZIMdnEoAj2n4H_uxYCRveW8mDVyoRXpGV1UMfpbw', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0', 1);
 
 -- --------------------------------------------------------
 
@@ -1306,7 +1443,7 @@ CREATE TABLE `treasuries` (
 --
 
 INSERT INTO `treasuries` (`id`, `created_at`, `active`, `is_master`, `last_isal_collect`, `last_isal_exhcange`, `name`, `updated_at`, `added_by`, `updated_by`) VALUES
-(1, '2024-06-22 15:35:03.000000', b'1', b'1', 1, 43, 'الرئيسية', '2024-07-12 20:38:46.000000', 1, 1);
+(1, '2024-06-22 15:35:03.000000', b'1', b'1', 1, 47, 'الرئيسية', '2024-07-13 20:31:01.000000', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1375,7 +1512,11 @@ INSERT INTO `treasuries_transactions` (`id`, `byan`, `created_at`, `is_account`,
 (40, 'صرف نظير فاتورة مشتريات  رقم14', '2024-07-04 23:21:54.000000', b'1', b'1', 1, -2000.00, 2000.00, 9, '2024-07-04', 1, NULL, '2024-07-04 23:21:54.000000', 12, 1, 1, 1),
 (41, 'تحصيل نظير فاتورة مبيعات  رقم15', '2024-07-07 01:17:07.000000', NULL, b'1', 1, 40.00, -40.00, 5, '2024-07-07', 1, NULL, '2024-07-07 01:17:07.000000', NULL, 1, 1, 1),
 (42, 'ok', '2024-07-12 20:35:37.000000', b'1', b'1', 1, 20.00, -20.00, 5, '2024-07-11', 1, NULL, '2024-07-12 20:35:37.000000', 11, 1, 1, 1),
-(43, 'صرف نظير فاتورة مشتريات  رقم22', '2024-07-12 20:38:46.000000', b'1', b'1', 1, -1000.00, 1000.00, 9, '2024-07-12', 1, NULL, '2024-07-12 20:38:46.000000', 12, 1, 1, 1);
+(43, 'صرف نظير فاتورة مشتريات  رقم22', '2024-07-12 20:38:46.000000', b'1', b'1', 1, -1000.00, 1000.00, 9, '2024-07-12', 1, NULL, '2024-07-12 20:38:46.000000', 12, 1, 1, 1),
+(44, 'جه دفع 300 من الفلوس اللي عليه', '2024-07-13 20:06:22.000000', b'1', b'1', 1, 300.00, -300.00, 4, '2024-07-12', 1, NULL, '2024-07-13 20:06:22.000000', 12, 1, 1, 1),
+(45, 'جه دفع 300 وعليه 5 اتبقي له 255', '2024-07-13 20:22:18.000000', b'1', b'1', 1, -300.00, 300.00, 4, '2024-07-12', 1, NULL, '2024-07-13 20:22:18.000000', 11, 1, 1, 1),
+(46, 'حصلنا منه 200 من ال 305 ', '2024-07-13 20:29:44.000000', b'1', b'1', 1, 200.00, -200.00, 4, '2024-07-12', 1, NULL, '2024-07-13 20:29:44.000000', 11, 1, 1, 1),
+(47, '125', '2024-07-13 20:31:00.000000', b'1', b'1', 1, -20.00, 20.00, 3, '2024-07-12', 1, NULL, '2024-07-13 20:31:00.000000', 11, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1411,6 +1552,31 @@ CREATE TABLE `users_roles` (
 
 INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES
 (1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `workers`
+--
+
+CREATE TABLE `workers` (
+  `id` bigint(20) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `daily_rate` decimal(10,2) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `position` varchar(100) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `workers`
+--
+
+INSERT INTO `workers` (`id`, `created_at`, `daily_rate`, `name`, `position`, `updated_at`, `created_by`, `updated_by`) VALUES
+(1, '2024-07-30 22:06:18.000000', 600.00, 'John Doe', 'Electrician', '2024-07-30 22:06:18.000000', 1, 1),
+(2, '2024-08-09 21:54:57.000000', 1000.00, 'محمود بدران', 'كهربائي', '2024-08-09 21:54:57.000000', 1, 1);
 
 --
 -- Indexes for dumped tables
@@ -1471,6 +1637,15 @@ ALTER TABLE `customers`
 --
 ALTER TABLE `delegate`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `expenses`
+--
+ALTER TABLE `expenses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK8o6ghp4tj5x7f43jeyu72tkxj` (`created_by`),
+  ADD KEY `FKf2q37yjhkyxgx5n661c7e4vm8` (`project_id`),
+  ADD KEY `FKsj0q9a7mwsqfo3fmvbv0xlnsr` (`updated_by`);
 
 --
 -- Indexes for table `failed_jobs`
@@ -1565,10 +1740,29 @@ ALTER TABLE `mov_type`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `owner_payment`
+--
+ALTER TABLE `owner_payment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKbfi55h77yjdf8ilt82v0a04kr` (`created_by`),
+  ADD KEY `FKn9cn4nk38e1mrnkb2jgu2e4nm` (`project_id`),
+  ADD KEY `FK8s83a6otvw8w5johy1np4k0fy` (`updated_by`);
+
+--
 -- Indexes for table `password_reset`
 --
 ALTER TABLE `password_reset`
   ADD PRIMARY KEY (`email`);
+
+--
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FKpneh9iu8vpjka14dn7rj3erej` (`created_by`),
+  ADD KEY `FK7h0as5hqhn845eewc7usiy0x3` (`project_id`),
+  ADD KEY `FKhyg4jkv8w3ooqhj7quheddfjj` (`updated_by`),
+  ADD KEY `FK67l4771i0yo03594j13kvnv9` (`worker_id`);
 
 --
 -- Indexes for table `personal_access_token`
@@ -1596,11 +1790,29 @@ ALTER TABLE `price_invoices_details`
   ADD KEY `FKtinx3bmuw57j3kxjeetyvcnx1` (`updated_by`);
 
 --
+-- Indexes for table `projects`
+--
+ALTER TABLE `projects`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK3cefgj8hb8dagduakjftajaw` (`created_by`),
+  ADD KEY `FKqede8rb2j9kc4y7pb1ne5ics0` (`updated_by`);
+
+--
 -- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UK_nb4h0p6txrmfc0xbrd1kglp9t` (`name`);
+
+--
+-- Indexes for table `salaries`
+--
+ALTER TABLE `salaries`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK76h7p36mdxfw2hl5l9a9cagsv` (`created_by`),
+  ADD KEY `FKaimhu17e0xlrkbl20vonr96xo` (`project_id`),
+  ADD KEY `FKoow8pu7t818f22hkh5jbttswy` (`updated_by`),
+  ADD KEY `FKbeqgsaawvcgypqm8c8wn9qcbk` (`worker_id`);
 
 --
 -- Indexes for table `sales_invoices`
@@ -1666,7 +1878,8 @@ ALTER TABLE `sarf_permissions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FKgggctg22a0t7rwf5875kf76od` (`added_by`),
   ADD KEY `FK30eum13cls4lm0ekeh2e57wvp` (`customer`),
-  ADD KEY `FKaehoj2kmpap0o7uv2d7ar6j6c` (`updated_by`);
+  ADD KEY `FKaehoj2kmpap0o7uv2d7ar6j6c` (`updated_by`),
+  ADD KEY `FK1jdqh7msk5xcksm2v2crbfuwm` (`store_id`);
 
 --
 -- Indexes for table `sarf_permission_details`
@@ -1795,6 +2008,14 @@ ALTER TABLE `users_roles`
   ADD KEY `FKj6m8fwv7oqv74fcehir1a9ffy` (`role_id`);
 
 --
+-- Indexes for table `workers`
+--
+ALTER TABLE `workers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK2o6s1838u17caaqt4ww4d4nb9` (`created_by`),
+  ADD KEY `FKlie4qvc80qavbth5g55xdlf9c` (`updated_by`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -1802,7 +2023,7 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `account_types`
@@ -1847,6 +2068,12 @@ ALTER TABLE `delegate`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `expenses`
+--
+ALTER TABLE `expenses`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -1856,13 +2083,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `inv_itemcard`
 --
 ALTER TABLE `inv_itemcard`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `inv_itemcard_categories`
 --
 ALTER TABLE `inv_itemcard_categories`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `inv_itemcard_movement`
@@ -1901,6 +2128,18 @@ ALTER TABLE `mov_type`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
+-- AUTO_INCREMENT for table `owner_payment`
+--
+ALTER TABLE `owner_payment`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `payments`
+--
+ALTER TABLE `payments`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `personal_access_token`
 --
 ALTER TABLE `personal_access_token`
@@ -1919,10 +2158,22 @@ ALTER TABLE `price_invoices_details`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `projects`
+--
+ALTER TABLE `projects`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `salaries`
+--
+ALTER TABLE `salaries`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `sales_invoices`
@@ -1994,7 +2245,7 @@ ALTER TABLE `stores`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `suppliers_categories`
@@ -2018,7 +2269,7 @@ ALTER TABLE `suppliers_with_orders_details`
 -- AUTO_INCREMENT for table `token_info`
 --
 ALTER TABLE `token_info`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `treasuries`
@@ -2036,13 +2287,19 @@ ALTER TABLE `treasuries_delivery`
 -- AUTO_INCREMENT for table `treasuries_transactions`
 --
 ALTER TABLE `treasuries_transactions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `workers`
+--
+ALTER TABLE `workers`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -2070,6 +2327,14 @@ ALTER TABLE `customers`
   ADD CONSTRAINT `FKb3jo3nimp5vbdsp5p8oobuu3c` FOREIGN KEY (`added_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKm57ejbuucgtyv8xkf2o98hhn2` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKor0fx9fttvasr4grtaqnltyrl` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`);
+
+--
+-- Constraints for table `expenses`
+--
+ALTER TABLE `expenses`
+  ADD CONSTRAINT `FK8o6ghp4tj5x7f43jeyu72tkxj` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKf2q37yjhkyxgx5n661c7e4vm8` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  ADD CONSTRAINT `FKsj0q9a7mwsqfo3fmvbv0xlnsr` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
 
 --
 -- Constraints for table `inv_itemcard`
@@ -2122,6 +2387,23 @@ ALTER TABLE `inv_uoms`
   ADD CONSTRAINT `FKexbqunjsgcyi7rsrj4w99qwfl` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
 
 --
+-- Constraints for table `owner_payment`
+--
+ALTER TABLE `owner_payment`
+  ADD CONSTRAINT `FK8s83a6otvw8w5johy1np4k0fy` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKbfi55h77yjdf8ilt82v0a04kr` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKn9cn4nk38e1mrnkb2jgu2e4nm` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`);
+
+--
+-- Constraints for table `payments`
+--
+ALTER TABLE `payments`
+  ADD CONSTRAINT `FK67l4771i0yo03594j13kvnv9` FOREIGN KEY (`worker_id`) REFERENCES `workers` (`id`),
+  ADD CONSTRAINT `FK7h0as5hqhn845eewc7usiy0x3` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  ADD CONSTRAINT `FKhyg4jkv8w3ooqhj7quheddfjj` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKpneh9iu8vpjka14dn7rj3erej` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`);
+
+--
 -- Constraints for table `price_invoices`
 --
 ALTER TABLE `price_invoices`
@@ -2137,6 +2419,22 @@ ALTER TABLE `price_invoices_details`
   ADD CONSTRAINT `FKlpbmii98juewur4fde9dwwjei` FOREIGN KEY (`item_code`) REFERENCES `inv_itemcard` (`id`),
   ADD CONSTRAINT `FKmj3g6j3ccf59awmc7cptkla0p` FOREIGN KEY (`price_invoice`) REFERENCES `price_invoices` (`id`),
   ADD CONSTRAINT `FKtinx3bmuw57j3kxjeetyvcnx1` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `projects`
+--
+ALTER TABLE `projects`
+  ADD CONSTRAINT `FK3cefgj8hb8dagduakjftajaw` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKqede8rb2j9kc4y7pb1ne5ics0` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `salaries`
+--
+ALTER TABLE `salaries`
+  ADD CONSTRAINT `FK76h7p36mdxfw2hl5l9a9cagsv` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKaimhu17e0xlrkbl20vonr96xo` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`),
+  ADD CONSTRAINT `FKbeqgsaawvcgypqm8c8wn9qcbk` FOREIGN KEY (`worker_id`) REFERENCES `workers` (`id`),
+  ADD CONSTRAINT `FKoow8pu7t818f22hkh5jbttswy` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
 
 --
 -- Constraints for table `sales_invoices`
@@ -2280,6 +2578,13 @@ ALTER TABLE `treasuries_transactions`
 ALTER TABLE `users_roles`
   ADD CONSTRAINT `FK8sns6t0fr1thabomy9r5dhd96` FOREIGN KEY (`user_id`) REFERENCES `admins` (`id`),
   ADD CONSTRAINT `FKj6m8fwv7oqv74fcehir1a9ffy` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
+
+--
+-- Constraints for table `workers`
+--
+ALTER TABLE `workers`
+  ADD CONSTRAINT `FK2o6s1838u17caaqt4ww4d4nb9` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`),
+  ADD CONSTRAINT `FKlie4qvc80qavbth5g55xdlf9c` FOREIGN KEY (`updated_by`) REFERENCES `admins` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
