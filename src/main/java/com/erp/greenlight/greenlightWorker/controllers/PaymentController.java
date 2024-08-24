@@ -30,12 +30,11 @@ public class PaymentController {
     private ProjectService projectService;
 
     @GetMapping("/getAllData")
-    public ResponseEntity<Object> getAllData(@RequestParam int pageIndex,
-                                             @RequestParam int pageSize) {
+    public ResponseEntity<Object> getAllData() {
         Map<String, Object> data = new HashMap<>();
 
-        data.put("workers", workerService.findAllWorkers(pageIndex, pageSize));
-        data.put("projects", projectService.findAllProjects(pageIndex, pageSize));
+        data.put("workers", workerService.findAllWorkers());
+        data.put("projects", projectService.findAllProjects());
 
         return AppResponse.generateResponse("all_data", HttpStatus.OK,  data , true);
     }
