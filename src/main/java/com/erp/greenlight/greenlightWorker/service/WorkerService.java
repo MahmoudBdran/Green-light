@@ -33,6 +33,11 @@ public class WorkerService {
         return workerRepository.save(worker);
     }
 
+    public Page<Worker> findAllWorkers(int pageIndex, int pageSize) {
+        Pageable page = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return workerRepository.findAll(page);
+    }
+
     public List<Worker> findAllWorkers() {
         return workerRepository.findAll();
     }

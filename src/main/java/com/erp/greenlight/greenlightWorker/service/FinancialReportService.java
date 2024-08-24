@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class FinancialReportService {
@@ -43,6 +44,7 @@ public class FinancialReportService {
             totalSalaries = totalSalaries.add(
                     salaries.stream()
                             .map(Salary::getAmount)
+                            .filter(Objects::nonNull)
                             .reduce(BigDecimal.ZERO, BigDecimal::add)
             );
 

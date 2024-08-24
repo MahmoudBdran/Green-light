@@ -27,8 +27,9 @@ public class ProjectController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getAllProjects() {
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,  projectService.findAllProjects() , true);
+    public ResponseEntity<Object> getAllProjects(@RequestParam int pageIndex,
+                                                 @RequestParam int pageSize) {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  projectService.findAllProjects(pageIndex, pageSize) , true);
     }
 
     @GetMapping("/{id}")
@@ -55,8 +56,8 @@ public class ProjectController {
 
     }
     @GetMapping("/{projectId}/financial-status")
-    public ProjectFinancialReportDTO getProjectFinancialStatus(@PathVariable Long projectId) {
-        return projectService.getProjectFinancialReport(projectId);
+    public ResponseEntity<Object> getProjectFinancialStatus(@PathVariable Long projectId) {
+        return AppResponse.generateResponse("financial-status", HttpStatus.OK, projectService.getProjectFinancialReport(projectId) , true);
     }
 
 
