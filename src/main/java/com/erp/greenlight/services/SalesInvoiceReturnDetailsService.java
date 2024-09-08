@@ -243,6 +243,21 @@ public class SalesInvoiceReturnDetailsService {
         }
     }
 
+    @Transactional
+    public SalesInvoiceReturn overWriteItemInOrder(SalesReturnInvoiceItemDTO request) throws JsonProcessingException {
+        Optional<SalesInvoicesReturnDetails> salesInvoicesReturnDetails = salesInvoiceReturnDetailsRepo.findBySalesInvoiceReturnIdAndItemIdAndUomId(request.getOrderId(), request.getInvItemCard(), request.getUom());
+
+
+        if(salesInvoicesReturnDetails.isPresent()){
+            Long oldItemDetailsId = salesInvoicesReturnDetails.get().getId();
+            BigDecimal oldItemQuantity = salesInvoicesReturnDetails.get().getQuantity();
+            deleteItem(oldItemDetailsId);
+            request.setItemQuantity(oldItemQuantity.add(request.getItemQuantity()));
+
+            return saveItemInOrder(request);
+        }
+        return null;
+    }
 
 }
 
