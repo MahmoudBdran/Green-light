@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/owner-payments")
+@CrossOrigin(origins = {"http://localhost", "https://animated-sprinkles-d16b69.netlify.app"})
 public class OwnerPaymentController {
 
     @Autowired
