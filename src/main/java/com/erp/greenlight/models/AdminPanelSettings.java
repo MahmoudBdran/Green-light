@@ -40,6 +40,8 @@ public class AdminPanelSettings {
 
     private String phone;
 
+    private String email;
+
     @Column(nullable = false)
     private Long customerParentAccountNumber;
 

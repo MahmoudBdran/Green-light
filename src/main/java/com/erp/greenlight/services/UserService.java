@@ -1,7 +1,11 @@
 package com.erp.greenlight.services;
 
+import com.erp.greenlight.exception.InternalServerErrorException;
 import com.erp.greenlight.models.Admin;
+import com.erp.greenlight.DTOs.UserDto;
+import com.erp.greenlight.models.Role;
 import com.erp.greenlight.repositories.AdminRepository;
+import com.erp.greenlight.repositories.RoleRepository;
 import com.erp.greenlight.security.AppUserDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,12 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class UserService implements  UserDetailsService  {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
 /*    public UserDto updatePassword(String newPassword)  {
             AppUser currentUser = getCurrentAuthUser();
@@ -35,11 +37,9 @@ public class UserService implements  UserDetailsService  {
     }*/
 
 
-/*    public List<UserDto> findAll() {
-        List<UserDto> result = new ArrayList<>();
-        userRepository.findAll().forEach(e-> result.add(UserMapper.entityToDto(e)));
-        return result;
-    }*/
+    public List<Admin> findAll() {
+        return adminRepository.findAll();
+    }
 
 
 /*
@@ -85,14 +85,49 @@ public class UserService implements  UserDetailsService  {
         return new Admin(user.getId());
     }
 
-/*    public AppUser save(UserDto registerRequest) {
-        Optional<AppUser> user = userRepository.findUserByEmail(registerRequest.getEmail());
-        if(user.isPresent()){
-            throw new DuplicateRecordException("This Email is already exist");
+   public Admin save(UserDto user) {
+        Optional<Admin> admin = adminRepository.findByUsername(user.getUsername());
+        if(admin.isPresent()){
+            throw new InternalServerErrorException("This User is already exist");
         }else{
-            registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            return userRepository.save(UserMapper.dtoToEntity( registerRequest));
+
+            Admin newAdmin = new Admin();
+
+            newAdmin.setName(user.getName());
+            newAdmin.setEmail(user.getEmail());
+            newAdmin.setUsername(user.getUsername());
+            newAdmin.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findById(user.getRole()).orElseThrow());
+            newAdmin.setRoles(roles);
+
+            return adminRepository.save(newAdmin);
         }
-    }*/
+    }
+
+
+    public Admin update(UserDto user) {
+        Optional<Admin> admin = adminRepository.findById(user.getId());
+        if(admin.isPresent()){
+            Admin newAdmin = admin.get();
+
+            newAdmin.setName(user.getName());
+            newAdmin.setEmail(user.getEmail());
+            newAdmin.setUsername(user.getUsername());
+            newAdmin.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findById(user.getRole()).orElseThrow());
+            newAdmin.setRoles(roles);
+
+            return adminRepository.save(newAdmin);
+
+
+        }else{
+
+            throw new InternalServerErrorException("This User is NOt Found");
+        }
+    }
 
 }

@@ -66,6 +66,27 @@ public class BatchesController {
     }
 
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getBatchesByItemId(@PathVariable Long id){
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("invItems", invItemCardService.getAllInvItemCards());
+        InvItemCard item = invItemCardService.getInvItemCardById(id).orElseThrow();
+
+
+
+            ItemsBalanceDto row = new ItemsBalanceDto();
+            List<InvItemCardBatch> newBatches = invItemCardBatchRepo.findAllByItemId(item.getId());
+            row.setItem(item);
+            row.setBatches(newBatches);
+
+
+        data.put("batches", row);
+
+        return AppResponse.generateResponse("all_batches", HttpStatus.OK, data, true);
+    }
+
+
 
     @PostMapping("/getItemBatches")
     public ResponseEntity<Object> getItemBatches(@RequestBody GetItemBatchDto request){
