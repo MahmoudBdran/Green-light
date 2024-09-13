@@ -64,6 +64,18 @@ public class PriceInvoice {
     @ManyToOne()
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     private Admin updatedBy;
+    //newly added
+    @Column(name = "customer")
+    private String customer;
+    @Column(name = "note")
+    private String note;
+    @Column(name = "tax_included")
+    private boolean taxIncluded;
+    @Column(name = "offer_duration")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate offerDuration;
+    @Column(name = "delivery_location")
+    private String deliveryLocation;
 
     public PriceInvoice(Long id) {
         this.id = id;
