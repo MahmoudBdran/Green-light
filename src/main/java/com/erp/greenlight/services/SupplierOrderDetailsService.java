@@ -1,6 +1,7 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.InvoiceItemDTO;
+import com.erp.greenlight.DTOs.SalesInvoiceItemDTO;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.InvItemCardRepo;
 import com.erp.greenlight.repositories.InvUomRepo;
@@ -103,6 +104,23 @@ public class SupplierOrderDetailsService {
         }else{
             return true;
         }
+    }
+
+
+    @Transactional
+    public SupplierOrder overWriteItemInOrder(InvoiceItemDTO invoiceItemDTO) throws JsonProcessingException {
+        Optional<SupplierOrderDetails> supplierOrderDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCardIdAndUomId(invoiceItemDTO.getOrderId(), invoiceItemDTO.getInvItemCard(), invoiceItemDTO.getUom());
+
+
+        if(supplierOrderDetails.isPresent()){
+            Long oldItemDetailsId = supplierOrderDetails.get().getId();
+            BigDecimal oldItemQuantity = supplierOrderDetails.get().getDeliveredQuantity();
+            deleteItemFromSupplierOrder(oldItemDetailsId);
+            invoiceItemDTO.setDeliveredQuantity(oldItemQuantity.add(invoiceItemDTO.getDeliveredQuantity()));
+
+            return saveItemInOrder(invoiceItemDTO);
+        }
+        return null;
     }
 }
 

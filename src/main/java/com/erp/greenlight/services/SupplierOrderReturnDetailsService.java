@@ -1,6 +1,7 @@
 package com.erp.greenlight.services;
 
 import com.erp.greenlight.DTOs.ReturnInvoiceItemDTO;
+import com.erp.greenlight.DTOs.SalesReturnInvoiceItemDTO;
 import com.erp.greenlight.exception.InternalServerErrorException;
 import com.erp.greenlight.models.*;
 import com.erp.greenlight.repositories.*;
@@ -206,6 +207,22 @@ public class SupplierOrderReturnDetailsService {
             System.out.println(supplierOrderReturnDetails.get().getUom().getId());
             return true;
         }
+    }
+
+    @Transactional
+    public SupplierOrder overWriteItemInOrder(ReturnInvoiceItemDTO request) throws JsonProcessingException {
+        Optional<SupplierOrderDetails> supplierOrderReturnDetails = supplierOrderDetailsRepo.findByOrderIdAndInvItemCardIdAndUomId(request.getOrderId(), request.getInvItemCard(), request.getUom());
+
+
+        if(supplierOrderReturnDetails.isPresent()){
+            Long oldItemDetailsId = supplierOrderReturnDetails.get().getId();
+            BigDecimal oldItemQuantity = supplierOrderReturnDetails.get().getDeliveredQuantity();
+            deleteItemFromSupplierOrderReturn(oldItemDetailsId);
+            request.setItemQuantity(oldItemQuantity.add(request.getItemQuantity()));
+
+            return saveItemInOrderReturn(request);
+        }
+        return null;
     }
 }
 

@@ -255,19 +255,24 @@ public class SalesInvoiceDetailsService {
     }
 
     public boolean checkItemInOrderOrNot(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
-        System.out.println("entered checkItemInORderOrNot method");
-        System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getOrderId());
-        System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getUom());
-        System.out.println("parsedInvoiceItemDto : " + parsedInvoiceItemDto.getInvItemCard());
         Optional<SalesInvoiceDetail> salesInvoiceDetails = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
-        if (salesInvoiceDetails.isEmpty()) {
-            return false;
-        } else {
-            System.out.println(salesInvoiceDetails.get().getSalesInvoice().getId());
-            System.out.println(salesInvoiceDetails.get().getItem().getId());
-            System.out.println(salesInvoiceDetails.get().getUom().getId());
-            return true;
+        return salesInvoiceDetails.isPresent();
+    }
+
+    @Transactional
+    public SalesInvoice overWriteItemInOrder(SalesInvoiceItemDTO parsedInvoiceItemDto) throws JsonProcessingException {
+        Optional<SalesInvoiceDetail> salesInvoiceDetails = salesInvoiceDetailsRepo.findBySalesInvoiceIdAndItemIdAndUomId(parsedInvoiceItemDto.getOrderId(), parsedInvoiceItemDto.getInvItemCard(), parsedInvoiceItemDto.getUom());
+
+
+        if(salesInvoiceDetails.isPresent()){
+            Long oldItemDetailsId = salesInvoiceDetails.get().getId();
+            BigDecimal oldItemQuantity = salesInvoiceDetails.get().getQuantity();
+            deleteItem(oldItemDetailsId);
+            parsedInvoiceItemDto.setItemQuantity(oldItemQuantity.add(parsedInvoiceItemDto.getItemQuantity()));
+
+            return saveItemInOrder(parsedInvoiceItemDto);
         }
+        return null;
     }
 }
 
