@@ -1,6 +1,8 @@
 package com.erp.greenlight.DTOs;
 
+import jakarta.persistence.Column;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -14,7 +16,10 @@ public class SavePriceInvoiceDTO {
     private Long id;
     private LocalDate invoiceDate;
 
-    private Long customer;
-    private String notes;
-    private String receiverName;
+    private String customer;
+
+    private String note;
+    private boolean taxIncluded;
+    private LocalDate offerDuration;
+    private String deliveryLocation;
 }
