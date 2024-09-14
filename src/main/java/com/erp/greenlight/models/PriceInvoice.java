@@ -37,10 +37,6 @@ public class PriceInvoice {
     private Boolean isApproved;
 
 
-    @Column(name = "notes", length = 225)
-    private String notes;
-
-
     @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalCost;
 
