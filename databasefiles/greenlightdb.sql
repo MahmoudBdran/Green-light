@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 13, 2024 at 03:28 PM
+-- Generation Time: Sep 17, 2024 at 01:20 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -805,8 +805,8 @@ CREATE TABLE `price_invoices` (
 --
 
 INSERT INTO `price_invoices` (`id`, `created_at`, `invoice_date`, `is_approved`, `notes`, `total_cost`, `updated_at`, `added_by`, `updated_by`, `customer`, `delivery_location`, `note`, `offer_duration`, `tax_included`) VALUES
-(1, '2024-07-05 22:31:24.000000', '2024-07-04', b'0', 'okkkkkk', 160.00, '2024-07-05 22:54:57.000000', 1, 1, NULL, NULL, NULL, NULL, NULL),
-(2, '2024-07-05 22:34:26.000000', '2024-07-04', b'0', 'ok', 0.00, '2024-07-05 22:36:06.000000', 1, 1, NULL, NULL, NULL, NULL, NULL);
+(1, '2024-07-05 22:31:24.000000', '2024-07-04', b'0', 'okkkkkk', 160.00, '2024-07-05 22:54:57.000000', 1, 1, 'العميد شريف مسعد', 'قرية اكوافيو', 'التسليم عند المخازن', '2024-09-30', b'1'),
+(2, '2024-07-05 22:34:26.000000', '2024-07-04', b'0', 'ok', 0.00, '2024-07-05 22:36:06.000000', 1, 1, 'المهندس محمود بدران', 'سجن 15 مايو', 'لا يوجد', '2024-09-27', b'0');
 
 -- --------------------------------------------------------
 
