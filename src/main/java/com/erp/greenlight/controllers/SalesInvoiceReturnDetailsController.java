@@ -46,7 +46,7 @@ public class SalesInvoiceReturnDetailsController {
         System.out.println("entered saveItemInOrder");
         if(salesInvoiceReturnDetailsService.checkItemInOrderOrNot(invoiceItemDTO)){
             System.out.println("entered if cond true checkItemInOrderOrNot ");
-            return AppResponse.generateResponse("عفوا غير الصنف موجود بالفعل في الفاتورة", HttpStatus.OK, null , true);
+            return AppResponse.generateResponse("تم التعديل علي الصنف في الفاتورة لأنة موجود بالفعل!", HttpStatus.OK, salesInvoiceReturnDetailsService.overWriteItemInOrder(invoiceItemDTO) , true);
         }else{
             System.out.println("entered if cond false checkItemInOrderOrNot ");
             return AppResponse.generateResponse("تم اضافة الصنف في الفاتورة", HttpStatus.OK,  salesInvoiceReturnDetailsService.saveItemInOrder(invoiceItemDTO) , true);

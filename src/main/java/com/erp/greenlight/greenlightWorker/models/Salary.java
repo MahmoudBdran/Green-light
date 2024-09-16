@@ -38,19 +38,19 @@ public class Salary {
     @JoinColumn(name = "project_id",referencedColumnName = "id")
     private Project project;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate salaryDate;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = true, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = true, precision = 10, scale = 2)
         private BigDecimal deduction;
 
-    @Column(nullable = false, precision = 10, scale = 2, updatable = false)
+    @Column(nullable = true, precision = 10, scale = 2, updatable = false)
     private BigDecimal totalDue;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Boolean isPaid;
 
     @CreatedBy
@@ -72,7 +72,12 @@ public class Salary {
     @PrePersist
     @PreUpdate
     private void updateTotalDue() {
-        this.totalDue = this.amount.subtract(this.deduction);
+        if(this.amount != null && this.deduction != null){
+            this.totalDue = this.amount.subtract(this.deduction);
+        } else {
+            this.totalDue = BigDecimal.ZERO;
+        }
+
     }
 }
 

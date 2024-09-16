@@ -45,13 +45,13 @@ public class Admin {
     private Set<Role> roles = new HashSet<>();
 
 
-    private boolean isEnabled;
+    private boolean isEnabled = true;
 
-    private boolean isCredentialsNonExpired;
+    private boolean isCredentialsNonExpired= true;
 
-    private boolean isAccountNonLocked;
+    private boolean isAccountNonLocked= true;
 
-    private boolean isAccountNonExpired;
+    private boolean isAccountNonExpired= true;
 
 
 

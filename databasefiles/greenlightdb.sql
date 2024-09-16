@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 24, 2024 at 02:37 AM
+-- Generation Time: Sep 13, 2024 at 03:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -186,15 +186,16 @@ CREATE TABLE `admin_panel_settings` (
   `photo` varchar(255) NOT NULL,
   `suppliers_parent_account_number` bigint(20) NOT NULL,
   `system_name` varchar(255) NOT NULL,
-  `added_by` int(11) DEFAULT NULL
+  `added_by` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin_panel_settings`
 --
 
-INSERT INTO `admin_panel_settings` (`id`, `active`, `address`, `customer_parent_account_number`, `general_alert`, `notes`, `phone`, `photo`, `suppliers_parent_account_number`, `system_name`, `added_by`) VALUES
-(1, b'1', 'asd', 10, NULL, NULL, '1111111111111111111111111111', 'sdf', 9, 'Green Light', 1);
+INSERT INTO `admin_panel_settings` (`id`, `active`, `address`, `customer_parent_account_number`, `general_alert`, `notes`, `phone`, `photo`, `suppliers_parent_account_number`, `system_name`, `added_by`, `email`) VALUES
+(1, b'1', 'asd', 10, NULL, NULL, '1111111111111111111111111111', 'sdf', 9, 'Green Light', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -791,16 +792,21 @@ CREATE TABLE `price_invoices` (
   `total_cost` decimal(10,2) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL,
+  `customer` varchar(255) DEFAULT NULL,
+  `delivery_location` varchar(255) DEFAULT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `offer_duration` date DEFAULT NULL,
+  `tax_included` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `price_invoices`
 --
 
-INSERT INTO `price_invoices` (`id`, `created_at`, `invoice_date`, `is_approved`, `notes`, `total_cost`, `updated_at`, `added_by`, `updated_by`) VALUES
-(1, '2024-07-05 22:31:24.000000', '2024-07-04', b'0', 'okkkkkk', 160.00, '2024-07-05 22:54:57.000000', 1, 1),
-(2, '2024-07-05 22:34:26.000000', '2024-07-04', b'0', 'ok', 0.00, '2024-07-05 22:36:06.000000', 1, 1);
+INSERT INTO `price_invoices` (`id`, `created_at`, `invoice_date`, `is_approved`, `notes`, `total_cost`, `updated_at`, `added_by`, `updated_by`, `customer`, `delivery_location`, `note`, `offer_duration`, `tax_included`) VALUES
+(1, '2024-07-05 22:31:24.000000', '2024-07-04', b'0', 'okkkkkk', 160.00, '2024-07-05 22:54:57.000000', 1, 1, NULL, NULL, NULL, NULL, NULL),
+(2, '2024-07-05 22:34:26.000000', '2024-07-04', b'0', 'ok', 0.00, '2024-07-05 22:36:06.000000', 1, 1, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 

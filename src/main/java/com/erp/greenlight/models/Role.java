@@ -20,4 +20,9 @@ public class Role {
 
     @NaturalId
     private String name;
+
+
+    public Role(Long id) {
+        this.id = id;
+    }
 }

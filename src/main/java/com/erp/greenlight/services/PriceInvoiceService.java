@@ -48,11 +48,14 @@ public class PriceInvoiceService {
 
         PriceInvoice dataToInsert = new PriceInvoice();
 
-        dataToInsert.setNotes(request.getNotes());
+        dataToInsert.setNote(request.getNote());
         dataToInsert.setInvoiceDate(request.getInvoiceDate());
         dataToInsert.setIsApproved(Boolean.FALSE);
-        dataToInsert.setNotes(request.getNotes());
         dataToInsert.setTotalCost(BigDecimal.ZERO);
+        dataToInsert.setCustomer(request.getCustomer());
+        dataToInsert.setDeliveryLocation(request.getDeliveryLocation());
+        dataToInsert.setOfferDuration(request.getOfferDuration());
+        dataToInsert.setTaxIncluded(request.isTaxIncluded());
 
         return priceInvoiceRepo.save(dataToInsert);
     }
@@ -60,10 +63,15 @@ public class PriceInvoiceService {
     public PriceInvoice update(SavePriceInvoiceDTO request) {
         PriceInvoice dataToUpdate = priceInvoiceRepo.findById(request.getId()).orElseThrow();
 
-        dataToUpdate.setNotes(request.getNotes());
         dataToUpdate.setInvoiceDate(request.getInvoiceDate());
         dataToUpdate.setIsApproved(Boolean.FALSE);
-        dataToUpdate.setNotes(request.getNotes());
+        dataToUpdate.setNote(request.getNote());
+
+
+        dataToUpdate.setCustomer(request.getCustomer());
+        dataToUpdate.setDeliveryLocation(request.getDeliveryLocation());
+        dataToUpdate.setOfferDuration(request.getOfferDuration());
+        dataToUpdate.setTaxIncluded(request.isTaxIncluded());
 
         return priceInvoiceRepo.save(dataToUpdate);
     }
