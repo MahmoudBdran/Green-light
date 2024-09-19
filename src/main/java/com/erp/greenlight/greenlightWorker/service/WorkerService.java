@@ -67,6 +67,7 @@ public class WorkerService {
 
         List<Salary> salaries = salaryRepository.findByWorkerId(workerId);
         List<Payment> payments = paymentRepository.findByWorkerId(workerId);
+        List<Salary> deductions = salaryRepository.findByWorkerId(workerId);
 
         BigDecimal totalSalary = salaries.stream()
                 .map(Salary::getAmount)
@@ -75,8 +76,10 @@ public class WorkerService {
         BigDecimal totalPaid = payments.stream()
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal remainingSalary = totalSalary.subtract(totalPaid);
+        BigDecimal totalDeduction = salaries.stream()
+                .map(Salary::getDeduction)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal remainingSalary = totalSalary.subtract(totalPaid.subtract(totalDeduction));
 
         WorkerTransactionHistoryDTO history = new WorkerTransactionHistoryDTO();
         history.setWorkerName(worker.getName());
@@ -84,6 +87,7 @@ public class WorkerService {
         history.setPayments(payments);
         history.setTotalSalary(totalSalary);
         history.setTotalPaid(totalPaid);
+        history.setTotalDeduction(totalDeduction);
         history.setRemainingSalary(remainingSalary);
 
         return history;

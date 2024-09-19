@@ -21,6 +21,7 @@ public class WorkerTransactionHistoryDTO {
     private BigDecimal totalSalary;
     private BigDecimal totalPaid;
     private BigDecimal remainingSalary;
+    private BigDecimal totalDeduction;
 
     // Getters and setters
 }
