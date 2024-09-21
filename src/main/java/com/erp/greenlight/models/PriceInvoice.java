@@ -66,7 +66,7 @@ public class PriceInvoice {
     @Column(name = "note")
     private String note;
     @Column(name = "tax_included")
-    private boolean taxIncluded;
+    private boolean taxIncluded=false;
     @Column(name = "offer_duration")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate offerDuration;
