@@ -79,7 +79,7 @@ public class WorkerService {
         BigDecimal totalDeduction = salaries.stream()
                 .map(Salary::getDeduction)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal remainingSalary = totalSalary.subtract(totalPaid.subtract(totalDeduction));
+        BigDecimal remainingSalary = totalSalary.subtract(totalPaid).subtract(totalDeduction);
 
         WorkerTransactionHistoryDTO history = new WorkerTransactionHistoryDTO();
         history.setWorkerName(worker.getName());
@@ -115,11 +115,15 @@ public class WorkerService {
             if (totalPaid == null) {
                 totalPaid = BigDecimal.ZERO;
             }
-
-            BigDecimal totalRemaining = totalSalaries.subtract(totalPaid);
+            List<Salary> salaries = salaryRepository.findByWorkerId(worker.getId());
+            BigDecimal totalDeduction = salaries.stream()
+                    .map(Salary::getDeduction)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal totalRemaining = totalSalaries.subtract(totalPaid).subtract(totalDeduction);
 
             workerStatus.put("totalSalaries", totalSalaries);
             workerStatus.put("totalPaid", totalPaid);
+            workerStatus.put("totalDeduction", totalDeduction);
             workerStatus.put("totalRemaining", totalRemaining);
 
             financialStatus.add(workerStatus);
