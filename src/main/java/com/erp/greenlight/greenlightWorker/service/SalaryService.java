@@ -5,6 +5,7 @@ import com.erp.greenlight.greenlightWorker.respository.SalaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,9 @@ public class SalaryService {
     private SalaryRepository salaryRepository;
 
     public Salary saveSalary(Salary salary) {
+        if(!salary.getIsPaid()){
+            salary.setDeduction(BigDecimal.ZERO);
+        }
         return salaryRepository.save(salary);
     }
 

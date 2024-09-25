@@ -41,11 +41,11 @@ public class Salary {
     @Column(nullable = true)
     private LocalDate salaryDate;
 
-    @Column(nullable = true, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = true, precision = 10, scale = 2)
-        private BigDecimal deduction;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal deduction;
 
     @Column(nullable = true, precision = 10, scale = 2, updatable = false)
     private BigDecimal totalDue;
