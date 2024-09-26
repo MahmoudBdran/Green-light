@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +32,8 @@ public class ExpensesController {
     }
 
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<Object> getExpensesByProjectId(@PathVariable Long projectId) {
-        return AppResponse.generateResponse("all_data", HttpStatus.OK, ExpensesService.findExpensessByProjectId(projectId), true);
+    public ResponseEntity<Object> getExpensesByProjectId(@PathVariable Long projectId, @RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
+        return AppResponse.generateResponse("all_data", HttpStatus.OK, ExpensesService.findExpensesByProjectId(projectId,fromDate,toDate), true);
     }
 
     @DeleteMapping("/{id}")
