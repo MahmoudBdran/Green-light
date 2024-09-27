@@ -22,6 +22,16 @@ public class SalaryService {
         return salaryRepository.save(salary);
     }
 
+    public void saveListOfSalaries(List <Salary> salaries) {
+
+        salaries.forEach( salary -> {
+            if(!salary.getIsPaid()){
+                salary.setDeduction(BigDecimal.ZERO);
+            }
+            salaryRepository.save(salary);
+        });
+    }
+
     public Optional<Salary> findSalaryById(Long id) {
         return salaryRepository.findById(id);
     }

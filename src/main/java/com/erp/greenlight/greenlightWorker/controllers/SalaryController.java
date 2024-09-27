@@ -24,6 +24,13 @@ public class SalaryController {
         return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,   salaryService.saveSalary(salary) , true);
     }
 
+    @PostMapping("/saveListOfSalaries")
+    public ResponseEntity<Object> saveListOfSalaries(@RequestBody List<Salary> salaries) {
+        salaryService.saveListOfSalaries(salaries);
+        return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,  null , true);
+    }
+
+
     @PutMapping
     public ResponseEntity<Object> updateSalary(@RequestBody Salary salary) {
         return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,   salaryService.saveSalary(salary) , true);
