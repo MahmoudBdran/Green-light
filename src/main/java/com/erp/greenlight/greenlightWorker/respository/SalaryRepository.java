@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface SalaryRepository extends JpaRepository<Salary, Long> {
-   List<Salary> findByWorkerId(Long workerId);
+   List<Salary> findByWorkerIdOrderBySalaryDateDesc(Long workerId);
    List<Salary> findByWorkerIdAndUpdatedAtBetween(Long workerId, LocalDateTime from, LocalDateTime to);
     List<Salary> findByProjectId(Long projectId);
     List<Salary> findByProjectIdAndUpdatedAtBetween(Long projectId, LocalDateTime from, LocalDateTime to);

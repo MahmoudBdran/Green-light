@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class SalaryService {
@@ -22,14 +22,41 @@ public class SalaryService {
         return salaryRepository.save(salary);
     }
 
-    public void saveListOfSalaries(List <Salary> salaries) {
+    public Map<String,Object> saveListOfSalaries(List <Salary> salaries) {
+        List<LocalDate> datesWhichIsNotSavedInSalary = new ArrayList<>();
 
-        salaries.forEach( salary -> {
-            if(!salary.getIsPaid()){
-                salary.setDeduction(BigDecimal.ZERO);
+        for(Salary salary : salaries){
+//            if(!salary.getIsPaid()){
+//                salary.setDeduction(BigDecimal.ZERO);
+//            }
+            if(checkSalaryDuplication(salary)){
+
+
+                datesWhichIsNotSavedInSalary.add(salary.getSalaryDate());
+                System.out.println(datesWhichIsNotSavedInSalary);
+                System.out.println(datesWhichIsNotSavedInSalary.size());
+            }else{
+                System.out.println(salaryRepository.save(salary));
+
+                System.out.println("Salary saved for date: " + salary.getSalaryDate());
+
             }
-            salaryRepository.save(salary);
-        });
+        }
+        Map<String,Object> result = new HashMap<>();
+        result.put("status", datesWhichIsNotSavedInSalary.isEmpty());
+        result.put("DatesNotSaved",datesWhichIsNotSavedInSalary);
+        return result;
+
+    }
+    public boolean checkSalaryDuplication(Salary salary){
+     List<Salary> salariesFromDBForThisWorker = salaryRepository.findByWorkerIdOrderBySalaryDateDesc(salary.getWorker().getId());
+     for(Salary salaryFromDb : salariesFromDBForThisWorker){
+         if(salaryFromDb.getSalaryDate().equals(salary.getSalaryDate())){
+             return true;
+         }
+     }
+
+     return false;
     }
 
     public Optional<Salary> findSalaryById(Long id) {
@@ -37,7 +64,7 @@ public class SalaryService {
     }
 
     public List<Salary> findSalariesByWorkerId(Long workerId) {
-        return salaryRepository.findByWorkerId(workerId);
+        return salaryRepository.findByWorkerIdOrderBySalaryDateDesc(workerId);
     }
 
     public List<Salary> findSalariesByProjectId(Long projectId) {

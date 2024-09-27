@@ -26,8 +26,8 @@ public class SalaryController {
 
     @PostMapping("/saveListOfSalaries")
     public ResponseEntity<Object> saveListOfSalaries(@RequestBody List<Salary> salaries) {
-        salaryService.saveListOfSalaries(salaries);
-        return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,  null , true);
+
+        return AppResponse.generateResponse("تم حفظ المرتب بنجاح", HttpStatus.OK,  salaryService.saveListOfSalaries(salaries) ,true);
     }
 
 
