@@ -47,6 +47,8 @@ public class Salary {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal deduction=BigDecimal.ZERO;
 
+    private String note;
+
     @Column(nullable = true, precision = 10, scale = 2, updatable = false)
     private BigDecimal totalDue;
 

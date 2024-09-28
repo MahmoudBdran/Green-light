@@ -40,6 +40,7 @@ public class PriceInvoice {
     @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalCost;
 
+    private Byte type; // 1=> توريد ------- 2 => تركيب
 
     @OneToMany(mappedBy = "priceInvoice")
     private List<PriceInvoiceDetail> priceInvoiceDetails;

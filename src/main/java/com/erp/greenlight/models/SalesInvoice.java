@@ -68,6 +68,13 @@ public class SalesInvoice {
     @Column(name = "tax_value", nullable = false, precision = 10, scale = 2)
     private BigDecimal taxValue;
 
+    @Column(name = "tax_included")
+    private boolean taxIncluded=false;
+
+    @Column(name = "invoice_type")
+    private Byte invoiceType; // 1=> توريد ------- 2 => تركيب
+
+
     @Column(name = "total_befor_discount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalBeforeDiscount;
 

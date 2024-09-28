@@ -1,5 +1,6 @@
 package com.erp.greenlight.DTOs;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -23,5 +24,7 @@ public class SalesInvoiceDTO {
 
     private Boolean isHasCustomer;
 
+    private boolean taxIncluded;
 
+    private Byte invoiceType; // 1=> توريد ------- 2 => تركيب
 }
