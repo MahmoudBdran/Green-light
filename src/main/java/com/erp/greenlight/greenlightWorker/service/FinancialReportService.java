@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,10 @@ public class FinancialReportService {
     @Autowired
     private OwnerPaymentRepository ownerPaymentRepository;
 
-    public Map<String, Object> getOverallFinancialStatus() {
+    public Map<String, Object> getOverallFinancialStatus(LocalDateTime fromDate, LocalDateTime toDate) {
         Map<String, Object> financialStatus = new HashMap<>();
 
-        List<Project> projects = projectRepository.findAll();
+        List<Project> projects = projectRepository.findByUpdatedAtBetween(fromDate, toDate);
         BigDecimal totalSalaries = BigDecimal.ZERO;
         BigDecimal totalPayments = BigDecimal.ZERO;
         BigDecimal totalExpenses = BigDecimal.ZERO;
@@ -57,7 +58,7 @@ public class FinancialReportService {
             );
 
             // Sum expenses for the project
-            List<Expenses> expenses = expensesRepository.findByProjectId(project.getId());
+            List<Expenses> expenses = expensesRepository.findByProjectIdAndUpdatedAtBetween(project.getId(), fromDate, toDate);
             totalExpenses = totalExpenses.add(
                     expenses.stream()
                             .map(Expenses::getAmount)
@@ -65,7 +66,7 @@ public class FinancialReportService {
             );
 
             // Sum owner payments for the project
-            List<OwnerPayment> ownerPayments = ownerPaymentRepository.findByProject(project);
+            List<OwnerPayment> ownerPayments = ownerPaymentRepository.findByProjectAndUpdatedAtBetween(project, fromDate, toDate);
             totalOwnerPayments = totalOwnerPayments.add(
                     ownerPayments.stream()
                             .map(OwnerPayment::getAmount)

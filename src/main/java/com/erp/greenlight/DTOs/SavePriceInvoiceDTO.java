@@ -22,4 +22,5 @@ public class SavePriceInvoiceDTO {
     private boolean taxIncluded;
     private LocalDate offerDuration;
     private String deliveryLocation;
+    private Byte type;
 }

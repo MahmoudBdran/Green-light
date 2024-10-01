@@ -96,19 +96,30 @@ public class SalesInvoiceService {
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
         salesInvoice.setInvoiceDate(salesInvoiceDTO.getDate());
         salesInvoice.setIsApproved(Boolean.FALSE);
-        salesInvoice.setNotes(salesInvoiceDTO.getNotes());
         salesInvoice.setDiscountPercent(BigDecimal.ZERO);
         salesInvoice.setDiscountValue(BigDecimal.ZERO);
-        salesInvoice.setTaxPercent(BigDecimal.ZERO);
-        salesInvoice.setTaxValue(BigDecimal.ZERO);
         salesInvoice.setTotalCostItems(BigDecimal.ZERO);
         salesInvoice.setTotalBeforeDiscount(BigDecimal.ZERO);
+        salesInvoice.setTaxIncluded(salesInvoiceDTO.isTaxIncluded());
+        salesInvoice.setInvoiceType(salesInvoiceDTO.getInvoiceType());
+        if(salesInvoiceDTO.isTaxIncluded()){
+            if(salesInvoiceDTO.getInvoiceType()==1){
+                salesInvoice.setTaxPercent(new BigDecimal(14));
+                salesInvoice.setTaxValue(salesInvoice.getTotalBeforeDiscount().multiply(new BigDecimal(14/100)));
+            }else if(salesInvoiceDTO.getInvoiceType()==2){
+                salesInvoice.setTaxPercent(new BigDecimal(5));
+                salesInvoice.setTaxValue(salesInvoice.getTotalBeforeDiscount().multiply(new BigDecimal(5/100)));
+            }
+        }else{
+            salesInvoice.setTaxPercent(BigDecimal.ZERO);
+            salesInvoice.setTaxValue(BigDecimal.ZERO);
+        }
+
         salesInvoice.setTotalCost(BigDecimal.ZERO);
         salesInvoice.setMoneyForAccount(BigDecimal.ZERO);
         salesInvoice.setPillType(salesInvoiceDTO.getPillType());
         salesInvoice.setWhatPaid(BigDecimal.ZERO);
         salesInvoice.setWhatRemain(BigDecimal.ZERO);
-        salesInvoice.setTotalCost(BigDecimal.ZERO);
 
         return salesInvoiceRepo.save(salesInvoice);
     }
@@ -125,6 +136,21 @@ public class SalesInvoiceService {
         }else{
             salesInvoice.setAccount(null);
             salesInvoice.setCustomer(null);
+        }
+
+        salesInvoice.setInvoiceType(salesInvoiceDTO.getInvoiceType());
+        salesInvoice.setTaxIncluded(salesInvoiceDTO.isTaxIncluded());
+        if(salesInvoiceDTO.isTaxIncluded()){
+            if(salesInvoiceDTO.getInvoiceType()==1){
+                salesInvoice.setTaxPercent(new BigDecimal(14));
+                salesInvoice.setTaxValue(salesInvoice.getTotalBeforeDiscount().multiply(new BigDecimal(14/100)));
+            }else if(salesInvoiceDTO.getInvoiceType()==2){
+                salesInvoice.setTaxPercent(new BigDecimal(5));
+                salesInvoice.setTaxValue(salesInvoice.getTotalBeforeDiscount().multiply(new BigDecimal(5/100)));
+            }
+        }else{
+            salesInvoice.setTaxPercent(BigDecimal.ZERO);
+            salesInvoice.setTaxValue(BigDecimal.ZERO);
         }
 
         salesInvoice.setNotes(salesInvoiceDTO.getNotes());
@@ -164,30 +190,36 @@ public class SalesInvoiceService {
 
             SalesInvoice dataUpdateParent = salesInvoiceRepo.findById(request.getId()).orElseThrow();
 
-            dataUpdateParent.setMoneyForAccount(invoiceData.getTotalCost());
+            dataUpdateParent.setMoneyForAccount(request.getWhatPaid());
             dataUpdateParent.setIsApproved(Boolean.TRUE);
             dataUpdateParent.setWhatPaid(request.getWhatPaid());
             dataUpdateParent.setWhatRemain(request.getWhatRemain());
+
             dataUpdateParent.setDiscountType(request.getDiscountType());
             dataUpdateParent.setDiscountPercent(request.getDiscountPercent());
-
             dataUpdateParent.setDiscountValue(request.getDiscountValue());
-
-            dataUpdateParent.setTaxPercent(request.getTaxPercent());
-
-            dataUpdateParent.setTaxValue(invoiceData.getTotalCost().multiply(request.getTaxPercent().divide(new BigDecimal(100))));
 
             dataUpdateParent.setTotalBeforeDiscount(invoiceData.getTotalCost());
 
+            BigDecimal totalCostBeforeDiscount = invoiceData.getTotalBeforeDiscount();
             BigDecimal totalCost = dataUpdateParent.getTotalCost();
             BigDecimal totalCostAfterDiscount = calculateTotalAfterDiscountAndTax(totalCost, request.getDiscountType(), request.getDiscountValue(), request.getDiscountPercent(), request.getTaxPercent());
 
 
-
-
-            dataUpdateParent.setTotalBeforeDiscount(dataUpdateParent.getTotalCost());
             dataUpdateParent.setTotalCost(totalCostAfterDiscount);
 
+            if(dataUpdateParent.isTaxIncluded()){
+                if(dataUpdateParent.getInvoiceType()==1){
+                    dataUpdateParent.setTaxPercent(new BigDecimal(14));
+                    dataUpdateParent.setTaxValue(totalCost.multiply(new BigDecimal(14/100)));
+                }else if(dataUpdateParent.getInvoiceType()==2){
+                    dataUpdateParent.setTaxPercent(new BigDecimal(5));
+                    dataUpdateParent.setTaxValue(totalCost.multiply(new BigDecimal(5/100)));
+                }
+            }else{
+                dataUpdateParent.setTaxPercent(BigDecimal.ZERO);
+                dataUpdateParent.setTaxValue(BigDecimal.ZERO);
+            }
 
             if (invoiceData.getIsHasCustomer()) {
                 dataUpdateParent.setAccount(customerData.getAccount());

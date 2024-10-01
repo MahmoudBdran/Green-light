@@ -56,6 +56,7 @@ public class PriceInvoiceService {
         dataToInsert.setDeliveryLocation(request.getDeliveryLocation());
         dataToInsert.setOfferDuration(request.getOfferDuration());
         dataToInsert.setTaxIncluded(request.isTaxIncluded());
+        dataToInsert.setType(request.getType());
 
         return priceInvoiceRepo.save(dataToInsert);
     }
@@ -72,6 +73,7 @@ public class PriceInvoiceService {
         dataToUpdate.setDeliveryLocation(request.getDeliveryLocation());
         dataToUpdate.setOfferDuration(request.getOfferDuration());
         dataToUpdate.setTaxIncluded(request.isTaxIncluded());
+        dataToUpdate.setType(request.getType());
 
         return priceInvoiceRepo.save(dataToUpdate);
     }

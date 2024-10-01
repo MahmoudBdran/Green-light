@@ -13,9 +13,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -53,7 +56,7 @@ public class WorkerService {
     public Worker updateWorker(Worker worker) {
         return workerRepository.save(worker);
     }
-    public WorkerTransactionHistoryDTO getWorkerTransactionHistory(Long workerId) {
+    public WorkerTransactionHistoryDTO getWorkerTransactionHistory(Long workerId,LocalDateTime fromDate, LocalDateTime toDate) {
 //        List<Salary> salaries = salaryRepository.findByWorkerId(workerId);
 //        List<Payment> payments = paymentRepository.findByWorkerId(workerId);
 //
@@ -62,12 +65,11 @@ public class WorkerService {
 //        history.put("payments", payments);
 //
 //        return history;
-        Worker worker = workerRepository.findById(workerId)
-                .orElseThrow(() -> new RuntimeException("Worker not found"));
+        Worker worker = workerRepository.findById(workerId).orElseThrow(()->new UsernameNotFoundException("didn't find the worker"));
 
-        List<Salary> salaries = salaryRepository.findByWorkerId(workerId);
-        List<Payment> payments = paymentRepository.findByWorkerId(workerId);
-        List<Salary> deductions = salaryRepository.findByWorkerId(workerId);
+        List<Salary> salaries = salaryRepository.findByWorkerIdAndUpdatedAtBetween(workerId,fromDate,toDate);
+        List<Payment> payments = paymentRepository.findByWorkerIdAndUpdatedAtBetween(workerId,fromDate,toDate);
+        // List<Salary> deductions = salaryRepository.findByWorkerIdAndUpdatedAtBetween(workerId,fromDate,toDate);
 
         BigDecimal totalSalary = salaries.stream()
                 .map(Salary::getAmount)
@@ -94,11 +96,11 @@ public class WorkerService {
     }
 
 
-    public List<Map<String, Object>> getAllWorkersFinancialStatus() {
+    public List<Map<String, Object>> getAllWorkersFinancialStatus(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Map<String, Object>> financialStatus = new ArrayList<>();
 
         // Retrieve all workers
-        List<Worker> workers = workerRepository.findAll();
+        List<Worker> workers = workerRepository.findAllByUpdatedAtBetween(fromDate,toDate);
 
         for (Worker worker : workers) {
             Map<String, Object> workerStatus = new HashMap<>();
@@ -106,16 +108,16 @@ public class WorkerService {
             workerStatus.put("name", worker.getName());
 
             // Calculate total earned, total paid, and total remaining
-            BigDecimal totalSalaries = salaryRepository.sumByWorkerId(worker.getId());
+            BigDecimal totalSalaries = salaryRepository.sumByWorkerId(worker.getId(),fromDate,toDate);
             if (totalSalaries == null) {
                 totalSalaries = BigDecimal.ZERO;
             }
 
-            BigDecimal totalPaid = paymentRepository.sumByWorkerId(worker.getId());
+            BigDecimal totalPaid = paymentRepository.sumByWorkerId(worker.getId(),fromDate,toDate);
             if (totalPaid == null) {
                 totalPaid = BigDecimal.ZERO;
             }
-            List<Salary> salaries = salaryRepository.findByWorkerId(worker.getId());
+            List<Salary> salaries = salaryRepository.findByWorkerIdAndUpdatedAtBetween(worker.getId(),fromDate,toDate);
             BigDecimal totalDeduction = salaries.stream()
                     .map(Salary::getDeduction)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);

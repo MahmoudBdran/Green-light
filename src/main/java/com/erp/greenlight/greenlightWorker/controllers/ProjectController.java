@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,14 +51,14 @@ public class ProjectController {
         return AppResponse.generateResponse("تم تحديث العامل بنجاح", HttpStatus.OK,   updatedProject, true);
     }
     @GetMapping("/{id}/expenses")
-    public ResponseEntity<List<Expenses>> getProjectExpenses(@PathVariable Long id) {
-        List<Expenses> expenses = projectService.getProjectExpenses(id);
+    public ResponseEntity<List<Expenses>> getProjectExpenses(@PathVariable Long id, @RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
+        List<Expenses> expenses = projectService.getProjectExpenses(id,fromDate,toDate);
         return ResponseEntity.ok(expenses);
 
     }
     @GetMapping("/{projectId}/financial-status")
-    public ResponseEntity<Object> getProjectFinancialStatus(@PathVariable Long projectId) {
-        return AppResponse.generateResponse("financial-status", HttpStatus.OK, projectService.getProjectFinancialReport(projectId) , true);
+    public ResponseEntity<Object> getProjectFinancialStatus(@PathVariable Long projectId, @RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
+        return AppResponse.generateResponse("financial-status", HttpStatus.OK, projectService.getProjectFinancialReport(projectId,fromDate,toDate) , true);
     }
 
 

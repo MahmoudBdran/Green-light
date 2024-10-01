@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,21 +56,21 @@ public class ProjectService {
 
 
 
-    public List<Expenses> getProjectExpenses(Long projectId) {
-        return expensesRepository.findByProjectId(projectId);
+    public List<Expenses> getProjectExpenses(Long projectId, LocalDateTime fromDate ,LocalDateTime toDate) {
+        return expensesRepository.findByProjectIdAndUpdatedAtBetween(projectId, fromDate, toDate);
     }
-    public ProjectFinancialReportDTO getProjectFinancialReport(Long projectId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+    public ProjectFinancialReportDTO getProjectFinancialReport(Long projectId, LocalDateTime fromDate ,LocalDateTime toDate) {
+        Project project = projectRepository.findById(projectId).get();
+
 
         // Get all salaries for the project
-        List<Salary> salaries = salaryRepository.findByProjectId(projectId);
+        List<Salary> salaries = salaryRepository.findByProjectIdAndUpdatedAtBetween(projectId,fromDate,toDate);
         BigDecimal totalSalaries = salaries.stream()
                 .map(Salary::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Get all payments for the project
-        List<Payment> payments = paymentRepository.findByProjectId(projectId);
+        List<Payment> payments = paymentRepository.findByProjectIdAndUpdatedAtBetween(projectId,fromDate,toDate);
         BigDecimal totalPayments = payments.stream()
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -78,13 +79,13 @@ public class ProjectService {
         BigDecimal totalDue = totalSalaries.subtract(totalPayments);
 
         // Get all expenses for the project
-        List<Expenses> expenses = expensesRepository.findByProjectId(projectId);
+        List<Expenses> expenses = expensesRepository.findByProjectIdAndUpdatedAtBetween(projectId, fromDate, toDate);
         BigDecimal totalExpenses = expenses.stream()
                 .map(Expenses::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Get all owner payments for the project
-        List<OwnerPayment> ownerPayments = ownerPaymentRepository.findByProject(project);
+        List<OwnerPayment> ownerPayments = ownerPaymentRepository.findByProjectAndUpdatedAtBetween(project, fromDate, toDate);
         BigDecimal totalOwnerPayments = ownerPayments.stream()
                 .map(OwnerPayment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

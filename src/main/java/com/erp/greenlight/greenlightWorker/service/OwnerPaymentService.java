@@ -6,6 +6,7 @@ import com.erp.greenlight.greenlightWorker.respository.OwnerPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,8 +15,8 @@ public class OwnerPaymentService {
     @Autowired
     private OwnerPaymentRepository ownerPaymentRepository;
 
-    public List<OwnerPayment> getPaymentsByProject(Long projectId) {
-        return ownerPaymentRepository.findByProject(new Project(projectId));
+    public List<OwnerPayment> getPaymentsByProject(Long projectId, LocalDateTime fromDate, LocalDateTime toDate) {
+        return ownerPaymentRepository.findByProjectAndUpdatedAtBetween(new Project(projectId),fromDate,toDate);
     }
 
     public OwnerPayment getPaymentById(Long paymentId) {

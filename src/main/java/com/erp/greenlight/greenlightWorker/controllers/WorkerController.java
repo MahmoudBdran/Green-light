@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,17 +56,17 @@ public class WorkerController {
         return AppResponse.generateResponse("تم تحديث العامل بنجاح", HttpStatus.OK,   updatedWorker, true);
     }
     @GetMapping("/{id}/history")
-    public ResponseEntity<Object> getWorkerTransactionHistory(@PathVariable Long id) {
+    public ResponseEntity<Object> getWorkerTransactionHistory(@PathVariable Long id,@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
 //        Map<String, Object> history = workerService.getWorkerTransactionHistory(id);
 //        return AppResponse.generateResponse("Worker transaction history fetched successfully", HttpStatus.OK, history, true);
 
-        return AppResponse.generateResponse("history", HttpStatus.OK,   workerService.getWorkerTransactionHistory(id) , true);
+        return AppResponse.generateResponse("history", HttpStatus.OK,   workerService.getWorkerTransactionHistory(id,fromDate,toDate) , true);
     }
 
     @GetMapping("/financial-status")
-    public ResponseEntity<Object> getWorkersFinancialStatus() {
+    public ResponseEntity<Object> getWorkersFinancialStatus(@RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
 
-        return AppResponse.generateResponse("financial status", HttpStatus.OK,   workerService.getAllWorkersFinancialStatus() , true);
+        return AppResponse.generateResponse("financial status", HttpStatus.OK,   workerService.getAllWorkersFinancialStatus(fromDate,toDate) , true);
     }
 
 }

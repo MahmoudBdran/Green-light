@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -19,9 +20,9 @@ public class OwnerPaymentController {
     private OwnerPaymentService ownerPaymentService;
 
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<Object>getPaymentsByProject(@PathVariable Long projectId) {
+    public ResponseEntity<Object>getPaymentsByProject(@PathVariable Long projectId, @RequestParam LocalDateTime fromDate, @RequestParam LocalDateTime toDate) {
 
-        return AppResponse.generateResponse("all_data", HttpStatus.OK,  ownerPaymentService.getPaymentsByProject(projectId) , true);
+        return AppResponse.generateResponse("all_data", HttpStatus.OK,  ownerPaymentService.getPaymentsByProject(projectId,fromDate,toDate) , true);
     }
 
     @GetMapping("/{paymentId}")
